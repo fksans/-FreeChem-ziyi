@@ -9,5 +9,6 @@
     <Compile Include="Program.cs" />
     <Compile Include="../../../src/ReactionEngine.cs" Link="ReactionEngine.cs" />
     <Compile Include="../../../src/Recipes.g.cs" Link="Recipes.g.cs" />
+    <Compile Include="../../../src/ImpurityScale.cs" Link="ImpurityScale.cs" />
   </ItemGroup>
 </Project>

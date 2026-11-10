@@ -31,5 +31,24 @@ case("没有温度档", lambda d: r0(d).update({"bands": []}), "没有温度档"
 case("缺英文名", lambda d: r0(d).update({"nameEn": ""}), "nameEn")
 case("英文名含中文", lambda d: r0(d).update({"nameEn": "沉淀"}), "不能有中文")
 case("minExtent 非法", lambda d: r0(d).update({"minExtent": 0}), "minExtent")
+import math
+# 动力学：Arrhenius 数值与单调性
+r = base["recipes"][0]
+t25 = g.band_time(r, {"tMin": 15, "tMax": 45})
+ok = abs(t25 - r["kinetics"]["tau25"]) < 1e-9
+print(("[PASS] " if ok else "[FAIL] ") + f"包含 25°C 的档，时间 = tau25（{t25}）"); fails += 0 if ok else 1
+hot = g.band_time(r, {"tMin": 45, "tMax": 70}); warm = g.band_time(r, {"tMin": 35, "tMax": 70})
+ok = hot < warm < t25 + 1e-9 or hot < t25
+print(("[PASS] " if ok else "[FAIL] ") + f"温度越高越快（45°C 档 {hot:.1f}s < 室温档 {t25:.1f}s）"); fails += 0 if ok else 1
+exp = r["kinetics"]["tau25"] * math.exp(r["kinetics"]["EaKJ"] * 1000 / 8.314 * (1 / 318.15 - 1 / 298.15))
+ok = abs(hot - max(15, exp)) < 1e-9
+print(("[PASS] " if ok else "[FAIL] ") + f"45°C 档与手算一致（{exp:.2f}s）"); fails += 0 if ok else 1
+ok = g.band_time(r, {"tMin": 45, "tMax": 70, "time": 77}) == 77
+print(("[PASS] " if ok else "[FAIL] ") + "档里写了 time 就以手写为准"); fails += 0 if ok else 1
+ok = all(g.band_time(rr, b) >= 15 for rr in base["recipes"] for b in rr["bands"])
+print(("[PASS] " if ok else "[FAIL] ") + "所有档不短于 15 秒"); fails += 0 if ok else 1
+case("没写 time 也没 kinetics", lambda d: (r0(d).pop("kinetics"),), "没写 time")
+case("Ea 越界", lambda d: r0(d)["kinetics"].update({"EaKJ": 500}), "EaKJ")
+case("tau25 非法", lambda d: r0(d)["kinetics"].update({"tau25": 0}), "tau25")
 print("结论：" + ("全部通过" if not fails else f"{fails} 项失败"))
 sys.exit(1 if fails else 0)

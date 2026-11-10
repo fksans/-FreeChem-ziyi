@@ -4,6 +4,8 @@ fc3_tip_progress,进度 {0}/{1} 秒 {2}
 metal_sludge_desc,重金属沉淀、过滤后留下的滤渣。含有害金属，不要随手丢弃。
 metal_sludge_flavor,沉得下去的，总得有人处理。
 fc3_back_full,柜台已满，无法加入新物品。
+cfg_hardcore_impurity,杂质偏硬核
+cfg_hardcore_impurity_tip,把原版试剂瓶（酸、碱、还原剂等）的杂质含量放大到 150%（2%–8% 变成 3%–12%）。下次生成的瓶子生效。
 fc3_tip_paused,温度不在反应温区，已暂停（进度保留）
 recipe_hydroxide_precipitation,氢氧化物沉淀（重金属）
 recipe_sulfide_polishing,硫化物精除（重金属）

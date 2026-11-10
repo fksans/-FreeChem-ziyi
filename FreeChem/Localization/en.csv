@@ -4,6 +4,8 @@ fc3_tip_progress,Progress {0}/{1} s {2}
 metal_sludge_desc,Filter residue left after heavy metals are precipitated and filtered out. Contains toxic metals — handle with care.
 metal_sludge_flavor,What sinks has to be dealt with by someone.
 fc3_back_full,The counter is full — no room for new items.
+cfg_hardcore_impurity,Hardcore impurities
+cfg_hardcore_impurity_tip,"Scales the impurity of vanilla reagent bottles (acid, base, reducing agent…) to 150% (2%–8% becomes 3%–12%). Applies to bottles generated from now on."
 fc3_tip_paused,Temperature is outside the reaction window — paused (progress kept)
 recipe_hydroxide_precipitation,Hydroxide precipitation (heavy metals)
 recipe_sulfide_polishing,Sulfide polishing (heavy metals)

@@ -10,11 +10,19 @@ namespace FreeChem
     public class ModEntry : IMod
     {
         ModLog log;
+        ConfigEntry<bool> hardcoreImpurity;
 
         public void Init(ModManifest manifest)
         {
             log = new ModLog(manifest);
             GameApi.Bind(log);
+            // 模组设置：杂质偏硬核（默认开）。分区名是原始字符串，不本地化；label / tooltip 走本地化键。
+            ModConfig config = ModHelper.GetConfig(manifest.ID);
+            hardcoreImpurity = config.Define("hardcore_impurity", true, "玩法",
+                () => ModHelper.GetLocalized(GameApi.ModId, "cfg_hardcore_impurity"),
+                tooltip: () => ModHelper.GetLocalized(GameApi.ModId, "cfg_hardcore_impurity_tip"));
+            ImpurityPatch.Enabled = hardcoreImpurity.Value;
+            hardcoreImpurity.OnChanged += v => ImpurityPatch.Enabled = v;
             log.Log("FreeChem v3 initializing: " + RecipeTable.All.Length + " recipes.");
         }
 

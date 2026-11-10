@@ -21,7 +21,7 @@ namespace FreeChem
                 new[]
                 {
                     new Band(15f, 45f, 120, 0.9),
-                    new Band(45f, 70f, 60, 0.75),
+                    new Band(45f, 70f, 34, 0.75),
                 }, producesSludge: true),
             new Recipe(
                 "sulfide_polishing", "硫化物精除（重金属）",

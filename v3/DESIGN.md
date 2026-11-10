@@ -32,7 +32,7 @@
 | `src/ReactionEngine.cs` | 纯逻辑，不引用游戏类型 |
 | `src/GameApi.cs` | **全部**游戏 API 调用都在这里 |
 | `src/ReactionPatch.cs` / `src/ModEntry.cs` | Harmony 补丁 / 入口与 tooltip |
-| `tools/v3/engine-tests/` | 引擎离线测试（30 项） |
+| `tools/v3/engine-tests/` | 引擎离线测试（34 项） |
 | `tools/v3/test_gen_recipes.py` | 生成器反例测试 |
 | `legacy/` | 旧版代码和资源，只作参考，不参与构建 |
 
@@ -94,8 +94,28 @@ dotnet run --project tools/v3/engine-tests -c Release
 
 接好钩子之前，滤渣账会一直累积但不会产出物品，其它部分不受影响。
 
-## 下一步
+## 阶段 4b：杂质偏硬核（用户要求）
 
-- 原料杂质：自己的新原料用 `PreBuildChemHelper.SetImpurity(item, min, max)` 带杂质，"偏硬核"就是把范围调高。
-- 联动内容：纯水、营养片、`serum_red` / `serum_green`（虚构配方）、养鱼用品，再加重金属的负面效果（原版里重金属不伤鱼、不伤鼠，要补丁）。
-- 离线生成器：用 Arrhenius 算出反应时间和转化率，替换目前手写的数值，并加经济检查。
+- **做法**：给原版 `PreBuildChemHelper.SetImpurity` 挂 Harmony Prefix（`src/ImpurityPatch.cs`），把杂质范围放大到 150%：酸、碱、还原剂、脂合剂、芬达前体瓶的 2%–8% 变成 **3%–12%**，封顶 20%（`ImpurityScale`，纯逻辑，已测）。迷你酒精瓶不调用 `SetImpurity`，不受影响。
+- 用位置参数 `__1` / `__2`，不依赖参数名；方法本身是 public static，RECON 已核对。
+- **模组设置里有开关「杂质偏硬核」**（默认开）。这会改变原版试剂瓶的杂质，所以做成可关的。只影响之后生成的瓶子。
+- 这样一来，碱瓶和还原剂瓶里的重金属更多，正好是本模组三条配方的原料。
+- **没做的**：原版水的杂质（按水的等级随机，比例固定，在 `WaterPremadeHelper` 的字典里）没有动。要改的话得补丁 `WaterHelper.AddWater`，等有具体需求再说。
+
+## 阶段 5（部分）：反应时间由生成器按温度算
+
+- 配方写 `kinetics: { EaKJ, tau25 }`，档里不再手写 `time`。生成器算：`time = tau25 × exp(Ea/R × (1/T − 1/298.15))`，T 取该档里最接近室温的温度（包含 25°C 的档用 25°C，高于室温的档用下限，保守）。最短 15 秒，再乘 `timeScale`。档里仍可手写 `time` 覆盖。
+- Ea 和 tau25 是**游戏设计值，不是文献值**。目前：氢氧化物沉淀 50 kJ/mol、25°C 时 120 秒 → 45°C 以上档 34 秒；硫化物精除 40 kJ/mol、150 秒；石灰软化 35 kJ/mol、90 秒。
+- 校验：缺 time 又缺 kinetics、Ea 不在 (0, 200]、tau25 ≤ 0 都会报错；测试含与手算对照、"温度越高越快"。
+- **还没做**：把转化率也由平衡常数算出来；经济检查（现在只有一种物品有价值，没有可检查的循环，等有了联动产品再做）。
+
+## 联动内容：还缺的原版信息（下一步要本地 Claude 先查）
+
+阶段 6 的纯水、营养片、激素、养鱼用品，现在**不能凭空做**：前面的配方只会改容器里的液体组分，而这些产物里有的是物品（`nutrient_tablet`、`serum_red` / `serum_green`）。需要先确认：
+
+1. **营养片 `nutrient_tablet`**：原版怎么获得（商店？`chem_finisher` 压片？）；`MachineChemFinisher` / `ChemFinisherRecipe` 能不能压任意化学容器，模组能不能加压片配方。如果原版成型机已经能把含 `mineral` 的液体压成营养片，那就只需要让玩家能配出含矿物质的营养液，不用造新物品。
+2. **激素 `serum_red` / `serum_green`**：原版怎么获得，用 `DirectoryMaster.Item("serum_red")` 能不能直接生成。
+3. **纯水**：原版 `water_purifier`（`MachinePurifier`）已经能去重金属，把水净化到什么等级；`PureWater` 档要求 `water` 占比 ≥ 99.9%，而氯的化学杂质下限是 0.7%，所以要达到纯水档还缺一步去化学杂质（计划书里的活性炭）。原版有没有现成的"炭"类组分或物品可以用？
+4. **养鱼 / 养鼠**：重金属伤鱼要给 `AquacultureHelper.ApplyWaterChecks` / `GetWastePercent` 打补丁；伤鼠要找 `HusbandryHelper` 里的每日入口。需要确认补丁点和影响的幅度。
+
+确认之后，引擎要加一个能力：配方结算时除了改组分，还能产出物品（和滤渣用同一套"放后柜台"代码）。这部分等确认了再写，避免凭空猜。

@@ -71,7 +71,8 @@ static class Tests
             var parts = P(("heavy_metal", 20000), ("base", 60000), ("water", 100000));
             var st = default(ReactionState);
             int n = RunUntil(rs, parts, 60f, ref st, TickOutcome.Completed);
-            Check(n == 60, $"60°C 走第二档，60 tick 完成（实际 {n}）");
+            int t2 = rs[0].Bands[1].Time;
+            Check(n == t2 && t2 < rs[0].Bands[0].Time, $"60°C 走第二档，{t2} tick 完成且比第一档快（实际 {n}）");
             Check(parts["heavy_metal"] == 5000, $"第二档转化率 75%：剩 5000（实际 {parts["heavy_metal"]}）");
             var parts2 = P(("heavy_metal", 20000), ("base", 60000));
             var st2 = default(ReactionState);
@@ -159,6 +160,22 @@ static class Tests
             int mm = 54000, rr = 0, got = 0;
             for (int i = 0; i < 9; i++) got += SludgeLedger.OnDebrisRemoved(6000, 54000 - i * 6000, ref mm, ref rr, 5000);
             Check(got * 5000 + rr + mm == 54000, $"分 9 次滤完：件数×5000 + 零头 + 剩余账 = 原账（{got} 件，零头 {rr}，剩 {mm}）");
+        }
+
+        Console.WriteLine("── 杂质放大 ──");
+        {
+            int lo = 200, hi = 800;
+            ImpurityScale.Apply(ref lo, ref hi, 150);
+            Check(lo == 300 && hi == 1200, $"原版 2%–8% 放大到 150% = 3%–12%（实际 {lo}–{hi}）");
+            lo = 200; hi = 800;
+            ImpurityScale.Apply(ref lo, ref hi, 100);
+            Check(lo == 200 && hi == 800, "100% 不改动");
+            lo = 1000; hi = 1900;
+            ImpurityScale.Apply(ref lo, ref hi, 150);
+            Check(hi == 2000 && lo <= hi, $"上限封顶 20%（实际 {lo}–{hi}）");
+            lo = 0; hi = 0;
+            ImpurityScale.Apply(ref lo, ref hi, 150);
+            Check(lo == 0 && hi == 0, "没有杂质的瓶子保持 0");
         }
 
         Console.WriteLine("── 配方表自检 ──");

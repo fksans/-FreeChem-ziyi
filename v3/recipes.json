@@ -1,6 +1,7 @@
 {
   "_comment": "v3 MVP 配方源数据。物质只用原版 Liquid 组分 id（见 v3/RECON.md 第 3 节），不注册自定义 Liquid。数量是相对系数（part 比例），按体积守恒：输出系数之和必须等于输入系数之和。time 单位：秒（= 原版容器每秒 tick 的次数；夜间会补 360 次）。minExtent：开始反应所需的最小反应当量（限量试剂 part 数 ÷ 系数，1000 part = 1 ml），低于它的残留留在容器里不再反应（现实里的残留下限）。conversion：一轮完成时消耗限量试剂的比例（< 1 表示一轮除不干净，需要多轮，偏硬核）。",
   "timeScale": 1.0,
+  "_kinetics": "反应时间由生成器按 Arrhenius 算：time = tau25 × exp(Ea/R × (1/T − 1/298.15))，T 取温度档里最接近室温（25°C）的温度（保守：高于室温的档用它的下限）。Ea（kJ/mol）和 tau25（25°C 时的秒数）是游戏设计值，不是文献值；档里写了 time 就以手写为准。最短 15 秒，再乘 timeScale。",
   "sludge": { "item": "metal_sludge", "partsPerItem": 5000, "nameZh": "重金属滤渣", "nameEn": "Heavy-metal sludge", "value": 40 },
   "_sludge": "sludge:true 的配方，产出的碎屑记入容器的\"重金属滤渣\"账；过滤把这部分碎屑滤掉时，按比例换成 metal_sludge 物品（每 partsPerItem part 一件）。",
   "substances": [
@@ -16,9 +17,10 @@
       "outputs": { "debris": 3 },
       "sludge": true,
       "minExtent": 1000,
+      "kinetics": { "EaKJ": 50, "tau25": 120 },
       "bands": [
-        { "tMin": 15, "tMax": 45, "time": 120, "conversion": 0.90 },
-        { "tMin": 45, "tMax": 70, "time": 60,  "conversion": 0.75 }
+        { "tMin": 15, "tMax": 45, "conversion": 0.90 },
+        { "tMin": 45, "tMax": 70, "conversion": 0.75 }
       ]
     },
     {
@@ -30,8 +32,9 @@
       "outputs": { "debris": 2 },
       "sludge": true,
       "minExtent": 1000,
+      "kinetics": { "EaKJ": 40, "tau25": 150 },
       "bands": [
-        { "tMin": 20, "tMax": 50, "time": 150, "conversion": 0.99 }
+        { "tMin": 20, "tMax": 50, "conversion": 0.99 }
       ]
     },
     {
@@ -42,8 +45,9 @@
       "inputs":  { "mineral": 2, "base": 1 },
       "outputs": { "debris": 3 },
       "minExtent": 1000,
+      "kinetics": { "EaKJ": 35, "tau25": 90 },
       "bands": [
-        { "tMin": 15, "tMax": 60, "time": 90, "conversion": 0.85 }
+        { "tMin": 15, "tMax": 60, "conversion": 0.85 }
       ]
     }
   ]

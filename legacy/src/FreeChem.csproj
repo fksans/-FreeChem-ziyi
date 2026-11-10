@@ -1,0 +1,55 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>FreeChem</AssemblyName>
+    <RootNamespace>FreeChem</RootNamespace>
+    <!-- 默认指向本机游戏目录；换机时覆盖：dotnet build -c Release -p:GameDir="D:\...\Probably Stolen\" -->
+    <GameDir Condition="'$(GameDir)' == ''">D:\SteamLibrary\steamapps\common\Probably Stolen\</GameDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>$(GameDir)Probably Stolen_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(GameDir)Probably Stolen_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(GameDir)Probably Stolen_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(GameDir)Probably Stolen_Data\Managed\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!--
+      偏离官方模板（create-mod.bat / LearnerMod.csproj 生成的 csproj 只引用上面 4 个 DLL）：
+      官方 ModdingGuide 的「按键绑定」示例要求用 Input.GetKeyDown(hotkey) 轮询，
+      但 Input 类型位于 Unity 内置模块 UnityEngine.InputLegacyModule.dll，模板未列该引用 → 不补会 CS0103。
+      该 DLL 随游戏自带、Private=false（不复制进发布包，发布包仍只有 FreeChem.dll），
+      不新增原生依赖、不涉及反射/IO/网络/线程，不违反空 <Capabilities>。
+    -->
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(GameDir)Probably Stolen_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!--
+      P3b：成分仪 RefreshUI Postfix 需要读写 testedTMP/contaminantTMP/totalVolumeTMP 的 .text，
+      这些字段类型是 TMPro.TextMeshProUGUI，位于 Unity.TextMeshPro.dll（游戏自带、Private=false 不复制）。
+    -->
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(GameDir)Probably Stolen_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- TextMeshProUGUI 继承自 UnityEngine.UI.MaskableGraphic，编译期需要 UnityEngine.UI（游戏自带、Private=false）。 -->
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(GameDir)Probably Stolen_Data\Managed\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+</Project>

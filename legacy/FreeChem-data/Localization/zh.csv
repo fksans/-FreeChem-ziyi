@@ -1,0 +1,555 @@
+# FreeChem localization — key,text
+alcohol_lamp_name,酒精灯
+alcohol_lamp_desc,需插入灯芯并注入酒精燃料；燃料可用原版酒精，纯度越低火力越弱、烧得越快。
+alcohol_lamp_flavor,蓝色的小火苗，实验台的守夜灯。
+beaker_name,烧杯
+beaker_desc,玻璃反应容器，可放在大型加热台上做加热与热反应。
+beaker_flavor,杯壁上的刻度，是实验室最诚实的尺子。
+can_chlorine_industrial_name,工业氯气
+can_chlorine_industrial_desc,氯气钢瓶，受管制；用作氯化剂与消毒剂。
+can_chlorine_industrial_flavor,黄色的小钢瓶，标着危险两个字。
+can_chlorine_medical_name,精制氯气
+can_chlorine_medical_desc,氯气钢瓶，受管制；用作氯化剂与消毒剂。
+can_chlorine_medical_flavor,精制过的氯气，依旧需要小心对待。
+can_chlorine_ultrapure_name,化学纯氯
+can_chlorine_ultrapure_desc,氯气钢瓶，受管制；用作氯化剂与消毒剂。
+can_chlorine_ultrapure_flavor,更纯，也更不容失误。
+can_hydrogen_industrial_name,工业氢气
+can_hydrogen_industrial_desc,氢气钢瓶；用于合成氨、加氢与燃料。
+can_hydrogen_industrial_flavor,轻得能飘走，却装着大笔能量。
+can_hydrogen_medical_name,医用氢气
+can_hydrogen_medical_desc,氢气钢瓶；用于合成氨、加氢与燃料。
+can_hydrogen_medical_flavor,安静的高能钢瓶，接缝处总能听见嘶声。
+can_hydrogen_ultrapure_name,化学纯氢
+can_hydrogen_ultrapure_desc,氢气钢瓶；用于合成氨、加氢与燃料。
+can_hydrogen_ultrapure_flavor,几乎没有杂质，只剩轻与易燃。
+can_nitrogen_industrial_name,工业氮气
+can_nitrogen_industrial_desc,氮气钢瓶；惰性保护气，用于置换与储存。
+can_nitrogen_industrial_flavor,工业氮，给管道与储罐做无声的守护。
+can_nitrogen_medical_name,医用氮气
+can_nitrogen_medical_desc,氮气钢瓶；惰性保护气，用于置换与储存。
+can_nitrogen_medical_flavor,医用氮，冷得恰到好处。
+can_nitrogen_ultrapure_name,化学纯氮
+can_nitrogen_ultrapure_desc,氮气钢瓶；惰性保护气，用于置换与储存。
+can_nitrogen_ultrapure_flavor,惰性得无可挑剔，也只做这一件事。
+can_oxygen_industrial_name,工业氧气
+can_oxygen_industrial_desc,氧气钢瓶，供焊接与工业用途。
+can_oxygen_industrial_flavor,拧开阀门，蓝色火焰立刻认得它。
+can_oxygen_medical_name,医用氧气
+can_oxygen_medical_desc,氧气钢瓶，可被原版医生、护士、医院供货商收购。
+can_oxygen_medical_flavor,医院走廊的味道，被压进了钢瓶。
+can_oxygen_ultrapure_name,化学纯氧
+can_oxygen_ultrapure_desc,氧气钢瓶，可高价售给研究型顾客。
+can_oxygen_ultrapure_flavor,纯得只剩助燃这一件事。
+canister_filling_name,气体灌装台
+canister_filling_desc,把气体压入空钢瓶；仅接受气体。
+canister_filling_flavor,空间站的化学手册里，这一页被人反复翻过。
+catalyst_kit_name,催化剂套件
+catalyst_kit_desc,作为催化剂投入设备：部分反应需要它才可进行，部分反应有加成，用后消耗。
+catalyst_kit_flavor,几粒不起眼的小珠，能让慢反应快起来。
+chem_reactor_name,合成反应釜
+chem_reactor_desc,多投料合成设备：氢氯合成、湿法制酸、次氯酸盐与 T4 虚构违禁品。沿用原版电力与模组框架。
+chem_reactor_flavor,空间站的化学手册里，这一页被人反复翻过。
+condenser_unit_name,冷凝吸收塔
+condenser_unit_desc,气体吸收成液体（氯化氢→盐酸、氨→氨水）：需要气体 + 液体（水/吸收液）同时投料，不能只放气体。
+condenser_unit_flavor,空间站的化学手册里，这一页被人反复翻过。
+crystallizer_name,结晶器
+crystallizer_desc,液体蒸发结晶为固体。仅接受液体。
+crystallizer_flavor,空间站的化学手册里，这一页被人反复翻过。
+decanter_name,静置滗析槽
+decanter_desc,液体静置 24 小时，分离下层沉淀、取得纯度更高的上层清液。仅接受液体，气体不能滗析。
+decanter_flavor,空间站的化学手册里，这一页被人反复翻过。
+electrolyzer_name,电解槽
+electrolyzer_desc,氯碱法与盐酸电解，液体进、气体出。
+electrolyzer_flavor,空间站的化学手册里，这一页被人反复翻过。
+erlenmeyer_flask_name,锥形瓶
+erlenmeyer_flask_desc,锥形反应容器，摇匀方便，适合滴定与结晶前处理。
+erlenmeyer_flask_flavor,三角瓶，摇匀时最不容易洒。
+filter_paper_name,化学滤纸
+filter_paper_desc,孔径 22 μm：拦得住物理污染物与不溶碎屑，但拦不住化学污染物(2 μm)和重金属(12 μm)。有耐久，会耗尽。
+filter_paper_flavor,普通滤纸，拦住看得见的脏东西。
+filter_paper_ash_name,无灰定量滤纸
+filter_paper_ash_desc,孔径 2 μm 的定量滤纸：拦截化学污染物，但每类仍会留下极低残留。
+filter_paper_ash_flavor,无灰定量纸，烧完几乎不留下自己。
+filter_paper_fine_name,精密滤纸
+filter_paper_fine_desc,孔径 5 μm：可拦下重金属与微塑料，仍无法完全去除化学污染物。
+filter_paper_fine_flavor,精密滤纸，网眼更细，也更娇气。
+filtration_bench_name,过滤台
+filtration_bench_desc,装上滤纸对液体加压过滤：按孔径拦截污染物，仍会留下极低残留。仅接受液体。
+filtration_bench_flavor,空间站的化学手册里，这一页被人反复翻过。
+fractionator_name,分馏柱
+fractionator_desc,按沸点差分离与提纯，硝石制硝酸、奥斯特瓦尔德法。
+fractionator_flavor,空间站的化学手册里，这一页被人反复翻过。
+gas_ammonia_name,氨气
+gas_ammonia_desc,刺激性碱性气体，哈伯法或铵盐加碱制得。
+gas_ammonia_flavor,呛人的碱味，肥料与清洁剂的起点。
+gas_canister_empty_name,空钢瓶
+gas_canister_empty_desc,可重复使用的耐压容器。灌装台把气体压入其中形成商品气罐。
+gas_canister_empty_flavor,空的；但每个空瓶都在等一种气体。
+gas_carbon_dioxide_name,二氧化碳
+gas_carbon_dioxide_desc,大理石与盐酸反应制得，高浓度可致窒息。
+gas_carbon_dioxide_flavor,无色无味，只在火熄灭时提醒你它在。
+gas_chlorine_name,氯气
+gas_chlorine_desc,黄绿色剧毒气体。原版氯组分的具名独立药剂；具强氧化性与致命毒性。
+gas_chlorine_flavor,钢瓶壁上凝着淡黄绿色的影子，闻一口就能记住它。
+gas_drum_carbon_dioxide_name,大型二氧化碳桶
+gas_drum_carbon_dioxide_desc,装满二氧化碳的大型储气桶（3×4 格）。
+gas_drum_carbon_dioxide_flavor,大桶二氧化碳，灭火、碳酸、啤酒泡沫。
+gas_drum_chlorine_name,大型氯气桶
+gas_drum_chlorine_desc,装满氯气的大型储气桶（3×4 格），剧毒，泄漏会让整个舱段遭殃。
+gas_drum_chlorine_flavor,大桶氯气，一次泄漏就能毁掉整层甲板。
+gas_drum_empty_name,大型储气桶（空）
+gas_drum_empty_desc,钢制大型储气桶（3×4 格）；灌装台可把它压装成对应气体，空桶是容器、不能当气体投料。
+gas_drum_empty_flavor,一个巨大的空胃，只等气体填满。
+gas_drum_hydrogen_name,大型氢气桶
+gas_drum_hydrogen_desc,装满氢气的大型储气桶（3×4 格），易燃易爆。
+gas_drum_hydrogen_flavor,大桶氢气，站得越近越该敬畏。
+gas_drum_nitrogen_name,大型氮气桶
+gas_drum_nitrogen_desc,装满氮气的大型储气桶（3×4 格），惰性保护气。
+gas_drum_nitrogen_flavor,大桶氮气，惰性氛围的搬运工。
+gas_drum_oxygen_name,大型氧气桶
+gas_drum_oxygen_desc,装满氧气的大型储气桶（3×4 格），供焊接、潜水与批量出货。
+gas_drum_oxygen_flavor,大桶氧气，焊接与潜水都靠它续命。
+gas_ethylene_name,乙烯
+gas_ethylene_desc,乙醇脱水的产物，植物催熟激素，易燃。
+gas_ethylene_flavor,有一点甜味的气体，催熟果实也催熟麻烦。
+gas_generator_name,气体发生器
+gas_generator_desc,启普发生器式：固体 + 液体 → 气体。制 二氧化碳、氯化氢、氧气、氨。
+gas_generator_flavor,空间站的化学手册里，这一页被人反复翻过。
+gas_hydrogen_name,氢气
+gas_hydrogen_desc,无色易燃气体，与氯气点燃生成氯化氢。
+gas_hydrogen_flavor,最轻的气体，逃得比谁都快，只剩一声轻响。
+gas_hydrogen_chloride_name,氯化氢
+gas_hydrogen_chloride_desc,刺激性酸性气体，溶于水即得盐酸。
+gas_hydrogen_chloride_flavor,刺鼻的白雾，遇水就成了盐酸。
+gas_nitrogen_name,氮气
+gas_nitrogen_desc,惰性气体，哈伯法合成氨的原料。
+gas_nitrogen_flavor,惰性的守夜人，安静地隔开危险。
+gas_nitrous_oxide_name,笑气
+gas_nitrous_oxide_desc,硝酸铵热分解产物，麻醉性气体，医用价值高。
+gas_nitrous_oxide_flavor,笑气，让人笑，也让人麻木。
+gas_oxygen_name,氧气
+gas_oxygen_desc,助燃气体，可用于焊接、医疗供氧与氧化反应。
+gas_oxygen_flavor,助燃，不燃烧；它让别的东西烧得更旺。
+gas_scrubber_name,气体洗涤塔
+gas_scrubber_desc,气体洗涤/吸附除杂，提纯一档而不改变化学身份；仅接受气体，不接受液体。
+gas_scrubber_flavor,空间站的化学手册里，这一页被人反复翻过。
+heating_platform_name,大型加热台
+heating_platform_desc,实时设备：放上反应容器后每秒驱动升温/冷却（套用原版加热板公式），温度落入热反应温区即按秒累积产物，超温则降解为废渣。燃料用酒精，纯度决定加热效率与消耗。
+heating_platform_flavor,空间站的化学手册里，这一页被人反复翻过。
+high_pressure_synth_name,高压合成塔
+high_pressure_synth_desc,哈伯法合成氨及高压致幻合成，需高温高压与催化剂。
+high_pressure_synth_flavor,空间站的化学手册里，这一页被人反复翻过。
+illicit_ashbreath_name,灰息（违禁）
+illicit_ashbreath_desc,虚构致命违禁品：硝酸、活性炭与氨气反应制得。
+illicit_ashbreath_flavor,最后一口灰色的气，有人在卖这个。
+illicit_nightglass_name,夜玻（违禁）
+illicit_nightglass_desc,虚构致幻违禁品：梦帽菇、硫酸与高锰酸钾高压合成。
+illicit_nightglass_flavor,深色玻璃，夜里看东西像隔着一层梦。
+illicit_redmist_name,红雾（违禁）
+illicit_redmist_desc,虚构剧毒违禁品：氯气与原版还原剂、脂合剂反应制得。
+illicit_redmist_flavor,瓶里像有红色的雾，在慢慢呼吸。
+illicit_voidsalt_name,空盐（违禁）
+illicit_voidsalt_desc,虚构强成瘾违禁品：N-羟甲基碱与氯化氢、高纯氨催化合成。欣快系数 10.0，带戒断语义。
+illicit_voidsalt_flavor,灰白色的盐，吃下去的人会变得安静。
+label_printer_name,标签打印机
+label_printer_desc,把药剂瓶放进去即可盖上纯度等级与化学品/医疗品标签；激活本物品切换标签模式。
+label_printer_flavor,它不伪造东西，只是替你把话印得更好看。
+liq_ammonia_water_name,氨水
+liq_ammonia_water_desc,氨气溶于水所得弱碱溶液。
+liq_ammonia_water_flavor,呛人的氨水，开瓶时最好别凑近。
+liq_brine_name,饱和盐水
+liq_brine_desc,氯碱法原料，静置滗析可提高纯度。
+liq_brine_flavor,咸得发苦，是氯碱工业的起点。
+liq_calcium_chloride_name,氯化钙溶液
+liq_calcium_chloride_desc,大理石与盐酸反应的液相副产物。
+liq_calcium_chloride_flavor,无色微苦，冬天用来化冰，也用来干燥。
+liq_hydrochloric_acid_name,盐酸
+liq_hydrochloric_acid_desc,强酸。由氯化氢吸收或浓硫酸与食盐反应制得，也是原版酸性溶液瓶的折算对应物。
+liq_hydrochloric_acid_flavor,冒烟的强酸，能把大理石啃出气泡。
+liq_hydrogen_peroxide_name,双氧水
+liq_hydrogen_peroxide_desc,氧化剂，催化分解放出氧气。
+liq_hydrogen_peroxide_flavor,安静地冒着小泡，随时准备分解。
+liq_nitric_acid_name,硝酸
+liq_nitric_acid_desc,强氧化性酸，硝石法或奥斯特瓦尔德法制得。
+liq_nitric_acid_flavor,在光下慢慢变黄，像藏了一点阳光。
+liq_sodium_hydroxide_name,烧碱液
+liq_sodium_hydroxide_desc,强碱溶液，氯碱法副产，也是原版碱性溶液瓶的折算对应物。
+liq_sodium_hydroxide_flavor,滑腻的碱液，碰皮肤会留下警告。
+liq_sulfuric_acid_name,硫酸
+liq_sulfuric_acid_desc,强腐蚀性酸，湿法由硫磺氧化吸收制得。
+liq_sulfuric_acid_flavor,黏稠而沉重，稀释时放热得让人后退。
+note_chem_dealer_name,化学品商人的便条
+note_chem_dealer_desc,一张写着化学品商人电话与暗语的便条：拨打他的号码即可订购基础化学品，次晨送到店前柜台。
+note_chem_dealer_flavor,纸角沾着试剂，号码被反复描过好几遍。
+ph_meter_name,pH 计
+ph_meter_desc,切换反应酸碱档，决定中和类配方的分支。
+ph_meter_flavor,一根探针，把酸碱吵成数字。
+precision_balance_name,精密天平
+precision_balance_desc,用于配平投料份量，为反应提供配平加成（不改变产物品级）。
+precision_balance_flavor,在它面前，一撮盐也有分量。
+retort_flask_name,鹅颈瓶
+retort_flask_desc,曲颈蒸馏瓶，耐热玻璃材质，适合蒸馏与高温加热反应。
+retort_flask_flavor,弯颈的玻璃，让蒸汽学会拐弯。
+safety_goggles_name,护目镜
+safety_goggles_desc,开启防护：佩戴后高危反应（危险等级≥2）才能正常产出，否则只会得到废渣；可在模组设置关闭危险反应。
+safety_goggles_flavor,划痕很多，说明主人还活着。
+sludge_name,废渣
+sludge_desc,配比失败或事故后的残留物，可回收再处理。
+sludge_flavor,一坨说不清成分的废渣，最好别碰。
+sol_activated_carbon_name,活性炭
+sol_activated_carbon_desc,吸附剂，用于气体洗涤与过滤；也作为梦帽菇的折算碳源。
+sol_activated_carbon_flavor,一片漆黑，却最擅长抓住杂质。
+sol_ammonium_chloride_name,氯化铵
+sol_ammonium_chloride_desc,氨与氯化氢直接结合生成的白色结晶盐，可作氮肥与焊药。
+sol_ammonium_chloride_flavor,白色结晶，焊工的药，化肥的盐。
+sol_ammonium_nitrate_name,硝酸铵
+sol_ammonium_nitrate_desc,中和结晶产物，加碱放出氨气。
+sol_ammonium_nitrate_flavor,白色颗粒，既是肥料也是氧化剂。
+sol_bleaching_powder_name,漂白粉
+sol_bleaching_powder_desc,氯气与烧碱反应所得次氯酸盐。
+sol_bleaching_powder_flavor,漂白粉的氯味，是消毒过头的旧医院。
+sol_caffeine_name,咖啡因
+sol_caffeine_desc,咖啡豆糊经酒精热萃取所得；中枢兴奋剂，小剂量提神、大剂量心悸。
+sol_caffeine_flavor,白色粉末，小剂量提神，大剂量心悸。
+sol_calcium_carbonate_name,碳酸钙
+sol_calcium_carbonate_desc,大理石/石灰石，与酸反应放出二氧化碳。
+sol_calcium_carbonate_flavor,粉笔、贝壳与大理石都曾是它。
+sol_calcium_hydroxide_name,熟石灰
+sol_calcium_hydroxide_desc,氢氧化钙。生石灰加水消化所得，制漂白粉的钙源（次氯酸钙反应必须用它）。
+sol_calcium_hydroxide_flavor,熟石灰，温和的碱，老墙的味道。
+sol_calcium_oxide_name,生石灰
+sol_calcium_oxide_desc,钙氧化物。石灰石高温煅烧所得，遇水放热变成熟石灰，是制熟石灰与漂白粉的钙源。
+sol_calcium_oxide_flavor,生石灰，遇水会烫得冒汽。
+sol_coffee_grounds_name,咖啡豆糊
+sol_coffee_grounds_desc,咖啡因热萃取的原料，原版可得的植物残渣。
+sol_coffee_grounds_flavor,湿漉漉的咖啡渣，还能再榨一次提神的东西。
+sol_copper_oxide_name,氧化铜
+sol_copper_oxide_desc,棕黑色铜氧化物，可作颜料与催化剂原料；当前只能从废料中拾获。
+sol_copper_oxide_flavor,棕黑色粉末，把铜的红藏了起来。
+sol_copper_sulfate_name,硫酸铜晶体
+sol_copper_sulfate_desc,蓝色晶体，催化剂与试剂。
+sol_copper_sulfate_flavor,蓝得不像化工原料，倒像一块宝石。
+sol_manganese_dioxide_name,二氧化锰
+sol_manganese_dioxide_desc,高锰酸钾热分解的黑色副产物，也是双氧水分解的催化剂。
+sol_manganese_dioxide_flavor,黑色粉末，安静得像熄掉的电池芯。
+sol_potassium_manganate_name,锰酸钾
+sol_potassium_manganate_desc,高锰酸钾热分解生成的深绿色锰酸盐。
+sol_potassium_manganate_flavor,深绿色晶体，锰的另一种表情。
+sol_potassium_nitrate_name,硝酸钾
+sol_potassium_nitrate_desc,硝石，制硝酸与强氧化剂的原料。
+sol_potassium_nitrate_flavor,白色针状结晶，硝石的老名字。
+sol_potassium_permanganate_name,高锰酸钾
+sol_potassium_permanganate_desc,强氧化剂，加热分解制氧。
+sol_potassium_permanganate_flavor,紫黑色晶体，溶于水像泼了墨水。
+sol_potassium_sulfate_name,硫酸钾
+sol_potassium_sulfate_desc,硝石与硫酸制硝酸时的白色副产盐，可作钾肥。
+sol_potassium_sulfate_flavor,白色晶体，制硝酸时的顺手副产。
+sol_sediment_name,沉降沉淀
+sol_sediment_desc,静置滗析分出的下层固体杂质。滗析是液相操作，气体不能滗析。
+sol_sediment_flavor,沉降下来的沉淀，是失败实验留下的硬证据。
+sol_sodium_bicarbonate_name,小苏打
+sol_sodium_bicarbonate_desc,碳酸氢钠。纯碱再吸收二氧化碳与水所得，弱碱，可作缓冲与膨松剂。
+sol_sodium_bicarbonate_flavor,小苏打，遇酸就起泡，厨房里的化学家。
+sol_sodium_carbonate_name,纯碱
+sol_sodium_carbonate_desc,碳酸钠。烧碱吸收二氧化碳制得，可进一步制小苏打，也用于玻璃与洗涤。
+sol_sodium_carbonate_flavor,纯碱，洗碗与制玻璃的老朋友。
+sol_sodium_chloride_name,氯化钠晶体
+sol_sodium_chloride_desc,食盐晶体。可电解、可制氯化氢、可再溶成盐水。
+sol_sodium_chloride_flavor,方方正正的晶体，咸味的本相。
+sol_sodium_hydroxide_name,片状烧碱
+sol_sodium_hydroxide_desc,片状固体强碱，可作为铵盐加碱放氨的碱源；从建筑废料中拾获，不是本模组反应产物。
+sol_sodium_hydroxide_flavor,片状烧碱，遇见水就发热。
+sol_sodium_nitrate_name,硝酸钠
+sol_sodium_nitrate_desc,硝酸铵加碱放氨时的副产盐，氧化剂与肥料。
+sol_sodium_nitrate_flavor,白色晶体，放氨时悄悄留下的钠盐。
+sol_sulfur_name,硫磺
+sol_sulfur_desc,制硫酸与含硫反应的基础原料。
+sol_sulfur_flavor,黄色粉末，火山与火柴的共同记忆。
+spirit_burner_name,酒精喷灯
+spirit_burner_desc,加压酒精喷灯，火焰温度明显高于普通酒精灯，适合需要高温的热反应。
+spirit_burner_flavor,喷灯开口吼了一声，温度就上去了。
+test_tube_name,试管
+test_tube_desc,小容量玻璃试管：可倒入少量试剂，也可放进试管架；可被分析仪分析。
+test_tube_flavor,空间站的化学手册里，这一页被人反复翻过。
+test_tube_rack_name,试管架
+test_tube_rack_desc,放置试管的架子：把试管插在架上晾干、分类保存，或一次搬多根。
+test_tube_rack_flavor,一排试管站队，像等待审问的小证人。
+thermometer_name,温度计
+thermometer_desc,点击循环切换实验温度档：0 冷 / 1 常温 / 2 加热 / 3 高温高压。温度档是 T2–T4 配方能否匹配的条件，档位不对不会出产物。
+thermometer_flavor,冷、常温、加热、高温高压——它只认档位。
+titration_bench_name,滴定台
+titration_bench_desc,定量中和与 pH 控制，酸碱中和滴定。
+titration_bench_flavor,空间站的化学手册里，这一页被人反复翻过。
+wick_ceramic_name,陶瓷灯芯
+wick_ceramic_desc,耐高温陶瓷灯芯，火焰稳定、耐久 40，适合长时间加热。
+wick_ceramic_flavor,陶瓷灯芯，耐用是它唯一的脾气。
+wick_cotton_name,棉灯芯
+wick_cotton_desc,酒精灯的棉质灯芯，便宜但烧得快（耐久 20）。
+wick_cotton_flavor,棉灯芯，便宜、好烧、换得勤。
+cfg_dangerous,允许危险反应
+cfg_dangerous_tip,关闭后，高危配方只产出废渣，不生成目标化合物。
+cfg_vanilla_security,排气计入原版治安部
+cfg_vanilla_security_tip,开启后，有毒气体排放会按排风服务倍率折算为原版治安部的「危害公共安全（ENDANGERMENT）」犯罪记录；关闭后只保留模组内计数。该接入使用游戏未文档化的公开成员，建议按需关闭。
+codex_progress,已发现 {0} / {1} 条反应
+network_tab,自由化学
+network_broker_title,气体商人引荐
+network_broker_desc,在 Wild 的人脉中引荐一位气体商人。解锁后可向气体商人下订单，并获得空钢瓶与基础气体供货。
+network_order_title,气体订购
+network_order_desc,向气体商人下单：空钢瓶 ×2、空大型储气桶、氧气、氮气与饱和盐水，次日送达。每 3 天可再订。
+network_order_wait,上一次气体订单还在配送途中。
+network_vent_title,排风服务
+network_vent_desc,王尔德的常驻排风服务：为化学设备接上排风管线，有毒气体（氯气/氯化氢/氨气）排放累积的治安部嫌疑度增长降至 55%。排放按 ENDANGERMENT 折算写入原版治安部；可在模组设置关闭该接入。
+network_adv_vent_title,进阶排风服务
+network_adv_vent_desc,在排风服务基础上加装冷凝回收与二级过滤：有毒气体排放的治安部嫌疑度增长降至 12%。需先购买排风服务，常驻生效。
+suspicion_profile,排气嫌疑度 {0}（{1}；已按排风倍率折算写入原版治安部 ENDANGERMENT，可在模组设置关闭）
+vent_none,无排风服务
+vent_basic,基础排风服务 ×0.55
+vent_advanced,进阶排风服务 ×0.12
+chem_profile,纯度 {0}% · {1} · 欣快等级 {2}
+lethal_lethal,致命
+lethal_toxic,有毒
+lethal_safe,无毒
+inst_lamp_hint,用法：先在加热器槽放酒精灯/喷灯，装上灯芯，再从燃料槽放入乙醇或原版酒精；每瓶按纯度灌入灯内（灯容量 500 ml）。点击灯可在低档 99°C / 高档 160°C 间切换。
+inst_wick_hint,灯芯有耐久，点燃时每秒消耗；耗尽后会被消耗掉，在加热台的灯芯槽放入新灯芯即可更换。
+inst_filter_hint,过滤台用法：放入液体药剂 + 滤纸；滤纸按孔径拦截颗粒并消耗耐久（用尽即毁），每过滤一次提纯等级 +1。
+inst_fuel_hint,可作为大型加热台的燃料：放入加热台燃料槽即可；酒精纯度越高火力越强、消耗越慢（灯容量 500 ml）。
+phone_chem_stock_desc,库存与价格：盐酸、硫酸、硝酸、烧碱、双氧水、盐水、氨水、纯碱各 1 件，每包 $320；每日限订 1 包，次日清晨送达前柜台。
+phone_chem_menu_hangup,挂断
+phone_chem_result_ok,订购成功：已扣 $320，明早开店时送到前柜台。
+phone_chem_result_fail_insufficient,订购失败：现金不足（需要 $320）。
+phone_chem_result_pending,订购失败：你上一单还在等次日配送，请先收货。
+phone_chem_result_daily_limit,订购失败：今天已经下过单了，明天再打来。
+phone_chem_back,返回
+phone_chem_label_order,订购基础化学品
+phone_chem_label_stock,查看库存与价格
+phone_chem_label_hangup,挂断
+phone_chem_label_back,返回
+phone_chem_stock_choice,查看库存与价格
+phone_chem_stock_choice_desc,查看基础化学品包内容与价格。
+phone_pack_acid_name,酸包
+phone_pack_acid_desc,盐酸、硫酸、硝酸各 1 件。
+phone_pack_base_name,碱包
+phone_pack_base_desc,烧碱、氨水、纯碱各 1 件。
+phone_pack_solvent_name,溶剂包
+phone_pack_solvent_desc,双氧水、饱和盐水各 1 件。
+phone_pack_solid_name,固体包
+phone_pack_solid_desc,纯碱、小苏打、生石灰、氯化铵各 1 件。
+phone_pack_basic_name,基础化学品包
+phone_pack_basic,基础化学品包
+phone_pack_acid,酸包
+phone_pack_base,碱包
+phone_pack_solvent,溶剂包
+phone_pack_solid,固体包
+phone_pack_menu,化学品套餐
+phone_pack_menu_choice,套餐目录
+phone_single_menu,单项化学品
+phone_single_menu_choice,单项目录
+phone_pack_basic_desc,盐酸、硫酸、硝酸、烧碱、双氧水、盐水、氨水、纯碱各 1 件 + 酒精瓶 1 个。
+phone_cat_packs,套餐
+phone_cat_singles,单项化学品
+phone_cat_acid,酸类
+phone_cat_base,碱类
+phone_cat_solvent,溶剂类
+phone_cat_solid,固体类
+phone_order_single_result,已订购：{0}（${1}），次晨送达前柜台。
+phone_order_pack_result,已订购套餐：{0}（${1}），次晨送达前柜台。
+phone_chem_result_fail,订单暂时无法提交，请稍后再试。
+note_chem_dealer_text,化学品商人：电话 96686。可订购基础化学品，次日清晨送到店前柜台。
+phone_chem_title,FreeChem 化学品供应商
+phone_chem_greeting,您好，这里是 FreeChem 化学品供应商。基础化学品可以按日订购，次日清晨送到您店的前柜台。需要我为您介绍一下库存吗？
+phone_chem_order_choice,订购基础化学品（$320）
+phone_chem_order_desc,每天限订 1 包：盐酸、硫酸、硝酸、烧碱、双氧水、盐水、氨水、纯碱各 1 件；次日开店时送达前柜台。
+phone_chem_order_desc_short,次日清晨送到前柜台。
+phone_order_ok,订购成功：-$320。明早开店时送达前柜台。
+phone_order_pending,你上一单还在等次日清晨配送，请先收货。
+phone_order_daily_limit,你今天已经下过单了，明天再打来。
+phone_order_insufficient,现金不足，无法订购。
+phone_order_fail,当前无法下单（店铺未营业或发生错误）。
+machine_note_decanter,静置分离液体：放入液体药剂后静置，上层与下层分别进入产出；不耗电、不用滤纸，也不改变提纯等级。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_filtration_bench,液体 + 滤纸加压过滤：滤纸按孔径拦截污染物并消耗耐久，每次过滤提纯等级 +1。不耗电；有一个滤纸专用槽。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_titration_bench,酸碱中和滴定：两个投料槽分别放酸与碱，产出盐水与水的混合液。不耗电。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_crystallizer,低功率蒸发结晶：把盐水或硝酸铵溶液浓缩结晶，产出固体与母液。需要电池供电。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_chem_reactor,常压合成：三个投料槽 + 一个模块槽，按配方在指定温度档反应。需要电池供电。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_electrolyzer,电解：两个投料槽 + 一个模块槽，通直流电分解盐水等，产出气体与碱液。需要电池（功率 14）。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_gas_generator,加热固体产气：按温度档加热投料，生成二氧化碳、氧气、氨气等气体。需要电池（功率 6）。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_condenser_unit,冷凝与吸收：把气体溶于水或冷凝成液体，投料可同时含液体与气体。需要电池（功率 8）。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_fractionator,分馏：按沸点分段取出不同馏分，三个投料槽。需要电池（功率 12）。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_high_pressure_synth,高压合成：三个投料槽，在高温高压下合成 T3/T4 药剂。需要电池（功率 16）。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_canister_filling,气体灌装：气体投料 + 空钢瓶/空桶专用槽，按气体纯度产出工业钢瓶或大桶。需要电池（功率 9）；本机不设气瓶槽，气体请直接用气体物品投料。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_gas_scrubber,气体洗涤：一个气体投料槽，洗掉酸性/碱性杂质（仅接受气体，不接受液体）。需要电池（功率 7）。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+machine_note_heating_platform,加热台用法：反应槽可放容器或直接放药剂；先在加热器槽放酒精灯/喷灯、灯芯槽放灯芯、燃料槽放乙醇或原版酒精；点击灯切换低档 99°C / 高档 160°C；产出在右侧格。 可把烧杯或锥形瓶放进投料槽并倒入试剂；两件药剂互相接触也可能直接反应。 机器便签优先显示在窗口便签面板；若未显示，物品提示（tooltip）也会给出这段用法说明。
+debug_gen_index_book,生成 ID 索引书
+debug_book_exists,场上已有索引书，不能再生成。
+debug_book_ok,已生成 ID 索引书（放在后柜台）。
+debug_book_spawn_fail,创建索引书失败。
+debug_list_removed,ID 列表已改为索引书，请点「生成 ID 索引书」。
+phone_chem_dealer_name,化学品商人
+index_book_name,化学品 ID 索引
+index_book_desc,本模组全部物品的私有数字 ID 对照手册，配合 F10 调试生成窗使用。
+ui_gas_slot,气瓶槽
+ui_gas_slot_tip,可作为机器/加热台「气瓶槽」的气体来源：放入后其中的气体参与反应，反应消耗后空瓶会回到产出。
+printer_mode_calibrate,校准（分析纯）
+printer_charge,催化剂充能：{0}
+printer_charge_ok,已装填催化剂：{0}/3
+printer_calibrate_ok,校准成功：100% 分析纯
+printer_calibrate_fail_purity,校准失败：纯度需 ≥99.5%（当前 {0}%）
+printer_calibrate_fail_charge,校准失败：请先装填催化剂（用打印机点催化剂套件）
+purify_level,提纯等级 {0}
+chem_lab_pure_100,100% 分析纯
+printer_mode,当前标签：{0} / {1}
+printer_cat_chemical,化学品
+printer_cat_medical,医疗品
+printer_stamp_ok,已盖章：{0} → {1}
+printer_stamp_fail,盖章失败：{0}
+printer_stamp_target_invalid,只能给本模组药剂盖章
+scanner_fc_line,FreeChem 成分：{0} · 纯度 {1}%
+scanner_fc_grade,FreeChem 等级：{0}
+scanner_fc_volume,总液量：{0} ml
+scanner_fc_single,单件
+scanner_fc_pure,纯净物
+pour_approx_water,原版没有该液体对应组分，倒入时按水近似（化学身份仍为本模组药剂）
+grade_lab_pure,实验室纯级
+grade_pharma,药用级
+grade_near_pharma,近药用级
+grade_street_standard,街头标准
+grade_cut_product,掺兑级
+grade_junk_grade,垃圾级
+grade_starch_grade,淀粉级
+chem_vanilla_bridge_tip,可被原版成分仪分析，也可倒入原版液体容器
+chem_profile_reagent,纯度 {0}% · {1}
+chem_medical_grade,医疗品级（原版医疗采购可收购）
+ui_battery,电池
+ui_modules,模组
+ui_input,投料 {0}
+ui_output,产出
+ui_note,便签
+ui_vessel,反应容器
+ui_heater,加热器
+ui_wick,灯芯
+ui_fuel,燃料
+ui_filter_slot,滤纸槽
+ui_container_slot,空瓶槽
+ui_gas_slot_1,气瓶槽 1
+ui_gas_slot_2,气瓶槽 2
+ui_input_title,投料
+accident_protection_hint,危险反应需要防护（佩戴安全护目镜）且未关闭「危险反应」，否则只会得到废渣。
+scanner_tox_euph,毒性 {0} / 欣快 {1}
+scanner_toxicity,毒性
+scanner_euphoria,欣快
+inst_temp,温度档 {0}（{1}）
+inst_ph,pH {0}
+inst_balance,天平 {0}
+inst_protection,防护 {0}
+inst_fuel,灯内燃料 {0} ml
+inst_wick,灯芯耐久 {0}
+inst_filter,滤纸剩余 {0} 次
+state_on,开
+state_off,关
+temp_0,冷
+temp_1,常温
+temp_2,加热
+temp_3,高温高压
+option_debug_open,FreeChem 调试生成窗口
+option_debug_open_tip,游戏「选项 → 按键绑定」里的快捷键（默认 F10）。按下打开/关闭生成窗口：输入数字 ID（1–97）即可把对应物品生成到后柜台，也兼容旧英文指令 spawn N / list；需先在模组设置开启「调试模式」才能实际生成。
+cfg_debug_mode,调试模式
+cfg_debug_mode_tip,开启后，按 F9 打开调试面板，在「指令」列点「FreeChem 按 ID 生成」，即可按数字 ID 把物品放进店铺后柜台。仅调试用，默认关闭。
+debug_title,FreeChem 按ID生成
+debug_hint,输入数字 ID（1–97），点「生成物品」；也兼容旧英文指令 spawn N / list。物品会放进店铺后柜台。
+debug_range,有效编号：{0}–{1}
+debug_placeholder,例如：12，或旧指令 spawn 12 / list
+debug_spawn,生成物品
+debug_list,列出 ID 对照
+debug_close,关闭
+debug_status_ready,就绪：输入编号后点「生成物品」。
+debug_status_ok,已放入后柜台：{0}
+debug_status_bad,生成失败：{0}
+debug_status_disabled,调试模式未开启：请在「模组设置 → FreeChem → 调试」里打开。
+debug_list_header,已在 F8 控制台列出 #1–#85 的 ID 对照。
+debug_alert_title,FreeChem 提示
+debug_alert_full,柜台已满，无法加入新物品。
+debug_alert_ok,确定
+err_invalid_id,无效的编号指令。请输入数字 ID（1–97），或旧指令 spawn N / id N / list。
+err_not_found,物品未注册或生成失败。
+err_no_store,不在店铺场景（找不到后柜台）。
+contact_marble_hcl,盐酸与大理石反应
+contact_neutralize_hcl,盐酸与烧碱中和
+contact_neutralize_h2so4,硫酸与烧碱中和
+contact_nh4no3,硝酸与氨水反应
+contact_slaked_lime,水与生石灰反应
+contact_peroxide_mno2,双氧水与二氧化锰催化分解
+contact_baking_soda_hcl,小苏打与盐酸反应
+contact_nh4cl,盐酸与氨水反应生成氯化铵
+contact_marble_hcl_name,盐酸与大理石反应
+contact_neutralize_hcl_name,盐酸与烧碱中和
+contact_neutralize_h2so4_name,硫酸与烧碱中和
+contact_nh4no3_name,硝酸与氨水反应
+contact_slaked_lime_name,水与生石灰反应
+contact_peroxide_mno2_name,双氧水与二氧化锰催化分解
+contact_baking_soda_hcl_name,小苏打与盐酸反应
+contact_nh4cl_name,盐酸与氨水反应生成氯化铵
+contact_result,接触反应：{0}
+contact_fail,这两件物品接触后没有反应。
+liq_ethanol_name,乙醇（已移除）
+liq_ethanol_desc,已移除：请改用原版酒精瓶（mini_bottle）。
+liq_ethanol_flavor,瓶子还留在旧存档里，但它已经不再被生产。
+liq_water_name,蒸馏水（已移除）
+liq_water_desc,已移除：请改用原版水容器（水瓶/水罐/水壶）。
+liq_water_flavor,旧存档里的最后一瓶蒸馏水，静得像一段回忆。
+comp_fc_h2o_name,水
+comp_fc_hcl_name,氯化氢
+comp_fc_h2so4_name,硫酸
+comp_fc_hno3_name,硝酸
+comp_fc_naoh_name,氢氧化钠
+comp_fc_caoh2_name,氢氧化钙
+comp_fc_cao_name,氧化钙
+comp_fc_nacl_name,氯化钠
+comp_fc_na2co3_name,碳酸钠
+comp_fc_nahco3_name,碳酸氢钠
+comp_fc_nh4cl_name,氯化铵
+comp_fc_nh3_name,氨
+comp_fc_nh3h2o_name,氨水
+comp_fc_co2_name,二氧化碳
+comp_fc_o2_name,氧气
+comp_fc_h2_name,氢气
+comp_fc_n2_name,氮气
+comp_fc_cl2_name,氯气
+comp_fc_h2o2_name,过氧化氢
+comp_fc_cacl2_name,氯化钙
+comp_fc_caclo2_name,次氯酸钙
+comp_fc_cuso4_name,硫酸铜
+comp_fc_kmno4_name,高锰酸钾
+comp_fc_k2mno4_name,锰酸钾
+comp_fc_mno2_name,二氧化锰
+comp_fc_cuo_name,氧化铜
+comp_fc_s_name,硫
+comp_fc_c_name,碳
+comp_fc_kno3_name,硝酸钾
+comp_fc_nh4no3_name,硝酸铵
+comp_fc_nano3_name,硝酸钠
+comp_fc_k2so4_name,硫酸钾
+comp_fc_c2h5oh_name,乙醇
+comp_fc_caffeine_name,咖啡因
+comp_fc_c8h10n4o2_name,咖啡因
+comp_fc_c2h4_name,乙烯
+comp_fc_n2o_name,一氧化二氮
+comp_fc_caco3_name,碳酸钙
+comp_fc_voidsalt_name,空盐成分
+comp_fc_redmist_name,红雾成分
+comp_fc_nightglass_name,夜玻成分
+comp_fc_ashbreath_name,灰息成分
+comp_fc_brass_name,黄铜
+comp_fc_gear_name,齿轮部件
+comp_fc_glass_name,玻璃
+comp_fc_steel_name,钢
+comp_fc_paper_name,纸
+comp_fc_ceramic_name,陶瓷
+comp_fc_cotton_name,棉
+comp_fc_note_name,便条纸
+comp_fc_print_name,打印件
+comp_fc_inst_name,仪器部件
+comp_fc_cat_name,催化剂
+comp_fc_coffee_name,咖啡渣
+comp_fc_sediment_name,沉淀
+comp_fc_waste_name,废渣
+comp_water_name,水

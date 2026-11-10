@@ -1,0 +1,555 @@
+# FreeChem localization — key,text
+alcohol_lamp_name,Alcohol Lamp
+alcohol_lamp_desc,"Needs a wick and alcohol fuel; vanilla alcohol works, and lower purity means a weaker flame that burns faster."
+alcohol_lamp_flavor,"A small blue flame, the night light of the bench."
+beaker_name,Beaker
+beaker_desc,Glass reaction vessel; sits on the heating platform for heating and thermal reactions.
+beaker_flavor,The graduations on the wall are a lab's most honest ruler.
+can_chlorine_industrial_name,Industrial Chlorine
+can_chlorine_industrial_desc,Chlorine cylinder; controlled. Used as a chlorinating and disinfecting agent.
+can_chlorine_industrial_flavor,A small yellow cylinder with danger written all over it.
+can_chlorine_medical_name,Refined Chlorine
+can_chlorine_medical_desc,Chlorine cylinder; controlled. Used as a chlorinating and disinfecting agent.
+can_chlorine_medical_flavor,Refined chlorine that still demands respect.
+can_chlorine_ultrapure_name,Ultra-Pure Chlorine
+can_chlorine_ultrapure_desc,Chlorine cylinder; controlled. Used as a chlorinating and disinfecting agent.
+can_chlorine_ultrapure_flavor,Purer — and even less forgiving.
+can_hydrogen_industrial_name,Industrial Hydrogen
+can_hydrogen_industrial_desc,"Hydrogen cylinder; used for ammonia synthesis, hydrogenation and fuel."
+can_hydrogen_industrial_flavor,"Light enough to drift, yet full of energy."
+can_hydrogen_medical_name,Medical Hydrogen
+can_hydrogen_medical_desc,"Hydrogen cylinder; used for ammonia synthesis, hydrogenation and fuel."
+can_hydrogen_medical_flavor,A quiet high-energy cylinder; a hiss lives in every seam.
+can_hydrogen_ultrapure_name,Ultra-Pure Hydrogen
+can_hydrogen_ultrapure_desc,"Hydrogen cylinder; used for ammonia synthesis, hydrogenation and fuel."
+can_hydrogen_ultrapure_flavor,Nearly nothing but lightness and flammability.
+can_nitrogen_industrial_name,Industrial Nitrogen
+can_nitrogen_industrial_desc,Nitrogen cylinder; inert blanket gas for purging and storage.
+can_nitrogen_industrial_flavor,Industrial nitrogen standing silent guard over lines and tanks.
+can_nitrogen_medical_name,Medical Nitrogen
+can_nitrogen_medical_desc,Nitrogen cylinder; inert blanket gas for purging and storage.
+can_nitrogen_medical_flavor,"Medical nitrogen, cold to just the right degree."
+can_nitrogen_ultrapure_name,Ultra-Pure Nitrogen
+can_nitrogen_ultrapure_desc,Nitrogen cylinder; inert blanket gas for purging and storage.
+can_nitrogen_ultrapure_flavor,"Impeccably inert, and that is all it does."
+can_oxygen_industrial_name,Industrial Oxygen
+can_oxygen_industrial_desc,Oxygen cylinder for welding and industrial use.
+can_oxygen_industrial_flavor,Open the valve and a blue flame recognises it at once.
+can_oxygen_medical_name,Medical Oxygen
+can_oxygen_medical_desc,"Oxygen cylinder; buyable by vanilla doctors, nurses and hospital suppliers."
+can_oxygen_medical_flavor,"The smell of a hospital corridor, pressed into steel."
+can_oxygen_ultrapure_name,Ultra-Pure Oxygen
+can_oxygen_ultrapure_desc,Oxygen cylinder that commands a premium from research buyers.
+can_oxygen_ultrapure_flavor,So pure that combustion is all it does.
+canister_filling_name,Gas Filling Station
+canister_filling_desc,Compresses gas into empty canisters; gas input only.
+canister_filling_flavor,This page of the station chemistry manual is worn from use.
+catalyst_kit_name,Catalyst Kit
+catalyst_kit_desc,"Used as a catalyst in machines: some reactions require one, others gain a bonus; consumed on use."
+catalyst_kit_flavor,A few unremarkable beads that make slow reactions hurry.
+chem_reactor_name,Synthesis Reactor
+chem_reactor_desc,Multi-input synthesis vessel. Uses vanilla power and module framework.
+chem_reactor_flavor,This page of the station chemistry manual is worn from use.
+condenser_unit_name,Condenser / Absorption Tower
+condenser_unit_desc,"Absorbs gas into liquid (Hydrogen Chloride -> acid, Ammonia -> ammonia water): needs both gas and a liquid (water/absorbent), not gas alone."
+condenser_unit_flavor,This page of the station chemistry manual is worn from use.
+crystallizer_name,Crystallizer
+crystallizer_desc,"Evaporative crystallisation, liquid -> solid. Liquid input only."
+crystallizer_flavor,This page of the station chemistry manual is worn from use.
+decanter_name,Decanting / Settling Tank
+decanter_desc,Settles liquid for 24h; separates sediment and yields purer supernatant. Liquid only.
+decanter_flavor,This page of the station chemistry manual is worn from use.
+electrolyzer_name,Electrolysis Cell
+electrolyzer_desc,"Chlor-alkali and Hydrogen Chloride electrolysis; liquid in, gases out."
+electrolyzer_flavor,This page of the station chemistry manual is worn from use.
+erlenmeyer_flask_name,Erlenmeyer Flask
+erlenmeyer_flask_desc,"Conical reaction flask; easy to swirl, good for titration and pre-crystallisation work."
+erlenmeyer_flask_flavor,The triangular flask that spills least when swirled.
+filter_paper_name,Chemical Filter Paper
+filter_paper_desc,"22 um pores: stops physical contaminants and debris, but not chemical contaminants (2 um) or heavy metals (12 um). Wears out with use."
+filter_paper_flavor,Plain filter paper for the dirt you can see.
+filter_paper_ash_name,Ash-Free Quantitative Filter Paper
+filter_paper_ash_desc,"2 um quantitative filter paper: traps chemical contaminants, though a very low residue always remains."
+filter_paper_ash_flavor,Ash-free paper that almost leaves no trace of itself.
+filter_paper_fine_name,Fine Filter Paper
+filter_paper_fine_desc,"5 um pores: catches heavy metals and microplastics, still not chemical contaminants."
+filter_paper_fine_flavor,"Fine paper: tighter pores, more delicate."
+filtration_bench_name,Filtration Bench
+filtration_bench_desc,"Pressure-filters liquids through filter paper: contaminants are trapped by pore size, though a low residue remains. Liquid input only."
+filtration_bench_flavor,This page of the station chemistry manual is worn from use.
+fractionator_name,Fractionating Column
+fractionator_desc,Boiling-point separation; niter nitric acid and Ostwald process.
+fractionator_flavor,This page of the station chemistry manual is worn from use.
+gas_ammonia_name,Ammonia
+gas_ammonia_desc,Pungent alkaline gas from the Haber process or ammonium salts with base.
+gas_ammonia_flavor,A sharp alkaline smell — the start of fertiliser and cleaner.
+gas_canister_empty_name,Empty Gas Canister
+gas_canister_empty_desc,Reusable pressure vessel; the filling station compresses gas into it.
+gas_canister_empty_flavor,Empty — yet every empty cylinder is waiting for a gas.
+gas_carbon_dioxide_name,Carbon Dioxide
+gas_carbon_dioxide_desc,From marble and hydrochloric acid; asphyxiant at high concentration.
+gas_carbon_dioxide_flavor,Colourless and odourless; it only reminds you it is there when a flame dies.
+gas_chlorine_name,Chlorine
+gas_chlorine_desc,"Pale green, highly toxic gas. A named standalone reagent beyond vanilla's abstract chlorine component."
+gas_chlorine_flavor,A pale yellow-green ghost clings to the cylinder wall; one breath is enough to remember it.
+gas_drum_carbon_dioxide_name,Large Carbon Dioxide Drum
+gas_drum_carbon_dioxide_desc,3x4-cell drum of carbon dioxide.
+gas_drum_carbon_dioxide_flavor,"A drum of Carbon Dioxide: extinguishers, carbonation, beer foam."
+gas_drum_chlorine_name,Large Chlorine Drum
+gas_drum_chlorine_desc,"3x4-cell drum of chlorine; lethal, and a leak would ruin the whole deck."
+gas_drum_chlorine_flavor,A drum of chlorine: one leak could ruin the whole deck.
+gas_drum_empty_name,Large Gas Drum (Empty)
+gas_drum_empty_desc,Steel gas drum (3x4 cells); the filling station charges it with gas. Empty drums are containers and cannot be fed as gas.
+gas_drum_empty_flavor,A huge empty stomach waiting to be filled with gas.
+gas_drum_hydrogen_name,Large Hydrogen Drum
+gas_drum_hydrogen_desc,3x4-cell drum of hydrogen; flammable and explosive.
+gas_drum_hydrogen_flavor,"A drum of hydrogen: the closer you stand, the more respect it demands."
+gas_drum_nitrogen_name,Large Nitrogen Drum
+gas_drum_nitrogen_desc,3x4-cell drum of nitrogen; inert blanket gas.
+gas_drum_nitrogen_flavor,A drum of nitrogen carrying an inert atmosphere with it.
+gas_drum_oxygen_name,Large Oxygen Drum
+gas_drum_oxygen_desc,"3x4-cell drum of oxygen; welding, diving and bulk sales."
+gas_drum_oxygen_flavor,A drum of oxygen keeping welders and divers alive.
+gas_ethylene_name,Ethylene
+gas_ethylene_desc,Dehydration product of ethanol; a plant ripening hormone and flammable gas.
+gas_ethylene_flavor,A faintly sweet gas that ripens fruit — and trouble.
+gas_generator_name,Gas Generator
+gas_generator_desc,"Kipp-style solid + liquid -> gas. Makes Carbon Dioxide, Hydrogen Chloride, Oxygen, Ammonia."
+gas_generator_flavor,This page of the station chemistry manual is worn from use.
+gas_hydrogen_name,Hydrogen
+gas_hydrogen_desc,Colourless flammable gas; burns in chlorine to form hydrogen chloride.
+gas_hydrogen_flavor,"The lightest gas, always the first to escape with a soft pop."
+gas_hydrogen_chloride_name,Hydrogen Chloride
+gas_hydrogen_chloride_desc,Pungent acidic gas; dissolving it in water yields hydrochloric acid.
+gas_hydrogen_chloride_flavor,A pungent white fume that turns into hydrochloric acid in water.
+gas_nitrogen_name,Nitrogen
+gas_nitrogen_desc,Inert gas; feedstock for the Haber ammonia synthesis.
+gas_nitrogen_flavor,"An inert night watchman, quietly keeping danger apart."
+gas_nitrous_oxide_name,Nitrous Oxide
+gas_nitrous_oxide_desc,Thermal decomposition product of ammonium nitrate; an anaesthetic gas with medical value.
+gas_nitrous_oxide_flavor,"Laughing gas: makes you laugh, then makes you numb."
+gas_oxygen_name,Oxygen
+gas_oxygen_desc,"Oxidising gas used for welding, medical oxygen supply and oxidation reactions."
+gas_oxygen_flavor,It does not burn itself; it makes everything else burn brighter.
+gas_scrubber_name,Gas Scrubber
+gas_scrubber_desc,"Washes/adsorbs gas impurities, raising purity one tier without changing identity; gas only, no liquids."
+gas_scrubber_flavor,This page of the station chemistry manual is worn from use.
+heating_platform_name,Large Heating Platform
+heating_platform_desc,Real-time device: ticks every second to heat or cool the vessel on it (vanilla heating-plate formulas). Thermal reactions accumulate while the temperature is in range; overheating degrades the batch into sludge. Alcohol purity sets the heating efficiency and burn rate.
+heating_platform_flavor,This page of the station chemistry manual is worn from use.
+high_pressure_synth_name,High-Pressure Synthesis Tower
+high_pressure_synth_desc,"Haber ammonia synthesis and high-pressure routes; needs heat, pressure and catalyst."
+high_pressure_synth_flavor,This page of the station chemistry manual is worn from use.
+illicit_ashbreath_name,Ash Breath (Contraband)
+illicit_ashbreath_desc,"Fictional lethal contraband from nitric acid, activated carbon and ammonia."
+illicit_ashbreath_flavor,The last grey breath — and someone sells it.
+illicit_nightglass_name,Night Glass (Contraband)
+illicit_nightglass_desc,"Fictional hallucinogenic contraband from dream caps, sulfuric acid and permanganate."
+illicit_nightglass_flavor,Dark glass that turns night vision into a layer of dream.
+illicit_redmist_name,Red Mist (Contraband)
+illicit_redmist_desc,Fictional toxic contraband from chlorine with vanilla reducing agent and lipobond agent.
+illicit_redmist_flavor,Red mist seems to breathe inside the bottle.
+illicit_voidsalt_name,Void Salt (Contraband)
+illicit_voidsalt_desc,"Fictional highly addictive contraband: N-methylol base + Hydrogen Chloride gas + pure ammonia. Euphoria 10.0, with withdrawal semantics."
+illicit_voidsalt_flavor,Grey-white salt; whoever takes it becomes quiet.
+label_printer_name,Label Printer
+label_printer_desc,Insert a reagent bottle to stamp it with a purity grade and a chemical/medical label; activate this item to cycle the label mode.
+label_printer_flavor,It does not fake anything; it just prints your claim more prettily.
+liq_ammonia_water_name,Ammonia Water
+liq_ammonia_water_desc,Weak base from dissolving ammonia in water.
+liq_ammonia_water_flavor,Pungent ammonia water; do not lean in when opening it.
+liq_brine_name,Saturated Brine
+liq_brine_desc,Chlor-alkali feedstock; decanting raises its purity.
+liq_brine_flavor,Bitterly salty — the starting point of the chlor-alkali industry.
+liq_calcium_chloride_name,Calcium Chloride Solution
+liq_calcium_chloride_desc,Liquid co-product of marble and hydrochloric acid.
+liq_calcium_chloride_flavor,Colourless and slightly bitter; used to melt ice and to dry things.
+liq_hydrochloric_acid_name,Hydrochloric Acid
+liq_hydrochloric_acid_desc,Strong acid from Hydrogen Chloride absorption or salt with sulfuric acid; the analogue of vanilla's acid solution bottle.
+liq_hydrochloric_acid_flavor,A fuming strong acid that fizzes through marble.
+liq_hydrogen_peroxide_name,Hydrogen Peroxide
+liq_hydrogen_peroxide_desc,Oxidiser; catalytically decomposes to release oxygen.
+liq_hydrogen_peroxide_flavor,"Quietly fizzing, always ready to decompose."
+liq_nitric_acid_name,Nitric Acid
+liq_nitric_acid_desc,Strong oxidising acid via the niter or Ostwald process.
+liq_nitric_acid_flavor,"Slowly yellows in the light, as if it kept a little sunshine."
+liq_sodium_hydroxide_name,Caustic Soda Solution
+liq_sodium_hydroxide_desc,Strong base; chlor-alkali co-product and analogue of vanilla's base solution bottle.
+liq_sodium_hydroxide_flavor,A slippery lye that leaves a warning on skin.
+liq_sulfuric_acid_name,Sulfuric Acid
+liq_sulfuric_acid_desc,Strongly corrosive acid made by oxidising sulfur and absorbing SOxygen.
+liq_sulfuric_acid_flavor,Thick and heavy; diluting it releases heat that makes you step back.
+note_chem_dealer_name,Chemistry Dealer's Note
+note_chem_dealer_desc,"A note with the chemistry dealer's phone number and passphrase: call him to order basic chemicals, delivered to your front counter next morning."
+note_chem_dealer_flavor,"Reagent stains the corner, and the number has been traced over many times."
+ph_meter_name,pH Meter
+ph_meter_desc,"Cycles the reaction pH tier, gating neutralisation recipes."
+ph_meter_flavor,A probe that turns acid-base bickering into numbers.
+precision_balance_name,Precision Balance
+precision_balance_desc,Balances portion sizes and gives a balancing bonus to reactions (it does not change product grade).
+precision_balance_flavor,"Before it, even a pinch of salt has weight."
+retort_flask_name,Retort Flask
+retort_flask_desc,Curved-neck distillation flask; heat-resistant glass for distillation and hot reactions.
+retort_flask_flavor,A bent neck of glass teaching vapour to turn.
+safety_goggles_name,Safety Goggles
+safety_goggles_desc,"Turns on protection: with these worn, hazardous reactions (hazard>=2) produce normally; without them you only get sludge. Dangerous reactions can be disabled in mod settings."
+safety_goggles_flavor,The scratches suggest its owner is still alive.
+sludge_name,Sludge
+sludge_desc,Residue from failed batches or accidents; can be reprocessed.
+sludge_flavor,A lump of unidentifiable waste; best left alone.
+sol_activated_carbon_name,Activated Carbon
+sol_activated_carbon_desc,Adsorbent for gas scrubbing; also the analogue carbon source for dream caps.
+sol_activated_carbon_flavor,"Pitch black, yet best at catching impurities."
+sol_ammonium_chloride_name,Ammonium Chloride
+sol_ammonium_chloride_desc,White crystalline salt from ammonia and hydrogen chloride; nitrogen fertiliser and flux.
+sol_ammonium_chloride_flavor,White crystals: a solder's flux and a fertiliser salt.
+sol_ammonium_nitrate_name,Ammonium Nitrate
+sol_ammonium_nitrate_desc,Neutralisation crystal; liberates ammonia with base.
+sol_ammonium_nitrate_flavor,White granules — both fertiliser and oxidiser.
+sol_bleaching_powder_name,Bleaching Powder
+sol_bleaching_powder_desc,Hypochlorite from chlorine and caustic soda.
+sol_bleaching_powder_flavor,The chlorine smell of bleaching powder — an over-disinfected old hospital.
+sol_caffeine_name,Caffeine
+sol_caffeine_desc,Hot alcohol extract of coffee grounds; a central stimulant — wakes you up in small doses and causes jitters in large ones.
+sol_caffeine_flavor,"White powder: a lift in small doses, palpitations in large ones."
+sol_calcium_carbonate_name,Calcium Carbonate
+sol_calcium_carbonate_desc,Marble/limestone; releases Carbon Dioxide with acid.
+sol_calcium_carbonate_flavor,"Chalk, shells and marble all used to be this."
+sol_calcium_hydroxide_name,Slaked Lime
+sol_calcium_hydroxide_desc,Calcium hydroxide from slaking quicklime; the required calcium source for the hypochlorite reaction.
+sol_calcium_hydroxide_flavor,Slaked lime: a mild base with the smell of old walls.
+sol_calcium_oxide_name,Quicklime
+sol_calcium_oxide_desc,Calcium oxide from calcining limestone; reacts with water to form slaked lime and is the calcium source for bleaching powder.
+sol_calcium_oxide_flavor,Quicklime that steams and scalds when wet.
+sol_coffee_grounds_name,Coffee Grounds
+sol_coffee_grounds_desc,Feedstock for caffeine extraction; plant residue obtainable from vanilla sources.
+sol_coffee_grounds_flavor,Damp coffee grounds with one more boost left in them.
+sol_copper_oxide_name,Copper Oxide
+sol_copper_oxide_desc,Brown-black copper oxide used as pigment and catalyst feedstock; currently only found in scrap.
+sol_copper_oxide_flavor,Brown-black powder hiding copper's red inside.
+sol_copper_sulfate_name,Copper Sulfate Crystals
+sol_copper_sulfate_desc,Blue crystals; catalyst and reagent.
+sol_copper_sulfate_flavor,So blue it looks like a gem rather than an industrial chemical.
+sol_manganese_dioxide_name,Manganese Dioxide
+sol_manganese_dioxide_desc,Black by-product of permanganate decomposition; also the catalyst for peroxide decomposition.
+sol_manganese_dioxide_flavor,"Black powder, quiet as a dead battery core."
+sol_potassium_manganate_name,Potassium Manganate
+sol_potassium_manganate_desc,Dark green manganate formed when potassium permanganate decomposes on heating.
+sol_potassium_manganate_flavor,Dark green crystals: another face of manganese.
+sol_potassium_nitrate_name,Potassium Nitrate
+sol_potassium_nitrate_desc,Saltpetre; feedstock for nitric acid and oxidisers.
+sol_potassium_nitrate_flavor,"White needle crystals, known to history as niter."
+sol_potassium_permanganate_name,Potassium Permanganate
+sol_potassium_permanganate_desc,Strong oxidiser; thermal decomposition yields oxygen.
+sol_potassium_permanganate_flavor,Purple-black crystals that bleed like ink in water.
+sol_potassium_sulfate_name,Potassium Sulfate
+sol_potassium_sulfate_desc,White potassium salt co-produced with nitric acid from niter and sulfuric acid.
+sol_potassium_sulfate_flavor,"White crystals, a convenient by-product of nitric acid."
+sol_sediment_name,Sediment
+sol_sediment_desc,Lower solid impurities separated by decanting. Decanting is liquid-only.
+sol_sediment_flavor,Settled sediment: hard evidence of a failed experiment.
+sol_sodium_bicarbonate_name,Baking Soda
+sol_sodium_bicarbonate_desc,"Sodium bicarbonate made from soda ash, Carbon Dioxide and water; a mild base used as buffer and leavening agent."
+sol_sodium_bicarbonate_flavor,Baking soda fizzing at acid — the chemist of kitchens.
+sol_sodium_carbonate_name,Soda Ash
+sol_sodium_carbonate_desc,"Sodium carbonate made from caustic soda and Carbon Dioxide; feedstock for baking soda, glass and detergents."
+sol_sodium_carbonate_flavor,"Soda ash, the old friend of dishwashing and glassmaking."
+sol_sodium_chloride_name,Sodium Chloride Crystals
+sol_sodium_chloride_desc,"Salt crystals; electrolyse, make Hydrogen Chloride, or redissolve into brine."
+sol_sodium_chloride_flavor,Neat cubic crystals — the truth behind saltiness.
+sol_sodium_hydroxide_name,Caustic Soda Flakes
+sol_sodium_hydroxide_desc,"Solid caustic soda flakes; a strong-base source for ammonium-salt ammonia release, scavenged from scrap rather than produced by this mod's reactions."
+sol_sodium_hydroxide_flavor,Caustic soda flakes that heat up on contact with water.
+sol_sodium_nitrate_name,Sodium Nitrate
+sol_sodium_nitrate_desc,Sodium salt co-produced when ammonium nitrate is treated with base; oxidiser and fertiliser.
+sol_sodium_nitrate_flavor,"White crystals, the sodium salt quietly left behind by ammonia release."
+sol_sulfur_name,Sulfur
+sol_sulfur_desc,Base feedstock for sulfuric acid and sulfur chemistry.
+sol_sulfur_flavor,"Yellow powder, shared memory of volcanoes and matches."
+spirit_burner_name,Spirit Burner
+spirit_burner_desc,"Pressurised alcohol blast burner; much hotter than a plain lamp, for high-temperature thermal reactions."
+spirit_burner_flavor,The burner roars once and the temperature climbs.
+test_tube_name,Test Tube
+test_tube_desc,A small glass test tube: holds a little reagent and fits in a test-tube rack; the chem scanner can analyse it.
+test_tube_flavor,This page of the station chemistry manual is worn from use.
+test_tube_rack_name,Test Tube Rack
+test_tube_rack_desc,"A rack for holding test tubes: stand them upright to dry, sort them, or carry several at once."
+test_tube_rack_flavor,A row of tubes standing in line like small witnesses.
+thermometer_name,Thermometer
+thermometer_desc,Click to cycle the experimental temperature tier: 0 cold / 1 room / 2 heated / 3 high-pressure hot. The tier gates whether T2-T4 recipes match at all.
+thermometer_flavor,"Cold, room, heated, high-pressure: it only knows tiers."
+titration_bench_name,Titration Bench
+titration_bench_desc,Quantitative neutralisation and pH control.
+titration_bench_flavor,This page of the station chemistry manual is worn from use.
+wick_ceramic_name,Ceramic Wick
+wick_ceramic_desc,"Heat-resistant ceramic wick; steady flame, 40 uses, good for long heating runs."
+wick_ceramic_flavor,A ceramic wick whose only temper is endurance.
+wick_cotton_name,Cotton Wick
+wick_cotton_desc,Cotton wick for alcohol lamps; cheap but burns out fast (20 uses).
+wick_cotton_flavor,"A cotton wick: cheap, willing to burn, replaced often."
+cfg_dangerous,Allow dangerous reactions
+cfg_dangerous_tip,"When off, hazardous recipes yield only sludge."
+cfg_vanilla_security,Report exhaust to vanilla Security Dept.
+cfg_vanilla_security_tip,"When on, toxic gas exhaust is converted (scaled by the vent service) into vanilla Security Dept. ENDANGERMENT crime records; when off only the mod-local counter remains. This uses undocumented game members; disable it if you prefer."
+codex_progress,Discovered {0} / {1} reactions
+network_tab,Free Chemistry
+network_broker_title,Gas Broker Referral
+network_broker_desc,Introduces a gas broker in Wild's Network. Unlocks gas orders and supplies of empty canisters and base gases.
+network_order_title,Gas Order
+network_order_desc,"Order 2 empty canisters, an empty bulk gas drum, oxygen, nitrogen and brine, delivered next day. Repeatable every 3 days."
+network_order_wait,The previous gas order is still in transit.
+network_vent_title,Vent Service
+network_vent_desc,"Wild's permanent vent service: ducting for your chemical machines reduces Security Dept. suspicion growth from toxic gas (chlorine, hydrogen chloride, ammonia) to 55%. Exhaust is recorded as vanilla ENDANGERMENT; the hook can be disabled in mod settings."
+network_adv_vent_title,Advanced Vent Service
+network_adv_vent_desc,Adds condenser recovery and secondary filtration on top of the vent service: Security Dept. suspicion growth from toxic gas drops to 12%. Requires the basic vent service; permanent.
+suspicion_profile,"Exhaust suspicion {0} ({1}; scaled into vanilla Security Dept. ENDANGERMENT, can be disabled in mod settings)"
+vent_none,no vent service
+vent_basic,"basic vent service, ×0.55"
+vent_advanced,"advanced vent service, ×0.12"
+chem_profile,Purity {0}% · {1} · Euphoria tier {2}
+lethal_lethal,Lethal
+lethal_toxic,Toxic
+lethal_safe,Safe
+inst_lamp_hint,"Usage: place the lamp/burner in the heater slot, insert a wick, then put ethanol or vanilla alcohol in the fuel slot. Each bottle fills the lamp by purity (lamp capacity 500 ml). Click the lamp to toggle LOW 99°C / HIGH 160°C."
+inst_wick_hint,Wicks wear out while burning and are consumed when depleted; insert a new wick into the heating platform's wick slot to replace it.
+inst_filter_hint,Filtration bench: insert a liquid reagent plus filter paper. Paper filters by pore size and loses durability (destroyed when used up); each filtration raises the purify level by 1.
+inst_fuel_hint,Usable as heating-platform fuel: put it in the fuel slot. Higher alcohol purity means stronger heat and slower consumption (lamp capacity 500 ml).
+phone_chem_stock_desc,"Stock and price: one pack per day with Hydrogen Chloride, sulfuric acid, nitric acid, Sodium Hydroxide, Hydrogen Peroxide, brine, ammonia water and soda ash, $320 per pack, delivered to your front counter next morning."
+phone_chem_menu_hangup,Hang up
+phone_chem_result_ok,"Order placed: $320 charged, delivered to your front counter at tomorrow's opening."
+phone_chem_result_fail_insufficient,Order failed: not enough cash ($320 required).
+phone_chem_result_pending,Order failed: your previous order is still awaiting delivery; collect it first.
+phone_chem_result_daily_limit,Order failed: you already ordered today; call again tomorrow.
+phone_chem_back,Back
+phone_chem_label_order,Order basic chemicals
+phone_chem_label_stock,View stock and prices
+phone_chem_label_hangup,Hang up
+phone_chem_label_back,Back
+phone_chem_stock_choice,Check stock and price
+phone_chem_stock_choice_desc,See what is included in the pack and its price.
+phone_pack_acid_name,Acid Pack
+phone_pack_acid_desc,"One each of hydrochloric, sulfuric and nitric acid."
+phone_pack_base_name,Base Pack
+phone_pack_base_desc,"One each of lye, ammonia water and soda ash."
+phone_pack_solvent_name,Solvent Pack
+phone_pack_solvent_desc,One each of hydrogen peroxide and saturated brine.
+phone_pack_solid_name,Solid Pack
+phone_pack_solid_desc,"One each of soda ash, baking soda, quicklime and ammonium chloride."
+phone_pack_basic_name,Basic Chemicals Pack
+phone_pack_basic,Basic chemical pack
+phone_pack_acid,Acid pack
+phone_pack_base,Base pack
+phone_pack_solvent,Solvent pack
+phone_pack_solid,Solid pack
+phone_pack_menu,Chemical packs
+phone_pack_menu_choice,Pack catalog
+phone_single_menu,Single chemicals
+phone_single_menu_choice,Single chemicals
+phone_pack_basic_desc,"One each of Hydrogen Chloride, sulfuric acid, nitric acid, lye, Hydrogen Peroxide, brine, ammonia water and soda ash, plus one bottle of alcohol."
+phone_cat_packs,Packs
+phone_cat_singles,Single chemicals
+phone_cat_acid,Acids
+phone_cat_base,Bases
+phone_cat_solvent,Solvents
+phone_cat_solid,Solids
+phone_order_single_result,"Ordered: {0} (${1}), delivered to the front counter next morning."
+phone_order_pack_result,"Pack ordered: {0} (${1}), delivered to the front counter next morning."
+phone_chem_result_fail,The order could not be placed right now.
+note_chem_dealer_text,Chemistry Dealer: phone 96686. Basic chemicals can be ordered and are delivered to your front counter next morning.
+phone_chem_title,FreeChem Chemical Supplier
+phone_chem_greeting,"Hello, this is the FreeChem chemical supplier. Basic chemicals can be ordered daily and are delivered to your front counter the next morning. Would you like to hear what we have in stock?"
+phone_chem_order_choice,Order basic chemicals ($320)
+phone_chem_order_desc,"One pack per day: Hydrogen Chloride, sulfuric acid, nitric acid, Sodium Hydroxide, Hydrogen Peroxide, brine, ammonia water and soda ash. Delivered to your front counter at the next day's opening."
+phone_chem_order_desc_short,Delivered to the front counter next morning.
+phone_order_ok,Order placed: -$320. Delivered to your front counter at tomorrow's opening.
+phone_order_pending,Your previous order is still waiting for the next-morning delivery.
+phone_order_daily_limit,You already ordered today. Call again tomorrow.
+phone_order_insufficient,Not enough cash for this order.
+phone_order_fail,The order could not be placed right now (store not open or an error occurred).
+machine_note_decanter,"Gravity separation: put a liquid in and let it settle; layers collect in the output. No power, no filter paper, and purification level is unchanged. Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_filtration_bench,"Pressure filtration: a liquid plus filter paper; paper traps contaminants by pore size and wears out, raising the purification level by 1 per pass. No power; has a dedicated filter-paper slot. Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_titration_bench,"Acid-base neutralisation: put an acid and a base in the two input slots to obtain brine plus water. No power required. Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_crystallizer,"Low-power evaporation: concentrate brine or ammonium nitrate solution into crystals, yielding a solid plus mother liquor. Needs a battery. Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_chem_reactor,"Atmospheric synthesis: three input slots plus a module bay; reactions run at the temperature tier stated in the recipe. Needs a battery. Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_electrolyzer,"Electrolysis: two input slots plus a module bay; direct current splits brine into gases and lye. Needs a battery (power 14). Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_gas_generator,"Heated gas generation: heat the input at the stated temperature tier to release gases such as Carbon Dioxide, Oxygen or ammonia. Needs a battery (power 6). Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_condenser_unit,"Condensation and absorption: dissolve gases in water or condense them into liquids; inputs may include both liquid and gas. Needs a battery (power 8). Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_fractionator,"Fractional distillation: collect different fractions by boiling point; three input slots. Needs a battery (power 12). Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_high_pressure_synth,"High-pressure synthesis: three input slots; makes T3/T4 reagents under heat and pressure. Needs a battery (power 16). Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_canister_filling,"Gas filling: gas input plus a dedicated empty-canister/drum slot; produces industrial cylinders or drums according to gas purity. Needs a battery (power 9); this machine has no gas slots — feed gas items directly. Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_gas_scrubber,"Gas scrubbing: one gas input slot to wash out acidic/alkaline contaminants (gas only, no liquids). Needs a battery (power 7). Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+machine_note_heating_platform,"Heating platform: the reaction slot accepts a vessel or a reagent directly; put the lamp/burner in the heater slot, a wick in the wick slot and ethanol or vanilla alcohol in the fuel slot; click the lamp to toggle LOW 99°C / HIGH 160°C; output appears on the right. Beakers or flasks can be placed in an input slot and filled with reagents; two reagents may also react on direct contact. The note appears on the machine window note panel; if it is not shown there, the item tooltip also displays this usage text."
+debug_gen_index_book,Spawn ID index book
+debug_book_exists,An index book already exists in the store.
+debug_book_ok,Index book created on the back counter.
+debug_book_spawn_fail,Failed to create the index book.
+debug_list_removed,The ID list is now a book: use the 'Spawn ID index book' button.
+phone_chem_dealer_name,Chemistry Dealer
+index_book_name,Chemical ID Index
+index_book_desc,"A reference manual of every private numeric item ID in this mod, for use with the F10 debug spawn window."
+ui_gas_slot,Gas Cylinder Slot
+ui_gas_slot_tip,"Usable in a machine's gas slot: the gas inside participates in reactions; when consumed, an empty canister is returned to the output."
+printer_mode_calibrate,Calibrate (analytical grade)
+printer_charge,Catalyst charge: {0}
+printer_charge_ok,Catalyst loaded: {0}/3
+printer_calibrate_ok,Calibration succeeded: 100% analytical grade
+printer_calibrate_fail_purity,Calibration failed: purity must be ≥99.5% (currently {0}%)
+printer_calibrate_fail_charge,Calibration failed: load a catalyst first (use the printer on a catalyst kit)
+purify_level,Purification level {0}
+chem_lab_pure_100,100% analytical grade
+printer_mode,Current label: {0} / {1}
+printer_cat_chemical,Chemical
+printer_cat_medical,Medical
+printer_stamp_ok,Stamped: {0} → {1}
+printer_stamp_fail,Stamping failed: {0}
+printer_stamp_target_invalid,Only this mod's reagents can be stamped
+scanner_fc_line,FreeChem components: {0} · purity {1}%
+scanner_fc_grade,FreeChem grade: {0}
+scanner_fc_volume,Total volume: {0} ml
+scanner_fc_single,Single item
+scanner_fc_pure,Pure substance
+pour_approx_water,Vanilla has no matching liquid component for this reagent; it is approximated as water when poured (the chemical identity remains this mod's reagent).
+grade_lab_pure,Lab-pure
+grade_pharma,Pharma grade
+grade_near_pharma,Near-pharma
+grade_street_standard,Street standard
+grade_cut_product,Cut product
+grade_junk_grade,Junk
+grade_starch_grade,Starch
+chem_vanilla_bridge_tip,Analysable by the vanilla chem scanner and pourable into vanilla liquid containers.
+chem_profile_reagent,Purity {0}% · {1}
+chem_medical_grade,Medical grade (buyable by vanilla medical buyers)
+ui_battery,Battery
+ui_modules,Modules
+ui_input,Input {0}
+ui_output,Output
+ui_note,Note
+ui_vessel,Vessel
+ui_heater,Heater
+ui_wick,Wick
+ui_fuel,Fuel
+ui_filter_slot,Filter slot
+ui_container_slot,Empty container slot
+ui_gas_slot_1,Gas slot 1
+ui_gas_slot_2,Gas slot 2
+ui_input_title,Input
+accident_protection_hint,"Hazardous reactions need protection (wear safety goggles) and must not be disabled in settings, otherwise you only get sludge."
+scanner_tox_euph,Toxicity {0} / Euphoria {1}
+scanner_toxicity,Toxicity
+scanner_euphoria,Euphoria
+inst_temp,Temperature tier {0} ({1})
+inst_ph,pH {0}
+inst_balance,Balance {0}
+inst_protection,Protection {0}
+inst_fuel,Fuel in lamp {0} ml
+inst_wick,Wick durability {0}
+inst_filter,Filter paper uses left {0}
+state_on,On
+state_off,Off
+temp_0,Cold
+temp_1,Ambient
+temp_2,Heated
+temp_3,High-pressure hot
+option_debug_open,FreeChem debug spawn window
+option_debug_open_tip,Hotkey in the game's Options -> Key Bindings (default F10). Press it to open/close the spawn window: enter a numeric ID 1-85 or spawn N to place the item onto the back counter. The Debug mode option in the mod settings must be on for spawning to work.
+cfg_debug_mode,Debug Mode
+cfg_debug_mode_tip,"When on, press F9, open the debug panel, click 'FreeChem: Spawn by ID' in the Command column, then spawn items into the shop's back counter by numeric ID. Debug use only; off by default."
+debug_title,FreeChem: Spawn by ID
+debug_hint,"Enter a numeric ID (1-85) or spawn N, then click Spawn. Items are placed into the shop's back counter."
+debug_range,Valid IDs: {0}-{1}
+debug_placeholder,e.g. 12 / spawn 12 / list
+debug_spawn,Spawn
+debug_list,List IDs
+debug_close,Close
+debug_status_ready,"Ready. Enter an ID, then click Spawn."
+debug_status_ok,Placed into back counter: {0}
+debug_status_bad,Spawn failed: {0}
+debug_status_disabled,Debug mode is off. Enable it in Mods -> FreeChem -> Debug settings.
+debug_list_header,ID reference #1-#85 written to the F8 console.
+debug_alert_title,FreeChem Notice
+debug_alert_full,The counter is full; the item cannot be added.
+debug_alert_ok,OK
+err_invalid_id,"Invalid ID command. Enter 1-85, spawn N, id N, or list."
+err_not_found,The item is not registered or could not be spawned.
+err_no_store,Not in the shop scene; the back counter is unavailable.
+contact_marble_hcl,Hydrochloric Acid + Marble
+contact_neutralize_hcl,Hydrochloric Acid + Lye
+contact_neutralize_h2so4,Sulfuric Acid + Lye
+contact_nh4no3,Nitric Acid + Ammonia Water
+contact_slaked_lime,Water + Quicklime
+contact_peroxide_mno2,Hydrogen Peroxide + Manganese Dioxide
+contact_baking_soda_hcl,Baking Soda + Hydrochloric Acid
+contact_nh4cl,Hydrochloric Acid + Ammonia Water
+contact_marble_hcl_name,Hydrochloric Acid + Marble
+contact_neutralize_hcl_name,Hydrochloric Acid + Lye
+contact_neutralize_h2so4_name,Sulfuric Acid + Lye
+contact_nh4no3_name,Nitric Acid + Ammonia Water
+contact_slaked_lime_name,Water + Quicklime
+contact_peroxide_mno2_name,Hydrogen Peroxide + Manganese Dioxide
+contact_baking_soda_hcl_name,Baking Soda + Hydrochloric Acid
+contact_nh4cl_name,Hydrochloric Acid + Ammonia Water
+contact_result,Contact reaction: {0}
+contact_fail,These two items do not react on contact.
+liq_ethanol_name,Ethanol (removed)
+liq_ethanol_desc,Removed: use a vanilla alcohol bottle (mini_bottle) instead.
+liq_ethanol_flavor,"The bottle lingers in old saves, but it is no longer produced."
+liq_water_name,Distilled Water (removed)
+liq_water_desc,"Removed: use vanilla water containers (bottled water, jug, pitcher) instead."
+liq_water_flavor,"The last distilled water in an old save, still as a memory."
+comp_fc_h2o_name,Water
+comp_fc_hcl_name,Hydrogen Chloride
+comp_fc_h2so4_name,Sulfuric Acid
+comp_fc_hno3_name,Nitric Acid
+comp_fc_naoh_name,Sodium Hydroxide
+comp_fc_caoh2_name,Calcium Hydroxide
+comp_fc_cao_name,Calcium Oxide
+comp_fc_nacl_name,Sodium Chloride
+comp_fc_na2co3_name,Sodium Carbonate
+comp_fc_nahco3_name,Sodium Bicarbonate
+comp_fc_nh4cl_name,Ammonium Chloride
+comp_fc_nh3_name,Ammonia
+comp_fc_nh3h2o_name,Ammonia Water
+comp_fc_co2_name,Carbon Dioxide
+comp_fc_o2_name,Oxygen
+comp_fc_h2_name,Hydrogen
+comp_fc_n2_name,Nitrogen
+comp_fc_cl2_name,Chlorine
+comp_fc_h2o2_name,Hydrogen Peroxide
+comp_fc_cacl2_name,Calcium Chloride
+comp_fc_caclo2_name,Calcium Hypochlorite
+comp_fc_cuso4_name,Copper Sulfate
+comp_fc_kmno4_name,Potassium Permanganate
+comp_fc_k2mno4_name,Potassium Manganate
+comp_fc_mno2_name,Manganese Dioxide
+comp_fc_cuo_name,Copper Oxide
+comp_fc_s_name,Sulfur
+comp_fc_c_name,Carbon
+comp_fc_kno3_name,Potassium Nitrate
+comp_fc_nh4no3_name,Ammonium Nitrate
+comp_fc_nano3_name,Sodium Nitrate
+comp_fc_k2so4_name,Potassium Sulfate
+comp_fc_c2h5oh_name,Ethanol
+comp_fc_caffeine_name,Caffeine
+comp_fc_c8h10n4o2_name,Caffeine
+comp_fc_c2h4_name,Ethylene
+comp_fc_n2o_name,Nitrous Oxide
+comp_fc_caco3_name,Calcium Carbonate
+comp_fc_voidsalt_name,Void Salt Component
+comp_fc_redmist_name,Red Mist Component
+comp_fc_nightglass_name,Night Glass Component
+comp_fc_ashbreath_name,Ash Breath Component
+comp_fc_brass_name,Brass
+comp_fc_gear_name,Gear Part
+comp_fc_glass_name,Glass
+comp_fc_steel_name,Steel
+comp_fc_paper_name,Paper
+comp_fc_ceramic_name,Ceramic
+comp_fc_cotton_name,Cotton
+comp_fc_note_name,Note Paper
+comp_fc_print_name,Printed Sheet
+comp_fc_inst_name,Instrument Part
+comp_fc_cat_name,Catalyst
+comp_fc_coffee_name,Coffee Grounds
+comp_fc_sediment_name,Sediment
+comp_fc_waste_name,Waste
+comp_water_name,Water

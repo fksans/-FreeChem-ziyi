@@ -1,0 +1,46 @@
+{
+  "_comment": "v3 MVP 配方源数据。物质只用原版 Liquid 组分 id（见 v3/RECON.md 第 3 节），不注册自定义 Liquid。数量是相对系数（part 比例），按体积守恒：输出系数之和必须等于输入系数之和。time 单位：秒（= 原版容器每秒 tick 的次数；夜间会补 360 次）。minExtent：开始反应所需的最小反应当量（限量试剂 part 数 ÷ 系数，1000 part = 1 ml），低于它的残留留在容器里不再反应（现实里的残留下限）。conversion：一轮完成时消耗限量试剂的比例（< 1 表示一轮除不干净，需要多轮，偏硬核）。",
+  "timeScale": 1.0,
+  "substances": [
+    "water", "acid", "base", "mineral", "heavy_metal", "debris", "reducing_agent"
+  ],
+  "recipes": [
+    {
+      "id": "hydroxide_precipitation",
+      "nameEn": "Hydroxide precipitation (heavy metals)",
+      "name": "氢氧化物沉淀（重金属）",
+      "note": "碱把溶解的重金属离子变成氢氧化物沉淀（原版的不溶碎屑 debris，粒径 200，滤芯能拦住）。温度高于约 45°C 时部分沉淀会回溶，转化率下降。",
+      "inputs":  { "heavy_metal": 1, "base": 2 },
+      "outputs": { "debris": 3 },
+      "minExtent": 1000,
+      "bands": [
+        { "tMin": 15, "tMax": 45, "time": 120, "conversion": 0.90 },
+        { "tMin": 45, "tMax": 70, "time": 60,  "conversion": 0.75 }
+      ]
+    },
+    {
+      "id": "sulfide_polishing",
+      "nameEn": "Sulfide polishing (heavy metals)",
+      "name": "硫化物精除（重金属）",
+      "note": "用还原剂（硫化物的替身）把氢氧化物法剩下的重金属进一步沉淀，转化率更高但更慢。",
+      "inputs":  { "heavy_metal": 1, "reducing_agent": 1 },
+      "outputs": { "debris": 2 },
+      "minExtent": 1000,
+      "bands": [
+        { "tMin": 20, "tMax": 50, "time": 150, "conversion": 0.99 }
+      ]
+    },
+    {
+      "id": "lime_softening",
+      "nameEn": "Lime softening (mineral hardness)",
+      "name": "石灰软化（去矿物质硬度）",
+      "note": "碱把水里的钙镁离子沉淀成碳酸钙 / 氢氧化镁（debris），降低矿物质含量。",
+      "inputs":  { "mineral": 2, "base": 1 },
+      "outputs": { "debris": 3 },
+      "minExtent": 1000,
+      "bands": [
+        { "tMin": 15, "tMax": 60, "time": 90, "conversion": 0.85 }
+      ]
+    }
+  ]
+}

@@ -15,6 +15,7 @@ v3 配方生成器（MVP 版）：读 v3/recipes.json，校验后输出 src/Reci
       python3 tools/v3/gen_recipes.py --check  只校验，不写文件（退出码 0 / 1）
 """
 import json
+import math
 import os
 import sys
 
@@ -30,8 +31,30 @@ UI_TEXT = {
     "metal_sludge_desc":   ("重金属沉淀、过滤后留下的滤渣。含有害金属，不要随手丢弃。", "Filter residue left after heavy metals are precipitated and filtered out. Contains toxic metals — handle with care."),
     "metal_sludge_flavor": ("沉得下去的，总得有人处理。", "What sinks has to be dealt with by someone."),
     "fc3_back_full":    ("柜台已满，无法加入新物品。", "The counter is full — no room for new items."),
+    "cfg_hardcore_impurity":     ("杂质偏硬核", "Hardcore impurities"),
+    "cfg_hardcore_impurity_tip": ("把原版试剂瓶（酸、碱、还原剂等）的杂质含量放大到 150%（2%–8% 变成 3%–12%）。下次生成的瓶子生效。", "Scales the impurity of vanilla reagent bottles (acid, base, reducing agent…) to 150% (2%–8% becomes 3%–12%). Applies to bottles generated from now on."),
     "fc3_tip_paused":   ("温度不在反应温区，已暂停（进度保留）", "Temperature is outside the reaction window — paused (progress kept)"),
 }
+
+
+R_GAS = 8.314      # J/(mol·K)
+T_ROOM = 25.0      # °C
+MIN_TIME = 15      # 秒
+
+
+def band_temp(b):
+    """温度档里最接近室温的温度：包含室温的档用室温，高于室温的档用下限，低于室温的档用上限。"""
+    return min(max(T_ROOM, b["tMin"]), b["tMax"])
+
+
+def band_time(r, b):
+    """档的反应时间（秒，未乘 timeScale）：手写 time 优先，否则按 Arrhenius 算。"""
+    if "time" in b:
+        return b["time"]
+    k = r["kinetics"]
+    t_k = band_temp(b) + 273.15
+    ratio = math.exp(k["EaKJ"] * 1000 / R_GAS * (1 / t_k - 1 / (T_ROOM + 273.15)))
+    return max(MIN_TIME, k["tau25"] * ratio)
 
 
 def validate(data):
@@ -91,8 +114,18 @@ def validate(data):
             bw = f"{where} 第 {i + 1} 档"
             if not b["tMin"] < b["tMax"]:
                 errs.append(f"{bw}: tMin 必须小于 tMax")
-            if not b["time"] > 0:
-                errs.append(f"{bw}: time 必须大于 0")
+            if "time" in b:
+                if not b["time"] > 0:
+                    errs.append(f"{bw}: time 必须大于 0")
+            else:
+                k = r.get("kinetics")
+                if not k:
+                    errs.append(f"{bw}: 没写 time，配方也没有 kinetics")
+                else:
+                    if not (isinstance(k.get("EaKJ"), (int, float)) and 0 < k["EaKJ"] <= 200):
+                        errs.append(f"{bw}: kinetics.EaKJ 必须在 (0, 200] kJ/mol")
+                    if not (isinstance(k.get("tau25"), (int, float)) and k["tau25"] > 0):
+                        errs.append(f"{bw}: kinetics.tau25 必须大于 0")
             if not 0 < b["conversion"] <= 1:
                 errs.append(f"{bw}: conversion 必须在 (0, 1]")
         ordered = sorted(bands, key=lambda b: b["tMin"])
@@ -136,7 +169,7 @@ def emit(data):
         lines.append("                new[]")
         lines.append("                {")
         for b in sorted(r["bands"], key=lambda b: b["tMin"]):
-            t = max(1, round(b["time"] * scale))
+            t = max(1, round(band_time(r, b) * scale))
             lines.append(f"                    new Band({b['tMin']}f, {b['tMax']}f, {t}, {b['conversion']}),")
         lines.append("                }" + (", producesSludge: true" if r.get("sludge") else "") + "),")
     lines += ["        };", "    }", "}", ""]

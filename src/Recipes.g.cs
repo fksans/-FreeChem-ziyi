@@ -7,6 +7,10 @@ namespace FreeChem
 {
     public static partial class RecipeTable
     {
+        public const string SludgeItemId = "metal_sludge";
+        public const int SludgePartsPerItem = 5000;
+        public const int SludgeValue = 40;
+
         public static readonly Recipe[] All =
         {
             new Recipe(
@@ -18,7 +22,7 @@ namespace FreeChem
                 {
                     new Band(15f, 45f, 120, 0.9),
                     new Band(45f, 70f, 60, 0.75),
-                }),
+                }, producesSludge: true),
             new Recipe(
                 "sulfide_polishing", "硫化物精除（重金属）",
                 new Dictionary<string, int> { { "heavy_metal", 1 }, { "reducing_agent", 1 } },
@@ -27,7 +31,7 @@ namespace FreeChem
                 new[]
                 {
                     new Band(20f, 50f, 150, 0.99),
-                }),
+                }, producesSludge: true),
             new Recipe(
                 "lime_softening", "石灰软化（去矿物质硬度）",
                 new Dictionary<string, int> { { "mineral", 2 }, { "base", 1 } },

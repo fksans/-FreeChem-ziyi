@@ -29,6 +29,7 @@ namespace FreeChem
                                               GameApi.GetTemperature(container), ref state);
 
                 if (res.PartsChanged) GameApi.WriteParts(container, before, parts);
+                if (res.SludgeParts > 0) GameApi.AddSludgeMetal(container, res.SludgeParts);
                 if (state.RecipeId != stateBefore.RecipeId || state.Progress != stateBefore.Progress)
                     GameApi.WriteState(container, state);
                 if (res.Outcome == TickOutcome.Completed)

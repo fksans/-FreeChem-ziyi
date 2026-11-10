@@ -20,14 +20,21 @@ namespace FreeChem
 
         public void OnEnable()
         {
+            ModHook.OnModItemDirectoryInit += RegisterItems;
             ModHook.OnCreateTooltipLate += OnTooltip;
             log.Log("FreeChem v3 enabled.");
         }
 
         public void OnDisable()
         {
+            ModHook.OnModItemDirectoryInit -= RegisterItems;
             ModHook.OnCreateTooltipLate -= OnTooltip;
             log.Log("FreeChem v3 disabled.");
+        }
+
+        void RegisterItems(ModItemDirectory dir)
+        {
+            dir.Add(RecipeTable.SludgeItemId, GameApi.BuildSludgeItem);
         }
 
         /// <summary>容器正在反应时，在 tooltip 里显示配方名和进度条（RECON 第 5 节：保底的进度显示）。</summary>

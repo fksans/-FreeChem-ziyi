@@ -1,6 +1,9 @@
 # FreeChem v3 localization — key,text（由 tools/v3/gen_recipes.py 生成，不要手改）
 fc3_tip_header,Reaction: {0}
 fc3_tip_progress,Progress {0}/{1} s {2}
+metal_sludge_desc,Filter residue left after heavy metals are precipitated and filtered out. Contains toxic metals — handle with care.
+metal_sludge_flavor,What sinks has to be dealt with by someone.
+fc3_back_full,The counter is full — no room for new items.
 fc3_tip_paused,Temperature is outside the reaction window — paused (progress kept)
 recipe_hydroxide_precipitation,Hydroxide precipitation (heavy metals)
 recipe_sulfide_polishing,Sulfide polishing (heavy metals)

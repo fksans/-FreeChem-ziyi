@@ -132,6 +132,35 @@ static class Tests
             Check(parts["heavy_metal"] < 100000 / 100 * 2, $"一夜（360 tick）能完成 3 轮氢氧化物沉淀，重金属降到 2% 以下（实际 {parts["heavy_metal"]}）");
         }
 
+        Console.WriteLine("── 重金属滤渣账 ──");
+        {
+            var parts = P(("water", 400000), ("heavy_metal", 20000), ("base", 60000));
+            var st = default(ReactionState);
+            TickResult last = default;
+            for (int i = 0; i < 120; i++) last = ReactionEngine.Step(rs, parts, 25f, ref st);
+            Check(last.SludgeParts == 54000, $"氢氧化物沉淀结算时记入 54000 part 滤渣（实际 {last.SludgeParts}）");
+            var soft = P(("mineral", 20000), ("base", 10000));
+            var st2 = default(ReactionState);
+            TickResult l2 = default;
+            for (int i = 0; i < 90; i++) l2 = ReactionEngine.Step(rs, soft, 25f, ref st2);
+            Check(l2.Outcome == TickOutcome.Completed && l2.SludgeParts == 0, "石灰软化不记滤渣");
+
+            int metal = 54000, rem = 0;
+            // 过滤滤走一半碎屑（容器里碎屑共 54000，另有别处来源的 6000）
+            int items = SludgeLedger.OnDebrisRemoved(30000, 60000, ref metal, ref rem, RecipeTable.SludgePartsPerItem);
+            Check(items == 5 && metal == 27000 && rem == 2000, $"滤走一半碎屑：账上 27000 转出，换 5 件、零头 2000（实际 {items}/{metal}/{rem}）");
+            items = SludgeLedger.OnDebrisRemoved(30000, 30000, ref metal, ref rem, RecipeTable.SludgePartsPerItem);
+            Check(items == 5 && metal == 0 && rem == 4000, $"碎屑滤光：余下的账全部结清（实际 {items}/{metal}/{rem}）");
+            int m2 = 0, r2 = 0;
+            Check(SludgeLedger.OnDebrisRemoved(5000, 5000, ref m2, ref r2, 5000) == 0, "没有滤渣账时滤碎屑不产出物品");
+            int m3 = 9000, r3 = 0;
+            Check(SludgeLedger.OnDebrisRemoved(1000, 5000, ref m3, ref r3, 5000) == 0 && m3 > 0, "账比碎屑多时按碎屑总量封顶，不会凭空多产出");
+            // 总量守恒：无论分几次滤，换出的件数 × 5000 + 零头 + 剩余账 = 原账
+            int mm = 54000, rr = 0, got = 0;
+            for (int i = 0; i < 9; i++) got += SludgeLedger.OnDebrisRemoved(6000, 54000 - i * 6000, ref mm, ref rr, 5000);
+            Check(got * 5000 + rr + mm == 54000, $"分 9 次滤完：件数×5000 + 零头 + 剩余账 = 原账（{got} 件，零头 {rr}，剩 {mm}）");
+        }
+
         Console.WriteLine("── 配方表自检 ──");
         {
             Check(rs.Select(r => r.Id).Distinct().Count() == rs.Length, "配方 id 不重复");

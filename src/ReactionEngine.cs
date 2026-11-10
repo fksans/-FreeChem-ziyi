@@ -34,9 +34,13 @@ namespace FreeChem
         /// <summary>开始反应所需的最小反应当量（part）：Extent 低于它不会开始（残留下限）。</summary>
         public readonly int MinExtent;
         public readonly Band[] Bands;
+        /// <summary>产出的碎屑是重金属滤渣：结算时记入容器的滤渣账（见 SludgeLedger）。</summary>
+        public readonly bool ProducesSludge;
         public Recipe(string id, string name, Dictionary<string, int> inputs,
-                      Dictionary<string, int> outputs, int minExtent, Band[] bands)
+                      Dictionary<string, int> outputs, int minExtent, Band[] bands,
+                      bool producesSludge = false)
         {
+            ProducesSludge = producesSludge;
             Id = id; Name = name; Inputs = inputs; Outputs = outputs;
             MinExtent = minExtent; Bands = bands;
         }
@@ -86,6 +90,39 @@ namespace FreeChem
         public string RecipeId;
         public int Progress, Target;   // Target = 当前温度档的 time（暂停时为上一次可用档的 time，无则 0）
         public bool PartsChanged;      // 组分是否被改写
+        public int SludgeParts;        // 本次结算新增的重金属滤渣（part，记账用）
+    }
+
+    /// <summary>
+    /// 重金属滤渣账。容器里记着"碎屑里有多少 part 是重金属沉淀"（Metal），
+    /// 过滤把碎屑滤走时，按比例把这部分换成滤渣物品，零头留在 Remainder 里下次再算。
+    /// 纯逻辑，可离线测试；游戏侧只负责把 Metal / Remainder 存进容器 tag、在过滤钩子里调用。
+    /// </summary>
+    public static class SludgeLedger
+    {
+        /// <summary>被滤走的 <paramref name="removedDebris"/> 里，属于滤渣的 part 数（按账上占比）。</summary>
+        public static int MetalShare(int removedDebris, int debrisBefore, int metal)
+        {
+            if (removedDebris <= 0 || debrisBefore <= 0 || metal <= 0) return 0;
+            if (removedDebris >= debrisBefore) return Math.Min(metal, debrisBefore);
+            long share = (long)removedDebris * Math.Min(metal, debrisBefore) / debrisBefore;
+            return (int)share;
+        }
+
+        /// <summary>
+        /// 一次过滤的结算：返回新的滤渣件数；<paramref name="metal"/> 扣掉被滤走的部分，
+        /// <paramref name="remainder"/> 累加后按 <paramref name="partsPerItem"/> 取整。
+        /// </summary>
+        public static int OnDebrisRemoved(int removedDebris, int debrisBefore, ref int metal,
+                                          ref int remainder, int partsPerItem)
+        {
+            int share = MetalShare(removedDebris, debrisBefore, metal);
+            metal -= share;
+            remainder += share;
+            int items = remainder / partsPerItem;
+            remainder -= items * partsPerItem;
+            return items;
+        }
     }
 
     public static class ReactionEngine
@@ -159,6 +196,8 @@ namespace FreeChem
                 parts.TryGetValue(kv.Key, out have);
                 parts[kv.Key] = have + kv.Value * extent;
             }
+            if (cur.ProducesSludge)
+                foreach (var kv in cur.Outputs) res.SludgeParts += kv.Value * extent;
             state = default(ReactionState);
             res.Outcome = TickOutcome.Completed;
             res.PartsChanged = true;

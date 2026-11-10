@@ -32,8 +32,8 @@
 | `src/ReactionEngine.cs` | 纯逻辑，不引用游戏类型 |
 | `src/GameApi.cs` | **全部**游戏 API 调用都在这里 |
 | `src/ReactionPatch.cs` / `src/ModEntry.cs` | Harmony 补丁 / 入口与 tooltip |
-| `tools/v3/engine-tests/` | 引擎离线测试（23 项） |
-| `tools/v3/test_gen_recipes.py` | 生成器反例测试（14 项） |
+| `tools/v3/engine-tests/` | 引擎离线测试（30 项） |
+| `tools/v3/test_gen_recipes.py` | 生成器反例测试 |
 | `legacy/` | 旧版代码和资源，只作参考，不参与构建 |
 
 ## 已经验证的（不需要游戏）
@@ -71,8 +71,31 @@ dotnet run --project tools/v3/engine-tests -c Release
 
 **联机**：按用户决定，跳过。
 
-## 下一步（阶段 4 起）
+## 阶段 4a：重金属滤渣（直接产出，不新增机器）
 
-- 重金属滤渣物品：这是计划书里"唯一新增的杂质类物品"。需要决定怎么从含碎屑的水里"提取"出来（过滤时产出？还是新机器？），这一点要先和用户商量。
+用户决定：滤渣在**过滤时直接产出**，尽量少造机器。
+
+**记账**：重金属沉淀产出的碎屑和别处来源的碎屑混在一起，所以容器上记一本账：
+- `fc3_msludge`：碎屑里有多少 part 是重金属沉淀（`sludge: true` 的配方结算时增加，目前是氢氧化物沉淀和硫化物精除）；
+- `fc3_msludge_rem`：不足一件的零头。
+
+**换算**（`SludgeLedger`，纯逻辑，已测）：过滤滤走 `removed` part 碎屑（滤前共 `before`）时，账上 `removed/before` 的比例转出，每 5000 part（5 ml）换 1 件 `metal_sludge`，零头留到下次。账比碎屑多时按碎屑总量封顶；总量守恒。
+物品：`metal_sludge`（暂用旧版 `sludge` 的 1×1 贴图，价值 40），放到后柜台，放不下时弹原版「柜台已满」提示，不静默丢失。
+
+**还差：谁来调用 `GameApi.OnDebrisRemoved(container, removedDebris, debrisBefore)`——过滤钩子。** 资料里只知道：
+- 滤芯容器带 `FILTER_CONTAINER_TAG`，`WaterHelper.HandleFilter(...)` 在倒液 `TransferLiquid` 时被调用（见 `docs/feedback-research.md` 1.1）；
+- `Liquid` 有 `filterVolumeRemoved`、`filterDurabilityUsage`、`filterMinimumPurity` 字段；碎屑 `debris` 粒径 200，滤芯孔径 22，所以滤得住。
+
+本地 Claude 需要读 IL 回答（写回本文件）：
+1. `WaterHelper.HandleFilter` 的签名和逻辑：滤掉的碎屑是被直接删除、还是搬到别处？滤前滤后碎屑量在哪里可以读到？
+2. 有没有别的过滤入口：`MachinePurifier`（净水器）、`WaterHelper.OnUVUsed`、鱼缸的 `RunRemediation` / `RunFilter`。要不要都接？（只接倒液过滤是最小方案。）
+3. 钩子打在哪一个方法上最稳：Prefix 里记下 `debris` 滤前的量，Postfix 里读滤后的量，差值就是 `removedDebris`。
+4. 倒液把含碎屑的水倒进另一个容器时，滤渣账不会跟着走（账在源容器上）。是否要在 `TransferLiquid` 的 Postfix 里按比例把账搬到目标容器？（建议要，否则倒一次液账就断了。）
+
+接好钩子之前，滤渣账会一直累积但不会产出物品，其它部分不受影响。
+
+## 下一步
+
 - 原料杂质：自己的新原料用 `PreBuildChemHelper.SetImpurity(item, min, max)` 带杂质，"偏硬核"就是把范围调高。
+- 联动内容：纯水、营养片、`serum_red` / `serum_green`（虚构配方）、养鱼用品，再加重金属的负面效果（原版里重金属不伤鱼、不伤鼠，要补丁）。
 - 离线生成器：用 Arrhenius 算出反应时间和转化率，替换目前手写的数值，并加经济检查。

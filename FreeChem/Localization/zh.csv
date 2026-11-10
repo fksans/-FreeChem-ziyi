@@ -1,6 +1,9 @@
 # FreeChem v3 localization — key,text（由 tools/v3/gen_recipes.py 生成，不要手改）
 fc3_tip_header,化学反应：{0}
 fc3_tip_progress,进度 {0}/{1} 秒 {2}
+metal_sludge_desc,重金属沉淀、过滤后留下的滤渣。含有害金属，不要随手丢弃。
+metal_sludge_flavor,沉得下去的，总得有人处理。
+fc3_back_full,柜台已满，无法加入新物品。
 fc3_tip_paused,温度不在反应温区，已暂停（进度保留）
 recipe_hydroxide_precipitation,氢氧化物沉淀（重金属）
 recipe_sulfide_polishing,硫化物精除（重金属）

@@ -27,6 +27,9 @@ LOC_DIR = os.path.join(ROOT, "FreeChem", "Localization")
 UI_TEXT = {
     "fc3_tip_header":   ("化学反应：{0}", "Reaction: {0}"),
     "fc3_tip_progress": ("进度 {0}/{1} 秒 {2}", "Progress {0}/{1} s {2}"),
+    "metal_sludge_desc":   ("重金属沉淀、过滤后留下的滤渣。含有害金属，不要随手丢弃。", "Filter residue left after heavy metals are precipitated and filtered out. Contains toxic metals — handle with care."),
+    "metal_sludge_flavor": ("沉得下去的，总得有人处理。", "What sinks has to be dealt with by someone."),
+    "fc3_back_full":    ("柜台已满，无法加入新物品。", "The counter is full — no room for new items."),
     "fc3_tip_paused":   ("温度不在反应温区，已暂停（进度保留）", "Temperature is outside the reaction window — paused (progress kept)"),
 }
 
@@ -36,6 +39,18 @@ def validate(data):
     subs = data.get("substances", [])
     if len(set(subs)) != len(subs):
         errs.append("substances 里有重复的物质 id")
+    sl = data.get("sludge")
+    if sl is None:
+        if any(r.get("sludge") for r in data.get("recipes", [])):
+            errs.append("有配方标了 sludge，但顶层缺 sludge 定义")
+    else:
+        for k in ("item", "partsPerItem", "nameZh", "nameEn", "value"):
+            if not sl.get(k):
+                errs.append(f"sludge 定义缺 {k}")
+        if sl.get("nameEn") and any("\u4e00" <= ch <= "\u9fff" for ch in sl["nameEn"]):
+            errs.append("sludge.nameEn 里不能有中文")
+        if sl.get("partsPerItem") is not None and (not isinstance(sl["partsPerItem"], int) or sl["partsPerItem"] <= 0):
+            errs.append("sludge.partsPerItem 必须是正整数")
     seen = set()
     for r in data.get("recipes", []):
         rid = r.get("id", "<缺 id>")
@@ -64,6 +79,8 @@ def validate(data):
             si, so = sum(r["inputs"].values()), sum(r["outputs"].values())
             if si != so:
                 errs.append(f"{where}: 体积不守恒，输入系数和 {si} ≠ 输出系数和 {so}")
+        if r.get("sludge") and set(r.get("outputs", {})) != {"debris"}:
+            errs.append(f"{where}: sludge 配方的输出只能是 debris（滤渣是靠碎屑记账的）")
         if not isinstance(r.get("minExtent"), int) or r["minExtent"] <= 0:
             errs.append(f"{where}: minExtent 必须是正整数")
         bands = r.get("bands", [])
@@ -103,6 +120,10 @@ def emit(data):
         "{",
         "    public static partial class RecipeTable",
         "    {",
+        f'        public const string SludgeItemId = "{data["sludge"]["item"]}";',
+        f"        public const int SludgePartsPerItem = {data['sludge']['partsPerItem']};",
+        f"        public const int SludgeValue = {data['sludge']['value']};",
+        "",
         "        public static readonly Recipe[] All =",
         "        {",
     ]
@@ -117,7 +138,7 @@ def emit(data):
         for b in sorted(r["bands"], key=lambda b: b["tMin"]):
             t = max(1, round(b["time"] * scale))
             lines.append(f"                    new Band({b['tMin']}f, {b['tMax']}f, {t}, {b['conversion']}),")
-        lines.append("                }),")
+        lines.append("                }" + (", producesSludge: true" if r.get("sludge") else "") + "),")
     lines += ["        };", "    }", "}", ""]
     return "\n".join(lines)
 

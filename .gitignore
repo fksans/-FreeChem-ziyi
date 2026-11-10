@@ -1,0 +1,19 @@
+﻿# Build outputs
+bin/
+obj/
+*.user
+*.suo
+# Local runtime / SDK
+.dotnet/
+dist/
+# Game files / mod installs
+Mods/
+# Temp / logs
+*.log
+tools/__pycache__/
+tools/api-probe/out*/
+*_out.txt
+audit*-out.txt
+icon-cells.txt
+icon-groups.txt
+icon-shapes.txt

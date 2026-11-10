@@ -1,0 +1,268 @@
+{
+  "tables": [
+    {
+      "id": "free_chem_reagents",
+      "entries": [
+        {
+          "id": "sol_sodium_chloride",
+          "weight": 220
+        },
+        {
+          "id": "sol_calcium_carbonate",
+          "weight": 190
+        },
+        {
+          "id": "sol_sulfur",
+          "weight": 150
+        },
+        {
+          "id": "sol_activated_carbon",
+          "weight": 140
+        },
+        {
+          "id": "liq_brine",
+          "weight": 130
+        },
+        {
+          "id": "sol_potassium_nitrate",
+          "weight": 110
+        },
+        {
+          "id": "sol_sodium_hydroxide",
+          "weight": 45
+        },
+        {
+          "id": "gas_canister_empty",
+          "weight": 100
+        },
+        {
+          "id": "liq_hydrogen_peroxide",
+          "weight": 80
+        },
+        {
+          "id": "sol_copper_sulfate",
+          "weight": 60
+        },
+        {
+          "id": "sol_potassium_permanganate",
+          "weight": 45
+        },
+        {
+          "id": "catalyst_kit",
+          "weight": 18
+        },
+        {
+          "id": "sol_sodium_carbonate",
+          "weight": 20
+        },
+        {
+          "id": "sol_sodium_bicarbonate",
+          "weight": 20
+        },
+        {
+          "id": "sol_calcium_oxide",
+          "weight": 15
+        },
+        {
+          "id": "sol_ammonium_chloride",
+          "weight": 10
+        },
+        {
+          "id": "sol_copper_oxide",
+          "weight": 8
+        },
+        {
+          "id": "gas_nitrogen",
+          "weight": 12
+        },
+        {
+          "id": "gas_drum_empty",
+          "weight": 8
+        },
+        {
+          "id": "gas_drum_oxygen",
+          "weight": 3
+        },
+        {
+          "id": "gas_drum_nitrogen",
+          "weight": 3
+        },
+        {
+          "id": "gas_drum_carbon_dioxide",
+          "weight": 3
+        },
+        {
+          "id": "gas_drum_hydrogen",
+          "weight": 2
+        },
+        {
+          "id": "gas_drum_chlorine",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "id": "free_chem_apparatus",
+      "entries": [
+        {
+          "id": "filter_paper",
+          "weight": 180
+        },
+        {
+          "id": "beaker",
+          "weight": 160
+        },
+        {
+          "id": "wick_cotton",
+          "weight": 160
+        },
+        {
+          "id": "erlenmeyer_flask",
+          "weight": 140
+        },
+        {
+          "id": "retort_flask",
+          "weight": 120
+        },
+        {
+          "id": "test_tube_rack",
+          "weight": 110
+        },
+        {
+          "id": "alcohol_lamp",
+          "weight": 100
+        },
+        {
+          "id": "filter_paper_fine",
+          "weight": 90
+        },
+        {
+          "id": "thermometer",
+          "weight": 80
+        },
+        {
+          "id": "wick_ceramic",
+          "weight": 70
+        },
+        {
+          "id": "filter_paper_ash",
+          "weight": 50
+        },
+        {
+          "id": "spirit_burner",
+          "weight": 40
+        },
+        {
+          "id": "label_printer",
+          "weight": 30
+        },
+        {
+          "id": "safety_goggles",
+          "weight": 70
+        },
+        {
+          "id": "precision_balance",
+          "weight": 25
+        },
+        {
+          "id": "ph_meter",
+          "weight": 25
+        },
+        {
+          "id": "catalyst_kit",
+          "weight": 15
+        },
+        {
+          "id": "test_tube",
+          "weight": 12
+        }
+      ]
+    }
+  ],
+  "groups": [],
+  "patches": [
+    {
+      "table": "junkTable",
+      "add": [
+        {
+          "id": "sol_sodium_chloride",
+          "weight": 40
+        },
+        {
+          "id": "sol_calcium_carbonate",
+          "weight": 30
+        },
+        {
+          "id": "sol_sulfur",
+          "weight": 22
+        },
+        {
+          "id": "gas_canister_empty",
+          "weight": 18
+        },
+        {
+          "id": "liq_brine",
+          "weight": 14
+        },
+        {
+          "id": "gas_drum_empty",
+          "weight": 5
+        },
+        {
+          "id": "gas_drum_nitrogen",
+          "weight": 2
+        },
+        {
+          "id": "gas_drum_oxygen",
+          "weight": 2
+        },
+        {
+          "id": "gas_drum_chlorine",
+          "weight": 1
+        }
+      ]
+    },
+    {
+      "table": "toolTable",
+      "add": [
+        {
+          "id": "thermometer",
+          "weight": 12
+        },
+        {
+          "id": "precision_balance",
+          "weight": 8
+        },
+        {
+          "id": "ph_meter",
+          "weight": 8
+        },
+        {
+          "id": "safety_goggles",
+          "weight": 6
+        },
+        {
+          "id": "label_printer",
+          "weight": 4
+        },
+        {
+          "id": "catalyst_kit",
+          "weight": 4
+        }
+      ]
+    },
+    {
+      "group": "dumpingGroundTG",
+      "add": [
+        {
+          "id": "free_chem_reagents",
+          "weight": 90
+        },
+        {
+          "id": "free_chem_apparatus",
+          "weight": 70
+        }
+      ]
+    }
+  ]
+}

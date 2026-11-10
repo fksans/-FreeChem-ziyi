@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="../../src/ChemRecipes.cs" Link="ChemRecipes.cs" />
+    <Compile Include="../../src/ChemLab.cs" Link="ChemLab.cs" />
+    <Compile Include="../../src/ChemItemIds.cs" Link="ChemItemIds.cs" />
+  </ItemGroup>
+</Project>

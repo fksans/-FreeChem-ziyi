@@ -1,0 +1,263 @@
+{
+  "id": "chem_codex",
+  "title": "FreeChem Codex",
+  "background": "notebook_manual",
+  "width": 628,
+  "height": 804,
+  "chrome": [
+    {
+      "type": "button",
+      "id": "close",
+      "action": "close",
+      "x": 297,
+      "y": 2.5,
+      "w": 14,
+      "h": 15
+    },
+    {
+      "type": "button",
+      "id": "flip_left",
+      "action": "flip_left",
+      "x": 124,
+      "y": 380,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "type": "button",
+      "id": "flip_right",
+      "action": "flip_right",
+      "x": 176,
+      "y": 380.5,
+      "w": 14,
+      "h": 15
+    },
+    {
+      "type": "text",
+      "id": "page_indicator",
+      "action": "page_indicator",
+      "style": "page_number",
+      "align": "center",
+      "valign": "middle",
+      "x": 140.5,
+      "y": 374,
+      "w": 33,
+      "h": 25
+    }
+  ],
+  "pages": [
+    {
+      "name": "Basics",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 28,
+          "w": 266,
+          "h": 24,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "自由化学 · 总览",
+            "en": "FreeChem · Overview"
+          }
+        },
+        {
+          "type": "text",
+          "x": 26,
+          "y": 60,
+          "w": 262,
+          "h": 172,
+          "style": "body",
+          "wrap": true,
+          "translations": {
+            "zh": "FreeChem 现在共有 84 件物品 + 13 台设备（私有数字 ID 1–97）：盐酸、硫酸、硝酸、烧碱、双氧水、氯气、氧气、氮气、氨气、氯化氢、二氧化碳、乙烯、笑气、咖啡因、生石灰、熟石灰、纯碱、小苏打、氯化铵等。全部按原版「化学用品」登记，能倒入原版液体容器，也能被原版搅拌机/蒸发器/成型机按类型接收。每件带纯度、毒性、欣快与管制标记；纯度沿用原版七档，描述只写用途，具体档位与纯度看 tooltip 与分析仪（四行：成分 / 总液量 / 化学式 / 毒性·欣快）。\n\n本手册只在新档发放一次；需要 ID 对照时按 F10 打开调试生成窗，点「生成 ID 索引书」（4 页、覆盖 ID 1–98、全场只允许 1 本）。\n\n成分与接触反应（P10）：每件药剂都有真实成分组成（如盐酸 = 氯化氢 + 水），分析仪按成分显示百分比、总液量、化学式与毒性/欣快。烧杯/锥形瓶等容器可以放进机器投料槽并倒入试剂；两件药剂互相接触也可能直接反应，无需机器。\n\n试管与试管架（P11）：#98 试管是 100 ml 玻璃液体容器，可倒入少量试剂，也可放进试管架；试管架（2×3）只收试管，把装好试剂的试管架放进机器输入槽即可让内容参与反应，容器保留。分析仪用户界面只显示物品中文名、总液量、成分名与百分比——不再显示化学式缩写（公式仅内部数据使用）。\n\n原版替代（P12）：本模组不再提供「蒸馏水」与「乙醇」物品——需要水时请用原版水瓶/水罐/水壶，需要酒精时请用原版酒精瓶（mini_bottle，可作加热台燃料）；ID 43/44 仅保留为已移除占位。",
+            "en": "FreeChem now has 83 items plus 13 machines (private IDs 1-98; #98 is the test tube): hydrochloric/sulfuric/nitric acid, lye, hydrogen peroxide, chlorine, oxygen, nitrogen, ammonia, hydrogen chloride, carbon dioxide, ethylene, laughing gas, caffeine, quicklime, slaked lime, soda ash, baking soda, ammonium chloride and more. All are registered as vanilla chemical supplies, can be poured into vanilla liquid containers and are accepted by vanilla blenders/evaporators/forming machines. Each carries purity, toxicity, euphoria and control tags; purity uses the vanilla seven tiers, while descriptions only state the purpose — exact tier and purity appear in tooltips and on the scanner (four lines: components / total volume / formula / toxicity · euphoria).\n\nThis manual is handed out once per new game; for an ID reference press F10 to open the debug spawn window and click Spawn ID index book (4 pages, covers IDs 1-98, one book per store).\n\nComponents and contact reactions (P10): every reagent has a real composition (e.g. hydrochloric acid = hydrogen chloride + water); the scanner shows percentages, total volume, formula and toxicity/euphoria by component. Beakers/flasks can be placed in machine input slots and filled with reagents; two reagents may also react directly on contact without a machine.\n\nTest tube and rack (P11): item #98 is a 100 ml glass liquid container that holds a little reagent and fits in the test-tube rack; the rack (2x3) only takes test tubes, and a loaded rack placed in a machine input slot lets the contents react while the container is kept. The scanner UI shows only the item name, total volume, component names and percentages - no chemical formulas (formulas are internal data).\n\nVanilla substitution (P12): this mod no longer provides distilled water or ethanol items - use vanilla water containers when you need water, and vanilla alcohol bottles (mini_bottle, also usable as heater fuel) for alcohol; IDs 43/44 remain as removed placeholders only."
+          }
+        },
+        {
+          "type": "image",
+          "x": 60,
+          "y": 238,
+          "w": 48,
+          "h": 48,
+          "sprite": "free_chem:liq_hydrochloric_acid",
+          "fit": "fit"
+        },
+        {
+          "type": "image",
+          "x": 126,
+          "y": 238,
+          "w": 48,
+          "h": 48,
+          "sprite": "free_chem:gas_oxygen",
+          "fit": "fit"
+        },
+        {
+          "type": "image",
+          "x": 192,
+          "y": 238,
+          "w": 48,
+          "h": 48,
+          "sprite": "free_chem:gas_drum_oxygen",
+          "fit": "fit"
+        },
+        {
+          "type": "text",
+          "id": "discovered",
+          "x": 40,
+          "y": 300,
+          "w": 234,
+          "h": 16,
+          "style": "caption",
+          "align": "center",
+          "preview": "Discovered 0 / 39 reactions"
+        },
+        {
+          "type": "button",
+          "x": 120,
+          "y": 326,
+          "w": 74,
+          "h": 18,
+          "action": "refresh",
+          "translations": {
+            "zh": "刷新",
+            "en": "Refresh"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Equipment & Phases",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 28,
+          "w": 266,
+          "h": 24,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "设备、器材与相态",
+            "en": "Equipment & Phases"
+          }
+        },
+        {
+          "type": "text",
+          "x": 26,
+          "y": 60,
+          "w": 262,
+          "h": 340,
+          "style": "body",
+          "wrap": true,
+          "translations": {
+            "zh": "本模组补足原版没有的单元操作（共 13 台设备）：\n· 不耗电：静置滗析槽、过滤台（含滤纸槽）、滴定台、大型加热台（酒精灯供热，点击灯切低档 99°C / 高档 160°C）\n· 需电池：结晶器(5)、气体发生器(6)、气体洗涤塔(7)、冷凝吸收塔(8)、气体灌装台(9)、合成反应釜(10)、分馏柱(12)、电解槽(14)、高压合成塔(16)\n每台窗口只保留必要槽位：投料槽、滤纸槽、空瓶槽、气瓶槽（1/2）、模块槽、产出格。气体灌装台只产工业钢瓶（带真实纯度 tag）；医用/化学纯钢瓶与桶为 legacy，仅旧存档保留、不再产出。\n\n容器与接触：烧杯/鹅颈瓶/锥形瓶/试管架可作液体容器，倒入试剂后放进机器参与反应；两件药剂互相接触可触发接触反应（详见物品描述与手册）。",
+            "en": "This mod fills in unit operations vanilla lacks (13 machines):\n- No power: decanter, filtration bench (with filter slot), titration bench, large heating platform (alcohol-lamp heat; click the lamp to toggle LOW 99°C / HIGH 160°C)\n- Battery: crystallizer (5), gas generator (6), gas scrubber (7), condenser tower (8), gas filling station (9), chem reactor (10), fractionator (12), electrolyzer (14), high-pressure synthesis (16)\nEach window keeps only the needed slots: input, filter, empty container, gas slots (1/2), module bay and output. The filling station produces industrial cylinders only (with a true purity tag); medical/ultra-pure cylinders and drums are legacy, kept for old saves and no longer produced.\n\nContainers and contact: beakers/retort/Erlenmeyer flasks/test-tube racks work as liquid containers; fill them and place them in a machine. Two reagents may react on contact (see item descriptions and this manual)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Synthesis Chain",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 28,
+          "w": 266,
+          "h": 24,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "多级合成链与实时加热",
+            "en": "Synthesis Chain & Real-Time Heating"
+          }
+        },
+        {
+          "type": "text",
+          "x": 26,
+          "y": 60,
+          "w": 262,
+          "h": 300,
+          "style": "body",
+          "wrap": true,
+          "translations": {
+            "zh": "T1：电解饱和盐水 → 氯气 + 氢气 + 烧碱；大理石 + 盐酸 → 二氧化碳；双氧水分解 → 氧气。\nT2：氢气 + 氯气 → 2氯化氢；氮气 + 3氢气 ⇌ 2氨；氯化氢(g) 溶于水 → 盐酸；石灰石煅烧 → 生石灰 + 二氧化碳；生石灰 + 水 → 熟石灰；苛化法 → 纯碱；纯碱 + 二氧化碳 + 水 → 小苏打；氨 + 氯化氢 → 氯化铵。\nT3：滗析/过滤提纯（提纯等级 0–5，纯度上限 94.40% → 99.84%）；气体洗涤；灌装工业钢瓶。\nT4：本模组药剂 + 原版药剂（紫药瓶/橙瓶/小粉瓶/梦帽菇/氨水瓶）→ 4 种虚构违禁品。\n实时加热台：容器/加热器/灯芯/燃料 + 温度驱动，共 6 条热反应（99/160°C 两档）。\n\n水不计物品（P12）：反应中作为溶剂/副产物的水不再产出物品，需要水时投原版水容器；乙醇相关热反应已删除（实时热反应 5 条）。",
+            "en": "T1: electrolyse brine -> chlorine + hydrogen + lye; marble + hydrochloric acid -> Carbon Dioxide; peroxide decomposition -> oxygen.\nT2: Hydrogen + Chlorine -> 2Hydrogen Chloride; Nitrogen + 3Hydrogen <=> 2Ammonia; Hydrogen Chloride(g) dissolved in water -> hydrochloric acid; calcine limestone -> quicklime + Carbon Dioxide; quicklime + water -> slaked lime; causticisation -> soda ash; soda ash + Carbon Dioxide + Water -> baking soda; Ammonia + Hydrogen Chloride -> ammonium chloride.\nT3: decant/filter purification (levels 0-5, purity ceiling 94.40% -> 99.84%); gas scrubbing; fill industrial cylinders.\nT4: this mod's reagents + vanilla reagents (violet bottle / orange bottle / small pink bottle / dream-cap mushroom / ammonia bottle) -> 4 fictional contraband compounds.\nHeating platform: vessel/heater/wick/fuel with temperature drive and 5 thermal reactions (LOW 99°C / HIGH 160°C).\n\nWater is not an item (P12): water formed as solvent/by-product is no longer produced as an item - feed a vanilla water container instead; ethanol thermal reactions were removed (5 real-time reactions)."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Gas Broker & Vent",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 28,
+          "w": 266,
+          "h": 24,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "气体商人 · 排风服务 · 电话供应商",
+            "en": "Gas Broker · Vent Service · Phone Supplier"
+          }
+        },
+        {
+          "type": "text",
+          "x": 26,
+          "y": 60,
+          "w": 262,
+          "h": 320,
+          "style": "body",
+          "wrap": true,
+          "translations": {
+            "zh": "乔·怀尔德人脉：气体商人引荐（600）解锁气体供货与可重复订单（120，每 3 天）；排风服务降低有毒气体排放写入治安部的嫌疑度；进阶排风再加冷凝回收与二级过滤。\n电话系统另有「化学品供应商」：号码 96686，可订购基础化学品包（$320/包，每日限 1 单），次日清晨开店时送到前柜台（前柜台满则回退后柜台）。持有商人便条（原版 handnote）可随时拨号。",
+            "en": "Joe Wild's network: gas broker referral (600) unlocks gas supply and repeatable orders (120, every 3 days); the vent service reduces Security Dept. suspicion from toxic exhaust; the advanced vent adds condenser recovery and secondary filtration.\nThe phone system also has a Chemistry Supplier: number 96686, order a basic chemicals pack ($320 per pack, once per day), delivered to the front counter at the next morning's opening (back counter if the front is full). Keep the dealer's note (vanilla handnote) to call him."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Settings & Debug",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 28,
+          "w": 266,
+          "h": 24,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "模组设置与调试",
+            "en": "Settings & Debug"
+          }
+        },
+        {
+          "type": "text",
+          "x": 26,
+          "y": 60,
+          "w": 262,
+          "h": 320,
+          "style": "body",
+          "wrap": true,
+          "translations": {
+            "zh": "模组设置：游戏「模组（Mods）」菜单 → FreeChem 配置面板，分「玩法」「调试」两个中文分区（允许危险反应 / 排气计入治安部 / 调试模式）。\n私有数字 ID 1–97：固定顺序、只追加不重排（1–72 物品、73–85 设备、86–97 追加物品）。按 F10 打开调试生成窗（可在 选项→按键绑定 改键）：可按 ID 生成物品、生成 ID 索引书（4 页 / 1–97，全场唯一），旧「列出 ID 对照」已改为索引书。\n危险反应默认可用（护目镜提供防护；关闭「危险反应」后事故会弹提示）；产物放不下会改投后柜台并记录日志，不会静默丢失。",
+            "en": "Settings: game Mods menu -> FreeChem config panel with two Chinese sections, Gameplay and Debug (allow dangerous reactions / exhaust counts for Security / debug mode).\nPrivate numeric IDs 1-97: fixed order, append-only (1-72 items, 73-85 machines, 86-97 appended items). Press F10 for the debug spawn window (rebind in Options > Key Bindings): spawn items by ID, spawn the ID index book (4 pages / 1-97, one per store); the old console ID list is now the index book.\nDangerous reactions are available by default (goggles provide protection; with dangerous reactions disabled an accident pop-up appears); overflow products are moved to the back counter and logged, never silently deleted."
+          }
+        }
+      ]
+    }
+  ],
+  "item": {
+    "id": "chem_codex",
+    "name": "FreeChem Codex",
+    "description": "Named reagents, pressure vessels, purity tiers, real-time heating and a multi-tier synthesis chain.",
+    "sprite": "ph_meter",
+    "value": 40,
+    "important": true
+  }
+}

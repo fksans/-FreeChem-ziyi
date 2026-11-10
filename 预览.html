@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FreeChem · 自由化学 Mod 设计预览 v0.9.6</title>
+<style>
+  :root{--bg:#141821;--panel:#1e2430;--line:#333c4e;--ink:#e8edf5;--sub:#96a3b8;
+        --acc:#7fd1a0;--warn:#e0b45c;--gas:#7fa8b0;--liq:#74ccc8;--sol:#d8aa60}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font:14px/1.6 -apple-system,"Segoe UI","Microsoft YaHei",sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+  header{border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:26px}
+  h1{font-size:26px;margin:0 0 6px}
+  .tag{color:var(--sub);font-size:13px}
+  .badges{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+  .badge{background:var(--panel);border:1px solid var(--line);border-radius:20px;
+         padding:4px 12px;font-size:12px;color:var(--sub)}
+  .badge b{color:var(--ink)}
+  h2{font-size:17px;margin:32px 0 12px;padding-left:10px;border-left:3px solid var(--acc)}
+  .grid{display:grid;gap:12px}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+  .card h3{margin:0 0 8px;font-size:14px}
+  .card p{margin:0;color:var(--sub);font-size:12.5px}
+  .phase{border-top:3px solid}
+  .phase.s{border-color:var(--sol)} .phase.l{border-color:var(--liq)} .phase.g{border-color:var(--gas)}
+  table{width:100%;border-collapse:collapse;background:var(--panel);
+        border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px}
+  th,td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  th{background:#252d3b;color:var(--sub);font-weight:600}
+  tr:last-child td{border-bottom:none}
+  td.mono{font-family:Consolas,monospace;color:var(--acc)}
+  .note{background:#241f18;border:1px solid #5a4626;border-radius:10px;
+        padding:14px;color:#e8d9b8;font-size:12.5px;margin-top:14px}
+  .ok{color:var(--acc)} .pending{color:var(--warn)}
+  code{background:#252d3b;padding:1px 5px;border-radius:4px;font-size:12px}
+  .tier{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .tier .card{border-top:3px solid var(--acc)}
+  .tier .card.t4{border-top-color:var(--warn)}
+  .icons{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+  .ic{background:var(--panel);border:1px solid var(--line);border-radius:8px;
+      padding:8px 4px;text-align:center}
+  .ic img{width:48px;height:48px;image-rendering:pixelated;object-fit:contain;
+          display:block;margin:0 auto 6px}
+  .ic span{font-size:11px;color:var(--sub)}
+  @media(max-width:760px){.g3,.g4,.tier{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>FreeChem · 自由化学 v0.9.6</h1>
+    <div class="tag">具名基础药剂 · 便携钢瓶 + 大型储气桶 · 气罐纯度分级 · 器材/滤纸/灯芯 · 实时加热台 · 王尔德气体商人 + 排风服务 · T1–T4 多级链</div>
+    <div class="badges">
+      <span class="badge"><b>83</b> 已注册物品（含试管）</span>
+      <span class="badge"><b>12</b> 气罐商品 + <b>6</b> 大型储气桶</span>
+      <span class="badge"><b>13</b> 台设备</span>
+      <span class="badge"><b>39+7</b> 条反应（夜间+实时）</span>
+      <span class="badge"><b>T1–T4</b> 多级链</span>
+      <span class="badge"><b>109</b> 张图标（13 台双状态 + 温度计 + 标签打印机 + P2a 化学品 + 便条 + 试管）</span>
+      <span class="badge"><b>554×2</b> 本地化键</span>
+      <span class="badge"><b>4</b> 虚构违禁品</span>
+    </div>
+  </header>
+
+  <h2>相态严格分工</h2>
+  <div class="grid g4">
+    <div class="card phase l">
+      <h3>静置滗析槽 · 仅液体</h3>
+      <p>静置 24 小时，固液两相分离。<b>上层清液 = 更纯的同一种药剂</b>，下层为沉淀杂质。两件产物，不改变化学身份，不凭空多造一瓶液体。</p>
+    </div>
+    <div class="card phase l">
+      <h3>过滤台 · 仅液体 + 滤纸</h3>
+      <p>按滤纸孔径拦截污染物：化学滤纸 22 μm / 精密滤纸 5 μm / 无灰定量滤纸 2 μm；<b>每类污染物仍保留 0.7% 残留下限</b>。</p>
+    </div>
+    <div class="card phase g">
+      <h3>气体洗涤塔 · 仅气体</h3>
+      <p>碱洗 / 分子筛 / 钯膜吸附除杂，提纯一档而仍是同一种气体。<b>气体不能滗析</b>，提纯走这里。</p>
+    </div>
+    <div class="card phase g">
+      <h3>气体灌装台 · 仅气体 + 空容器</h3>
+      <p>空钢瓶 → 工业/医用/化学纯三档 <code>can_*</code>；空大型储气桶 → 5 种工业档 <code>gas_drum_*</code>。SKU 由<b>投入气体纯度</b>决定，液体清液进不了灌装台。</p>
+    </div>
+  </div>
+  <div class="note">
+    三层强制：数据层 <code>AllowedInputPhases</code> + <code>ValidateLogic()</code>、设备输入过滤、独立 C# 校验（含反例「气体投滗析槽 → 无配方」）。
+  </div>
+
+  <h2>压力容器：便携钢瓶 vs 大型储气桶（第 11 轮）</h2>
+  <table>
+    <tr><th>容器</th><th>图标 / 占格</th><th>纯度档</th><th>产出 / 用途</th></tr>
+    <tr><td>空钢瓶 <code>gas_canister_empty</code></td><td>32×48 → <b>2×3 格</b></td><td>工业 / 医用 / 化学纯</td><td>灌装台产出 12 种 <code>can_*</code> 商品气罐（O2/H2/N2/Cl2 四气 × 三档）</td></tr>
+    <tr><td>大型储气桶 <code>gas_drum_empty</code> + 5 种气体桶</td><td>48×64 → <b>3×4 格</b></td><td>仅工业档</td><td>批量储运；价值约为同气体工业钢瓶的 3.4–3.6 倍；造型参照原版水罐（液位窗 / 加固箍 / 压力表 / 支脚）</td></tr>
+  </table>
+  <div class="note">
+    占格由 <code>SetSpriteAndShapeFromMod</code> 按图标不透明像素自动推导，代码不手写尺寸。
+    空桶是容器（Solid、辅助物），<b>不能当气体投料</b>；已充装的大桶内含压缩气体（Phase.Gas）。
+  </div>
+
+  <h2>气罐纯度分级</h2>
+  <table>
+    <tr><th>档位</th><th>纯度</th><th>对齐原版品级</th><th>价值修正</th><th>商品示例</th></tr>
+    <tr><td>工业级</td><td>~70%</td><td>街头标准</td><td>+0%</td><td>工业氧气 / 工业氢气 / 工业氮气 / 工业氯气；全部大型储气桶（<b>P1b1 起灌装只产这一档</b>）</td></tr>
+    <tr><td>医用级</td><td>~95%</td><td>药用级</td><td>+85%</td><td>医用氧气（<span class="ok">可卖给原版医生 / 护士 / 医院供货商</span>）</td></tr>
+    <tr><td>化学纯</td><td>≥99%</td><td>实验室纯级</td><td>+135%</td><td>化学纯氧 / 化学纯氢 / 化学纯氮 / 化学纯氯</td></tr>
+  </table>
+  <div class="note">
+    纯度链闭合：液体滗析 / 过滤 +1 档 → 气体洗涤 +1 档 → 提纯气体灌装得更高档气罐。
+    但每类污染物有 0.7% 残留下限，<b>纯度永远 &lt; 100%</b>，过滤链达不到满值。
+  </div>
+
+  <h2>温度控制与获取途径（第 12 轮补强）</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h3>温度计 · 配方温度条件</h3>
+      <p>点击循环 <b>0 冷 / 1 常温 / 2 加热 / 3 高温高压</b>。<b>档位不对就不反应</b>：T2–T4 配方尤其依赖 2/3 档（合成反应釜 / 电解槽 / 高压合成塔 / 分馏柱 / 结晶器 / 滴定台）。</p>
+    </div>
+    <div class="card">
+      <h3>与加热台的关系</h3>
+      <p>温度计是<b>离散档位的配方匹配条件</b>；实时加热台是<b>按秒真实温度</b>驱动 5 条热反应。两套温度通道互不替代。</p>
+    </div>
+    <div class="card">
+      <h3>获取途径</h3>
+      <p>试剂：<code>free_chem_reagents</code>（含乙醇/大桶）。器材：<code>free_chem_apparatus</code> + 原版 <code>toolTable</code> patch。另有起始礼包 / 发明家库存 / 气体商人订单。</p>
+    </div>
+  </div>
+  <div class="note">
+    <b>如实说明</b>：掉落实际刷出率、新档起始礼包内容、发明家上架概率、温度计点击是否被游戏内双击/使用事件正确触发，
+    <b>均未做游戏内验证</b>；静态只能验证「引用的 id 已注册、weight &gt; 0、无悬空 id」。
+  </div>
+
+  <h2>污染物不可完全提纯（8 类污染物 / 0.7% 下限）</h2>
+  <table>
+    <tr><th>污染物</th><th>粒径 μm</th><th>滗析</th><th>化学滤纸 22 μm</th><th>精密滤纸 5 μm</th><th>无灰滤纸 2 μm</th></tr>
+    <tr><td>化学污染物 chem</td><td>2</td><td class="pending">完全保留</td><td class="pending">穿透</td><td class="pending">穿透</td><td>拦截（留 0.7%）</td></tr>
+    <tr><td>重金属 heavy</td><td>12</td><td class="pending">完全保留</td><td class="pending">穿透</td><td>拦截（留 0.7%）</td><td>拦截（留 0.7%）</td></tr>
+    <tr><td>微塑料 / 矿物质 / 有机废物</td><td>25 / 30 / 40</td><td class="pending">完全保留</td><td>拦截（留 0.7%）</td><td>拦截（留 0.7%）</td><td>拦截（留 0.7%）</td></tr>
+    <tr><td>微生物</td><td>50</td><td class="pending">完全保留</td><td>拦截（留 0.7%）</td><td>拦截（留 0.7%）</td><td>拦截（留 0.7%）</td></tr>
+    <tr><td>物理污染物 / 不溶碎屑</td><td>100 / 200</td><td class="ok">移走 85%</td><td>拦截（留 0.7%）</td><td>拦截（留 0.7%）</td><td>拦截（留 0.7%）</td></tr>
+  </table>
+  <div class="note">
+    滗析<b>只能</b>移除可沉降的物理污染物与不溶碎屑，游离的化学污染物 / 重金属 / 微生物<b>完全保留</b>；
+    过滤按孔径拦截但每类留 0.7% 下限（滤纸耐久：化学 8 / 精密 5 / 无灰 3 次）。
+    这是「滗析与过滤只能提高纯度、无法完全提纯」的数值实现。
+  </div>
+
+  <h2>器材 / 耗材 / 实时加热台</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h3>反应容器</h3>
+      <p>烧杯、鹅颈瓶、锥形瓶、试管架。<b>大型加热台必须放容器</b>才能加热。</p>
+    </div>
+    <div class="card">
+      <h3>加热器 + 灯芯 + 燃料</h3>
+      <p>酒精灯 / 酒精喷灯必须插灯芯（棉 20 次 / 陶瓷 40 次）并加酒精燃料；燃料可用<b>原版酒精</b>（70% 纯度）。</p>
+    </div>
+    <div class="card">
+      <h3>实时加热台</h3>
+      <p>每秒 tick（<code>StartCoroutine</code>，禁止线程）：套用原版加热板升温/冷却公式；纯度决定加热因子 0.4–1.6 与消耗；温度进温区按秒累积产物，<b>超温降解为废渣</b>。</p>
+    </div>
+  </div>
+  <table style="margin-top:12px">
+    <tr><th>热反应</th><th>方程式</th><th>温区 °C</th><th>秒</th></tr>
+    <tr><td>盐酸蒸馏提纯</td><td>HCl(aq) → 更纯 HCl(aq)</td><td>78–110</td><td>20</td></tr>
+    <tr><td>乙醇脱水制乙烯</td><td>C2H5OH --浓 H2SO4--> C2H4↑ + H2O</td><td>160–180</td><td>30</td></tr>
+    <tr><td>高锰酸钾热分解</td><td>2KMnO4 → K2MnO4 + MnO2 + O2↑</td><td>200–260</td><td>25</td></tr>
+    <tr><td>硝酸铵热分解</td><td>NH4NO3 → N2O↑ + 2H2O</td><td>180–250</td><td>25</td></tr>
+        <tr><td>双氧水热分解</td><td>2H2O2 → 2H2O + O2↑</td><td>80–120</td><td>15</td></tr>
+    <tr><td>硝石制硝酸（加热）</td><td>KNO3 + H2SO4 → KHSO4 + HNO3↑</td><td>120–160</td><td>30</td></tr>
+  </table>
+
+  <h2>多级合成链 T1 → T4</h2>
+  <div class="tier">
+    <div class="card"><h3>T1 一级</h3><p>氯碱法：2NaCl + 2H2O → Cl2 + H2 + 2NaOH<br>大理石 + 盐酸 → CO2<br>双氧水分解 → O2</p></div>
+    <div class="card"><h3>T2 二级</h3><p>H2 + Cl2 → 2HCl<br>哈伯法：N2 + 3H2 ⇌ 2NH3<br>HCl(g) 溶于水 → 盐酸</p></div>
+    <div class="card"><h3>T3 三级</h3><p>滗析 / 过滤 / 洗涤提纯<br>气体灌装为三档气罐与工业气桶<br>纯度与售价逐级提升</p></div>
+    <div class="card t4"><h3>T4 四级 · 违禁</h3><p>与原版药剂（N-羟甲基碱、还原剂、脂合剂、梦帽菇）反应生成虚构违禁品：空盐 / 红雾 / 夜玻 / 灰息</p></div>
+  </div>
+
+  <h2>毒性 / 致命性 / 成瘾性（复用原版公式）</h2>
+  <table>
+    <tr><th>项</th><th>原版规则</th><th>本 Mod 实现</th></tr>
+    <tr><td>致命性</td><td>L=Σ(μl × 毒性系数)，L≥1000 致命，750≤L&lt;1000 有毒</td><td class="mono">ChemRuntime.Lethality()</td></tr>
+    <tr><td>欣快 / 成瘾</td><td>E=Σ(μl × 欣快系数)，欣快等级 0–4</td><td class="mono">ChemRuntime.EuphoriaTier()</td></tr>
+    <tr><td>提示框</td><td>—</td><td>OnCreateTooltipLate 追加「纯度 X% · 毒性 · 欣快等级 N」</td></tr>
+    <tr><td>管制</td><td>违禁 / 毒物 / 麻醉品</td><td>contraband tag + 高欣快/毒性系数，接入售后与安保路径（需实机验证）</td></tr>
+  </table>
+
+  <h2>王尔德人脉网络：气体商人 + 排风服务（第 11 轮）</h2>
+  <table>
+    <tr><th>升级</th><th>卡片</th><th>价格</th><th>效果</th></tr>
+    <tr><td class="mono">GAS_BROKER</td><td>Supplier</td><td>600</td><td>气体商人引荐，解锁气体供货</td></tr>
+    <tr><td class="mono">GAS_ORDER</td><td>Supplier</td><td>120 / 3 天冷却</td><td>可重复订单：空钢瓶 ×2 + 空大型储气桶 + 氧气 + 氮气 + 饱和盐水</td></tr>
+    <tr><td class="mono">VENT_SERVICE</td><td>Service</td><td>450</td><td><b>排风服务</b>（常驻、无冷却）：模组计数与原版 ENDANGERMENT 写入量均 ×0.55</td></tr>
+    <tr><td class="mono">ADV_VENT_SERVICE</td><td>Service</td><td>900（前置 VENT_SERVICE）</td><td><b>进阶排风服务</b>（常驻）：模组计数与原版 ENDANGERMENT 写入量均 ×0.12</td></tr>
+  </table>
+  <div class="note">
+    <b>排气嫌疑度已接入原版治安部 <code>ENDANGERMENT</code>（默认开启，可在模组设置关闭）。</b><br>
+    双层机制：① 模组自有计数 <code>exhaust_raw</code>（ModData 按局存档，供提示框展示）；
+    ② 按倍率折算<b>写入原版治安部</b> <code>SecData.CommitCrime(SecData.ENDANGERMENT, units × 10 × 排风倍率)</code>，
+    调用前先用 <code>PlayerStore.HasInstance</code> 判空（不在菜单/无存档时触发惰性建库），异常 catch + log。<br>
+    只有 Cl2 / HCl(g) / NH3 计入（CO2/O2/N2/H2/乙烯/笑气不计）；排风 ×0.55 / 进阶 ×0.12 <b>同时</b>削减模组计数增速与原版写入量。<br>
+    <b>风险事实</b>：官方 modding API 没有公开写 heat / 调查进度的接口，这里用的是<b>未文档化</b>的 public 成员，
+    随游戏版本可能变 —— 所以默认开但可在设置 <code>vanilla_security</code> 关闭。
+    <b>未实机验证</b>：10/单位的写入量平衡、调查节奏、起始专精消耗 RNG 的影响。
+  </div>
+
+  <h2>模组设置入口与调试（第 14–15 轮）</h2>
+  <div class="grid g3">
+    <div class="card">
+      <h3>模组设置入口</h3>
+      <p>游戏 <b>模组（Mods）菜单 → FreeChem 条目 → 配置面板</b>，2 个中文分区：<b>玩法</b>（允许危险反应、排气计入原版治安部）、<b>调试</b>（调试模式，默认关）。标签与提示走本地化表（依赖模组 Init 成功）。</p>
+    </div>
+    <div class="card">
+      <h3>私有数字 ID 1–85</h3>
+      <p><b>73 物品（1–72 + #86 标签打印机）+ 13 设备（73–85）</b>，顺序显式写死（<code>src/ChemItemIds.cs</code>），<b>只追加不重排</b>；QA 有 #1/#12/#30/#61/#72/#73/#85 顺序锚点断言。</p>
+    </div>
+    <div class="card">
+      <h3>快捷键生成（默认 F10）</h3>
+      <p>开调试模式 → 店铺存档按 <b>F10</b> 打开/关闭生成窗口（<b>不需 dev.txt</b>，可在<b>「选项 → 按键绑定」</b>改，条目「FreeChem 调试生成窗口」）→ 输入 <b>1–85</b> 或 <b>spawn N</b> → 物品<b>进后柜台</b>。</p>
+    </div>
+  </div>
+  <table style="margin-top:12px">
+    <tr><th>数字 ID</th><th>内容</th><th>数量</th></tr>
+    <tr><td>1–7 / 8–15 / 16–25</td><td>气体药剂 / 液体药剂 / 固体</td><td>7 / 8 / 10</td></tr>
+    <tr><td>26 / 27–31 / 32–35 / 36–40 / 41–42</td><td>空钢瓶 / 工具仪器防护 / 反应容器 / 耗材 / 加热器</td><td>1 / 5 / 4 / 5 / 2</td></tr>
+    <tr><td>43–48</td><td>热反应新增物质（乙醇、水、乙烯、笑气、咖啡豆糊、咖啡因；后两者 P3b 起仅 legacy）</td><td>6</td></tr>
+    <tr><td>49–60 / 61–66 / 67–70 / 71–72</td><td>商品气罐 / 大型储气桶 / 虚构违禁品 / 副产物</td><td>12 / 6 / 4 / 2</td></tr>
+    <tr><td>73–85</td><td>13 台设备</td><td>13</td></tr>
+  </table>
+  <div class="note">
+    <b>入口（第 15 轮改）</b>：用户实测 F9 调试面板里没有按钮 —— F9/F8 是游戏开发工具、<b>正式安装默认关闭</b>（需 exe 同级空 <code>dev.txt</code> + 重启）。
+    所以正式入口改为<b>模组自注册快捷键（默认 F10，可在「选项 → 按键绑定」重绑，不依赖 dev.txt）</b>；F9 旧入口只作<b>开发机备用</b>。
+    窗口能开，但<b>实际生成仍需在模组设置开启「调试模式」</b>。
+    <br><b>满仓提示（两段）</b>：① <code>GraphUtils.CanAccept</code> 探测失败 → <code>item.Destroy()</code> → 弹提示；
+    ② 放置用 <code>GraphUtils.TryAcceptAllOrDestroy(back, item, "free_chem.debug_spawn")</code>（bool 版，内部自动销毁未放下物品；
+    <b>不能</b>把 <code>TryAcceptAll</code> 的返回值当已接受数——它是剩余未接受数）。
+    弹窗<b>优先真正的原版 modal</b> <code>GenericConfirmationUIManager.OpenPanelSingleButton</code>（暗化遮罩，正文「<b>柜台已满，无法加入新物品。</b>」），自建 meta 窗口仅作兜底。
+    <br><b>未实机验证</b>：<b>F10 是否与游戏已有按键冲突/被占用</b>、按 F10 是否真的开关窗口、<b>重绑后重启是否保持</b>、输入法/Enter 行为、窗口实际呈现、后柜台满判定、
+    <code>GenericConfirmationUIManager</code> 在店铺场景是否非 null、生成物能否正常拾取/售卖/堆叠、备用 F9 入口在 dev.txt 下是否出现。
+    <br><b>热修复（v0.5.2）</b>：v0.5.0 曾因 <code>OnEnable → AddNetworkUpgrade → PlayerStore.Instance → PlayerStore..ctor</code> 抛 <b>NullReferenceException</b>（NRE）导致
+    <b>模组列表报错、模组被禁、设置面板显示原始键</b>；已把 Wild Network 注册移到 <code>OnGameLoaded</code>（<code>PlayerStore.HasInstance</code> guard + try/catch），
+    并把设置分区名改为中文「玩法」/「调试」。<b>未实机验证</b>：列表不再报错、模组可启用、设置面板全中文、按键绑定条目中文、王尔德 4 张卡是否正常出现。
+  </div>
+
+  <h2>兼容原版</h2>
+  <table>
+    <tr><th>层面</th><th>实现</th></tr>
+    <tr><td>物品类型</td><td>统一 <code>CHEMICAL_SUPPLIES</code> → 原版容器 / 搅拌机 / 蒸发器 / 成型机按类型接收</td></tr>
+    <tr><td>医用气罐</td><td>额外 <code>MEDICAL</code> → 原版医疗采购顾客收购</td></tr>
+    <tr><td>原版药剂</td><td><code>VanillaAnalog</code> 折算：酸性/碱性/还原剂/脂合剂/N-羟甲基碱溶液瓶 → 新体系药剂</td></tr>
+    <tr><td>原版酒精</td><td>酒精灯 / 加热台燃料可用原版酒精（70% 纯度）；物品 id 用 4 个候选运行时择一，<b>需实机核对</b></td></tr>
+    <tr><td>设备框架</td><td>沿用原版电池槽、模组槽、进度框架，共用电力与模组；设备功能不与原版重复</td></tr>
+    <tr><td>经济</td><td>掉落表挂 <code>junkTable</code> / <code>dumpingGroundTG</code>；人脉升级挂 Wild's Network</td></tr>
+  </table>
+
+  <h2>图标资产（109 张，对齐原版 16px 网格风格）</h2>
+  <div class="icons" id="icons"></div>
+
+  <h2>第 17 轮 P0 整改（用户 9 条授权第一批）</h2>
+  <div class="grid g4">
+    <div class="card">
+      <h3>占格修正</h3>
+      <p>5 件仪器 → <b>16×16（1 格）</b>；6 件反应容器/加热器 → <b>16×32（1×2 格）</b>；其余 87 张图标尺寸+SHA256 不变（已无 32×32）。</p>
+    </div>
+    <div class="card">
+      <h3>仪器与窗口提示</h3>
+      <p>温度档 / pH / 天平开关 / 防护 / 灯内燃料 ml / 灯芯耐久 / 滤纸剩余；机器窗口标签走 <code>ui_*</code>（电池/模组/投料/产出/便签/反应容器/加热器/灯芯/燃料）。</p>
+    </div>
+    <div class="card">
+      <h3>欣快显示修复</h3>
+      <p>只有真药剂带画像；普通酸碱盐显示 <code>chem_profile_reagent</code>「纯度 X% · 致命性」，<b>不再显示「欣快等级 0」</b>；成瘾品（tier ≥1 / 受管制）才用旧 3 占位行；医用气罐追加 <code>chem_medical_grade</code>「医疗品级」。</p>
+    </div>
+    <div class="card">
+      <h3>量纲与商人</h3>
+      <p><b>液体药剂 500 ml/件</b>（P3a 起，原 250 ml）、温度 °C、纯度 %、燃料 ml；嫌疑度 = 原版 ENDANGERMENT 写入量（10 点/单位×倍率）。气体订单放<b>后柜台</b>并设所有者/来源。</p>
+    </div>
+  </div>
+  <div class="note">
+    本地化 300 → <b>335</b> 条。<b>HARMONY 桥接</b>（成分仪 / 倒液 / 纯度标签 / 打印机）属后续阶段，本轮未做。
+    以上代码行为由 features 的 P0 批次落地，<b>未实机验证</b>。
+  </div>
+
+  <h2>第 18 轮 P1a：原版桥接</h2>
+  <div class="grid g4">
+    <div class="card"><h3>成分仪可分析</h3><p>真药剂补原版化学标签（<code>CHEM_ITEM_TAG</code> / <code>CHEMICAL_PRODUCT_TAG</code> / 纯度 tag + <code>SetPurityFeature</code>）；成分仪<b>按原版格式</b>显示纯度/成分/等级（补数据 + 原版 RefreshUI 重绘）。<code>scanner_fc_line</code>/<code>scanner_fc_grade</code> 为 <b>P1a 预留键、本轮未使用</b>。</p></div>
+    <div class="card"><h3>液体可倒进原版容器</h3><p><code>InitLiquidContainerItem(500ml)</code> + <code>AddLiquid</code> → 原版拖拽倒液；<b>1 ml = 1000 part、每件 500 ml 守恒（P3a 起，原 250 ml）</b>，目标满只倒 min(剩余,总量)。</p></div>
+    <div class="card"><h3>收购按原版七档</h3><p>≥99 实验室纯 / 90–99 药用 / 80–90 近药用 / 60–80 街头标准 / 45–60 掺兑 / 30–45 垃圾 / &lt;30 淀粉；<b>纯度自动影响原版报价</b>。</p></div>
+    <div class="card"><h3>Harmony 兜底</h3><p>① 成分仪旧存档按需补数据 ② 旧存档倒液 ③ 毒性/欣快图标 ④ 客户收购放宽（不绕过管制/拒绝）。共 <b>4 类 6 个补丁</b>；加载器自动应用 <code>[HarmonyPatch]</code>，<code>&lt;Capabilities /&gt;</code> 仍为空、<code>0Harmony</code> 不捆绑。</p></div>
+  </div>
+  <table style="margin-top:12px">
+    <tr><th>模组液体</th><th>原版组分映射</th><th>说明</th></tr>
+    <tr><td>HCl / H2SO4 / HNO3</td><td><code>acid</code> + <code>water</code></td><td>强酸溶液</td></tr>
+    <tr><td>NaOH / 氨水</td><td><code>base</code> + <code>water</code></td><td>强碱 / 弱碱</td></tr>
+    <tr><td>饱和盐水</td><td><code>water</code> + <code>mineral</code></td><td>盐溶液</td></tr>
+    <tr><td>氯化钙溶液</td><td><code>water</code> 90% + <code>mineral</code> 10%</td><td>盐溶液（非酸碱）</td></tr>
+    <tr><td>乙醇</td><td><code>alcohol</code> + <code>water</code></td><td>纯度决定酒精占比</td></tr>
+    <tr><td>蒸馏水</td><td><code>water</code></td><td>纯水</td></tr>
+    <tr><td><b>双氧水</b></td><td><b>仅 <code>water</code>（近似）</b></td><td>原版无过氧化物组分；提示 <code>pour_approx_water</code>「倒入时按水近似，化学身份仍是本模组药剂」</td></tr>
+  </table>
+  <div class="note">
+    <b>未实机验证</b>：成分仪实际显示、倒液交互与 500 ml 守恒、客户收购与价格幅度、Harmony 4 类 6 个补丁实际命中/冲突、旧存档接管，以及数据桥接后<b>原版 tooltip 多出「水/化学 feature」行的观感</b>。打印机（P1b）不在本轮。
+  </div>
+
+  <h2>第 19 轮 P1b1：标签打印机 + 单钢瓶纯度</h2>
+  <div class="grid g3">
+    <div class="card"><h3>标签打印机 <code>label_printer</code>（32×32 / 2×2）</h3><p><b>激活/点击打印机本身</b>循环 14 个标签模式（7 档 × 化学品/医疗品，默认街头标准/化学品）；<b>拿打印机点本模组药剂瓶</b>=盖章。状态行 <code>printer_mode</code>「当前标签：{0} / {1}」（{0}=档位，{1}=化学品/医疗品），结果用 <code>printer_stamp_ok/fail/target_invalid</code>。</p></div>
+    <div class="card"><h3>真实纯度 vs 标签等级</h3><p>真实纯度档（real）与标签档（fake）<b>分开存储</b>；原版成分仪分别显示 <b>tested / labeled</b> 两行。盖章不改真实纯度、不调 <code>GradeProduct</code>；医疗模式标 <code>MEDICAL</code>（可被医疗采购收购），化学品模式只加不撤。</p></div>
+    <div class="card"><h3>单钢瓶纯度</h3><p>灌装台<b>只产 <code>can_*_industrial</code></b>，气体纯度按投入档位写入 tag 并同步原版七档 <code>ItemFeature</code>；medical/ultrapure 8 个 SKU 保留注册（legacy）但<b>不再产出/掉落</b>；<b>100% 纯度留 P1c</b>（≥99.5 + 催化剂 + 电力 → 打印机校准，未实现）。</p></div>
+  </div>
+  <div class="note">
+    <b>未实机验证</b>：选中/点击盖章交互、14 模式循环手感、成分仪 tested/labeled 双行、医疗客户是否收购、旧存档三档钢瓶兼容、单钢瓶价格幅度。
+  </div>
+
+  <h2>第 20 轮 P1c：多级提纯与 100% 分析纯</h2>
+  <div class="grid g3">
+    <div class="card"><h3>多级提纯（过滤台）</h3><p>每次过滤 <code>fc_purify_level</code> <b>+1（上限 5）</b>；残留下限 0.70%→0.02%，理论纯度上限 <b>94.40% → 99.84%</b>（任何等级都 &lt;100%）；<b>滗析不改变提纯等级</b>；tooltip 里<b>等级 0 不显示</b>；需多张无灰滤纸。</p></div>
+    <div class="card"><h3>打印机第 15 模式：校准</h3><p>激活循环 <b>15 模式</b>（14 标签 + 校准）；切「校准（分析纯）」→ 点催化剂套件<b>充能（≤3）</b> → 点纯度 ≥99.5% 药剂。</p></div>
+    <div class="card"><h3>100% 分析纯</h3><p>校准成功：污染物清零、提纯等级 5、真实纯度 100、原版实验室纯级（价格 <b>+135%</b>），消耗 1 充能；这是<b>唯一 100% 路径</b>，成本高。</p></div>
+  </div>
+  <table style="margin-top:12px">
+    <tr><th>提纯等级</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th></tr>
+    <tr><td>残留下限/类</td><td>0.70%</td><td>0.35%</td><td>0.17%</td><td>0.08%</td><td>0.04%</td><td>0.02%</td></tr>
+    <tr><td>理论纯度上限</td><td>94.40%</td><td>97.20%</td><td>98.64%</td><td>99.36%</td><td>99.68%</td><td>99.84%</td></tr>
+  </table>
+  <div class="note">
+    <b>未实机验证</b>：提纯等级手感（每级过滤次数/滤纸消耗）、校准交互（充能 → 校准）、100% 在 tooltip/成分仪/价格/客户上的表现、旧存档物品按 level 0 兼容。
+  </div>
+
+  <h2>第 21 轮 P2a：化学品扩充与反应式重写</h2>
+  <div class="grid g4">
+    <div class="card"><h3>新增 10 种化学品</h3><p>生石灰 CaO / 熟石灰 Ca(OH)2 / 纯碱 Na2CO3 / 小苏打 NaHCO3 / 氯化铵 NH4Cl / 二氧化锰 MnO2 / 氧化铜 CuO（仅掉落）/ 硫酸钾 K2SO4 / 硝酸钠 NaNO3 / 锰酸钾 K2MnO4；全部 16×16、1 格。</p></div>
+    <div class="card"><h3>反应式修正</h3><p>CO2 / 双氧水 / 盐水 / 硝酸铵结晶补 <code>liq_water</code>；KMnO4 分解补 MnO2 + K2MnO4；铵盐放氨补 NaNO3 + 水；<b>次氯酸盐改用熟石灰</b>（原无钙源）；中和改出盐水+水；吸收塔补水；硝石制硝酸配平 + 硫酸钾。</p></div>
+    <div class="card"><h3>新增 5 条反应</h3><p><code>lime_calcination</code> CaCO3→CaO+CO2、<code>slaked_lime</code> CaO+H2O→Ca(OH)2、<code>soda_from_caustic</code> 2NaOH+CO2→Na2CO3+H2O、<code>baking_soda</code>、<code>ammonium_chloride</code>；反应 39→<b>44</b>。</p></div>
+    <div class="card"><h3>数字变化</h3><p>物品 73→<b>83</b>、数字 ID 86→<b>96</b>（87–96 追加）、图标 99→<b>109</b>、本地化 352→<b>382</b>、反应 39→<b>44</b>。</p></div>
+  </div>
+  <div class="note">
+    <b>未实机验证</b>：新反应设备投料/温度档/副产物槽位（尤其次氯酸盐改熟石灰、硝石制硝酸配平）、新化学品掉落刷出、图标背包观感、产物链式继续投料的游戏内可达性。
+  </div>
+
+  <h2>第 22 轮 P3a：液体瓶 500 ml / 16×48 与占格修复</h2>
+  <div class="grid g3">
+    <div class="card"><h3>液体瓶 500 ml / 16×48</h3><p>10 种液体药剂瓶统一 <b>16×48 → 1×3 格</b>（瓶盖+瓶颈+瓶身+液面+标签+瓶底），容量 <b>500 ml</b>。</p></div>
+    <div class="card"><h3>占格规则</h3><p><code>SetSpriteAndShapeFromMod</code> 按不透明像素推导 → 三个格子中心 <b>y=8/24/40</b> 必须有像素，且瓶盖贴顶、瓶底贴底；否则只判 1–2 格。</p></div>
+    <div class="card"><h3>16×32 修复</h3><p>烧杯/鹅颈瓶/锥形瓶/试管架/酒精灯/酒精喷灯 已延伸到画布上下缘并保证两格中心不透明，修复「看着两格、游戏里一格」。</p></div>
+  </div>
+  <div class="note">
+    其他 99 张图标尺寸+SHA256 不变，总数仍 <b>109</b>；本地化 382→<b>396</b>（+11：7 占位键 + 4 仪器提示键 <code>inst_lamp_hint</code>/<code>inst_wick_hint</code>/<code>inst_filter_hint</code>/<code>inst_fuel_hint</code>）。<br>同批行为修正：液体瓶 <b>500 ml</b>（原 250）、酒精灯按纯度灌入（70%→350ml / 100%→500ml）、灯芯耗尽可换、滤纸真正结算并提纯 +1、成瘾画像审计。
+    <b>未实机验证</b>：16×48 是否稳定 1×3、6 张 16×32 是否恢复 1×2、500 ml 瓶型观感；占位键功能尚未实现。
+  </div>
+
+  <h2>第 23 轮 P3b–P3e：倒液 / 扫描仪 / 原版替代 / 气瓶槽 / 索引书 / 电话商人</h2>
+  <div class="grid g3">
+    <div class="card"><h3>P3b 倒液 + 扫描仪 + 原版替代</h3><p>液体瓶设 <b>owner/source</b> 让原版容器可接收；扫描仪显示总液量/单件/纯净物；蒸馏水/乙醇转 legacy、反应改用原版 water/alcohol；<b>咖啡因/咖啡豆糊不再由 mod 生产</b>（热反应删除、仅 legacy 注册），原版咖啡/咖啡因走原版制作。</p></div>
+    <div class="card"><h3>P3c 气瓶槽（已落盘）</h3><p>13 台设备（含加热台）各 2 个气瓶槽（<code>ui_gas_slot</code> + <code>ui_gas_slot_tip</code>）；气瓶映射 <code>gas_*</code> 投料、反应后回收空瓶（守恒、输出满则保留）、无液体杂质、纯度带入产出气体。</p></div>
+    <div class="card"><h3>P3d 索引书（已落盘）</h3><p><code>chem_index.json</code> 5 页、每页 20 个 ID <b>单列</b>（fontSize 16/wrap/autoHeight）、zh/en 双语名，覆盖 1–97；调试面板（F10）只剩 3 项，新增「生成 ID 索引书」+ 全场 11 个物品栏唯一性检测；调试键 <code>debug_gen_index_book</code>/<code>debug_book_exists</code>/<code>debug_book_ok</code>/<code>debug_book_spawn_fail</code>/<code>debug_list_removed</code>。</p></div>
+  </div>
+  <div class="card" style="margin-top:12px"><h3>P3e 便条 + 电话商人（已落盘）</h3><p>便条 <code>note_chem_dealer</code> #97（16×32，线索用）；电话号码 <b>96686</b>（Supplier），选项「订购基础化学品（$320）」；<b>每日 1 单</b>、扣现金、ModData <code>fc_chem_order_pending</code>；<b>次日清晨开店送前柜台</b>（满则回退后柜台）；10 个电话/订购键齐备（<code>phone_chem_title</code> 等）。</p></div>
+  <div class="note">
+    图标 109→<b>110</b>（便条）、本地化 393→<b>440</b>（扫描仪 3 键 + 便条三连键转正）、新增 <code>chem_index.json</code>。
+    <b>未实机验证</b>：owned 倒液、扫描仪显示、原版替代后反应链、气瓶槽/空瓶守恒、索引书唯一性与翻页、电话订购/支付/次晨送达。
+  </div>
+
+  <h2>第 24 轮 P3f：化学/流程/器具审计</h2>
+  <div class="grid g3">
+    <div class="card"><h3>加热台 2×2 反应槽</h3><p>可直接放药剂 / 原版药剂瓶 / 容器；热反应成功<b>消耗投料（容器保留）</b>，超温降解也消耗——修复「6 条热反应实际不可达」。</p></div>
+    <div class="card"><h3>低档 99°C / 高档 160°C</h3><p>点击酒精灯/喷灯切档；<code>heat_kmno4</code> 改 140–160°C（降解 190）、<code>heat_nh4no3</code> 改 150–160°C（降解 200）。</p></div>
+    <div class="card"><h3>T4 原版化合物 + 方程修正</h3><p>空盐=紫药瓶、红雾=橙+小粉瓶、夜玻=梦帽菇、<b>灰息=原版氨水瓶</b>；<code>hcl_absorption</code>/<code>salt_crystallize</code> 标注为水为溶剂/母液的物理过程。</p></div>
+  </div>
+  <div class="note">
+    本轮修复 <b>7 类</b>：① 热反应不可达 ② 不消耗投料 ③ 高档无入口 ④ KMnO4/NH4NO3 温区超上限 ⑤ 灰息 T4 原版氨水 ⑥ ValidateLogic 误报 ⑦ 非化学计量方程标注。<br>
+    新增审计文档 <code>docs/chemistry-audit.md</code>（44 夜间逐条表 / 6 热反应 / T4 映射 / 设备步骤 / 修复清单）。
+    <b>未实机验证</b>：热反应匹配与投料销毁、2×2 槽交互、灯档切换、新温区可达、T4 合成、气瓶槽双气、滤纸/打印机/灌装机。
+  </div>
+
+  <h2>第 25 轮 P4b：描述纯度一致性 + 索引书单列</h2>
+  <div class="grid g2">
+    <div class="card"><h3>描述不再写死档位/纯度</h3><p>22 条 <code>_desc</code>/<code>_flavor</code> 去掉「街头标准/药用级/实验室纯/工业级」与 70%/95%/99%/0.7%/100% 等硬编码，只写用途/外观/化学性质；<b>档位与纯度由 tooltip/分析仪动态显示</b>（vent 55%/12% 属机制数值保留）。</p></div>
+    <div class="card"><h3>索引书单列排版</h3><p><code>chem_index.json</code> 单列、<b>fontSize 16 / wrap / autoHeight</b>、每页 <b>20 条</b>「ID X  名称」；1–97 分 <b>5 页</b>（20/20/20/20/17），zh/en 双语。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：改写后描述观感、动态纯度与描述协调性；索引书字号/自动高度/翻页/双语显示。</div>
+
+  <h2>第 26 轮 P4a：按功能重设 13 台机器窗口</h2>
+  <div class="grid g3">
+    <div class="card"><h3>无电设备（4 台）</h3><p>滗析槽 1 投料→3×3；过滤台 1 投料 + <b>滤纸专用槽</b>→3×3；滴定台 2 投料→3×2；加热台（容器/加热器/灯芯/燃料 + 2 气瓶槽，酒精灯供热）。<b>不建电池槽、不扣电</b>。</p></div>
+    <div class="card"><h3>有电设备（9 台，功率）</h3><p>结晶 5 / 气体发生器 6 / 洗涤 7 / 冷凝 8 / 灌装 9（空瓶专用槽 4×4）/ 反应釜 10（+模块）/ 分馏 12 / 电解 14（+模块）/ 高压合成 16。</p></div>
+    <div class="card"><h3>官方 Machinery 构建</h3><p><code>CreateMachineryWindow</code> + <code>PowerPanel/NotePanel</code> + <code>SetupBatterySlot</code> + <code>MachineryHelper.InitMachinery</code>；面板顺序即存档顺序；所有机器保留 2 气瓶槽；标签 <code>ui_input/ui_output/ui_vessel/ui_heater/ui_wick/ui_fuel/ui_modules/ui_battery/ui_note/ui_gas_slot(-tip)</code>。</p></div>
+  </div>
+  <div class="note"><b>未实机验证 / 风险</b>：<b>旧存档机器槽位可能错位</b>（面板顺序变化、未迁移）；窗口布局/尺寸、专用槽交互、扣电与电池面板、无电设备不耗电。</div>
+
+  <h2>第 27 轮 P4c/P4d：真实组分 · 属性标签 · 读档修复</h2>
+  <div class="grid g3">
+    <div class="card"><h3>真实化学组分（1000 part/件）</h3><p>全部药剂带原版 Liquid 组分（<code>ChemRecipes.ComponentParts</code>）：液体复用 PourParts，固体/气体/违禁品映射原版常量（如 MnO2→heavy_metal、咖啡因→caffeine、灰息→acid+plant_matter+base）；钢瓶/大桶按气体同组分；不注册自定义 Liquid。</p></div>
+    <div class="card"><h3>组分→属性标签</h3><p><code>fc_tox</code>/<code>fc_euph</code>/<code>fc_addict</code>（0–100）由原版 Liquid 的 lethality/euphoria/addictiveness 聚合计算；Profile 仍作 tooltip 显示层、同源。</p></div>
+    <div class="card"><h3>分析仪 + 读档修复</h3><p>扫描仪经 <code>AddLiquidToChemFromList</code> 显示总液量/成分百分比（兜底仅 total=0 时）；<code>EnsureLiquidBridge</code>/<code>RehydrateLoadedItems</code> 在 <code>OnGameLoaded</code> + 开店重建旧档 tag/组分（含机器内容窗）；电话 96686 用 <code>EnsureRegistered</code> 幂等注册。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：分析仪组分显示、组分与 Profile 量纲一致性、旧档组分持久化、电话/容器补丁实机、13 台机器新窗口渲染。</div>
+
+  <h2>第 28 轮 P5c：索引书版式 + 电话/便签/机器便签文案</h2>
+  <div class="grid g3">
+    <div class="card"><h3>索引书版式修正</h3><p><code>notebook_manual</code> 双页展开 → 单列只放左页：<b>x=24 / w=266 / y=60 / h=650 / fontSize=14</b>、wrap/autoHeight；x+w=290、y+h=710≤804；每页 ≤30 行，<b>4 页（25/24/24/24）</b>覆盖 1–97。</p></div>
+    <div class="card"><h3>电话/便签文案（+21 键）</h3><p><code>phone_chem_greeting</code> 重写；新增 <code>phone_chem_stock_desc</code>/<code>phone_chem_menu_hangup</code>/<code>phone_chem_result_ok</code>/<code>phone_chem_result_fail_insufficient</code>/<code>phone_chem_result_pending</code>/<code>phone_chem_result_daily_limit</code>/<code>phone_chem_back</code> + 按钮标签 <code>phone_chem_label_order/stock/hangup/back</code> + 库存选项 <code>phone_chem_stock_choice(_desc)</code>；原版便签 <code>note_chem_dealer_text</code>（96686、订购、次日配送）。</p></div>
+    <div class="card"><h3>机器便签（13 条）</h3><p>每台机器 1 条 <code>machine_note_&lt;id&gt;</code>：用途/投料/专用槽（滤纸/空瓶/气瓶）/温度-pH/产出，供 NotePanel 显示。试剂名称保持短名，公式只在描述里。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：索引书真实排版/翻页、电话多页对话与挂断、原版便签打开、机器便签在 NotePanel 的呈现。</div>
+
+  <h2>第 29 轮 P5f：原版便签 · 多页电话 · 机器便签 · 氯气组分</h2>
+  <div class="grid g4">
+    <div class="card"><h3>原版 handnote</h3><p>便签改原版 <b>handnote</b>（DOCUMENT、可点击打开），内容含电话 <b>96686</b>；mod #97 化学便条仅 legacy、掉落移除。</p></div>
+    <div class="card"><h3>多页电话</h3><p>首页（问候/订购/库存/挂断）→ 结果页（成功/资金不足/已订/待配送/失败）；每页含挂断+返回；资金不足不扣款。</p></div>
+    <div class="card"><h3>机器便签 14 台</h3><p>12 机器 + 加热台各 1 张原版 handnote（<code>machine_note_&lt;id&gt;</code>，含 <code>machine_note_heating_platform</code>），用途/槽位/条件，随机器存档。</p></div>
+    <div class="card"><h3>氯气独立组分</h3><p>自定义 Liquid <code>fc_chlorine_gas</code>（显示「氯气」），不与原版 chlorine/净水片冲突；读档迁移 <code>fc_components_ver=2</code>。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：handnote 打开、电话多页/挂断、机器便签呈现与存档、自定义组分读档显示。</div>
+
+  <h2>第 30 轮 P6：端到端合理性修复</h2>
+  <div class="grid g4">
+    <div class="card"><h3>电话修复</h3><p>姓名走 locID、联系人与快捷拨号可见；每日 1 单可靠日期判定（跨天可再订）；下单防连点、单点扣款；旧档可拨。</p></div>
+    <div class="card"><h3>倒液兜底</h3><p>任意原版液体容器可接收；<b>容量限流</b>、<b>体积扣减</b>、<b>倒空销毁空瓶</b>。</p></div>
+    <div class="card"><h3>分析仪四行</h3><p>成分 / 总液量 / 化学式 / 毒性·欣快；<b>氯气显示「氯气」</b>（<code>fc_chlorine_gas</code>，不与原版 chlorine 混淆）。</p></div>
+    <div class="card"><h3>机器逐台 + code-review</h3><p>13 机器 + 加热台 + 打印机逐台核对；code-review P0/P1 <b>12 条全 PASS</b>（其状态表为旧状态）。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：电话列表/快捷拨号与跨天再订、倒液交互、分析仪四行排版、机器窗口实机渲染。</div>
+
+  <h2>第 31 轮 P7b：手册事实更新 · 中文界面 · 索引书清理</h2>
+  <div class="grid g4">
+    <div class="card"><h3>手册重做</h3><p><code>chem_codex</code> 5 页更新：84 物品+13 设备、ID 1–97、反应 44+6、灌装只产工业钢瓶、索引书 4 页/1–97、电话 96686/$320/每日 1 单/次晨前柜台；新档发放，F10 索引书查 ID。</p></div>
+    <div class="card"><h3>中文界面</h3><p>分析仪「毒性 {0} / 欣快 {1}」（<code>scanner_tox_euph</code>/<code>scanner_toxicity</code>/<code>scanner_euphoria</code>）；槽位 <code>ui_filter_slot</code>/<code>ui_container_slot</code>/<code>ui_gas_slot_1/2</code>/<code>ui_module_slot</code>；事故提示 <code>accident_protection_hint</code>；调试 ID 范围动态 1–97。</p></div>
+    <div class="card"><h3>索引书清理</h3><p>11 件 legacy 无来源物品标「（legacy）」；<b>84 条物品 flavor 全部差异化</b>。</p></div>
+    <div class="card"><h3>灌装便签统一</h3><p>灌装台只产工业钢瓶/大桶、需电池、<b>不设气瓶槽</b>；洗涤塔仅气体、冷凝塔需气体+液体；催化剂/天平/护目镜描述改实际作用。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：手册/索引书排版翻页、分析仪中文四行、槽位/事故提示显示、燃料来源、产物溢出后柜台。</div>
+
+  <h2>第 32 轮 P7：玩家审查修复（P0/P1）</h2>
+  <div class="grid g3">
+    <div class="card"><h3>P0 危险反应默认可用</h3><p><code>Protected</code> 默认 true，护目镜防护；设置关闭后事故弹提示；17 条 hazard≥2 配方正常产出不吞料。</p></div>
+    <div class="card"><h3>P0 输出累计 + 溢出后柜台</h3><p>输出格扩容、<code>CanAcceptOutputs</code> 累计判定；放不下改投后柜台并日志，<b>绝不静默销毁</b>。</p></div>
+    <div class="card"><h3>P0 燃料</h3><p>原版酒精小瓶 <code>mini_bottle</code>（250 ml/70%）直接作加热台燃料；起始礼包/电话包/掉落补乙醇。</p></div>
+  </div>
+  <div class="grid g3" style="margin-top:12px">
+    <div class="card"><h3>P1 机器与提纯</h3><p>13 台机器加入发明家库存/人脉升级；液体产物继承纯度/提纯等级、蒸馏过滤提升、固体可重结晶。</p></div>
+    <div class="card"><h3>P1 打印机与违禁品</h3><p>盖章 <b>$8/次</b>（医疗同价）；出售/购买/持有违禁品按价值增加 ENDANGERMENT 嫌疑。</p></div>
+    <div class="card"><h3>P1 灌装槽与宽容判定</h3><p>灌装台无气瓶槽（与便签一致）；温度区间宽松匹配、多余同相投料容忍并提示。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：危险反应默认产出/事故提示、输出溢出后柜台、mini_bottle 燃料、机器获取、提纯链、$8 扣费、违禁品嫌疑、温度/投料宽容。<br><b>DLL</b>：包与游戏 Mods 已同步（117 文件，181,760B 与构建逐字节一致）。</div>
+
+  <h2>第 33 轮 P8b：电话套餐 / 单项化学品</h2>
+  <div class="grid g3">
+    <div class="card"><h3>套餐</h3><p><code>phone_pack_basic/acid/base/solvent/solid</code>（基础/酸/碱/溶剂/固体包）+ <code>phone_pack_*_name/_desc</code>；<b>套餐价 = 单项合计 -15%</b>。</p></div>
+    <div class="card"><h3>目录/分类</h3><p>首页（基础包/套餐目录/单项目录/挂断）→ 套餐页 → 单项分类页（<code>phone_pack_menu(_choice)</code>/<code>phone_single_menu(_choice)</code>/<code>phone_cat_*</code>）；单项按钮动态「名称 - $价」，<b>单项价 = Value×1.6</b>。</p></div>
+    <div class="card"><h3>结果页</h3><p><code>phone_order_single_result</code> / <code>phone_order_pack_result</code>；每日 1 单、次晨前柜台、mini_bottle 特判。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：电话目录/价格/折扣显示、下单与次晨配送、酒精瓶特判。</div>
+
+  <h2>第 34 轮 P9：物品名去化学式 + 公式 ASCII</h2>
+  <div class="grid g3">
+    <div class="card"><h3>名称只留俗名</h3><p>30 个化学品 <code>_name</code> 去掉公式/括号/下标（盐酸、硫酸、氯化铵、生石灰…），英文只留 compound name。</p></div>
+    <div class="card"><h3>公式统一 ASCII</h3><p>描述/flavor/手册/索引书/UI 化学式改为 <b>H2SO4 / Ca(OH)2 / CO2 / C2H5OH</b>；全局替换 <b>398 处</b> Unicode 下标，CSV 0 残留，修复方块字。</p></div>
+    <div class="card"><h3>索引书 schema</h3><p><code>chem_index.json</code> 用官方 <code>height=0</code>（沿用背景原生高度）、width 628、正文 h=600；不写死 804。</p></div>
+  </div>
+  <div class="note"><b>代码侧（features task-78）</b>：<code>ChemRecipes.Formula</code> 提供 ASCII 公式（HCl/H2SO4/Ca(OH)2/CO2，无公式「—」），分析仪化学式行/ProfileLine/机器便签均 ASCII；<code>fc_chlorine_gas</code> 显示名仅「氯气」。<br><b>未实机验证</b>：名称去公式后的显示、ASCII 公式字体显示、索引书 height=0 排版。</div>
+
+  <h2>第 36 轮 P10c：成分名 · 接触反应 · 全文本易理解化</h2>
+  <div class="grid g3">
+    <div class="card"><h3>成分名 57 键</h3><p><code>comp_&lt;id&gt;_name</code> 覆盖全部成分 57 个（<code>comp_water_name</code> 水、<code>comp_fc_hcl_name</code> 氯化氢、<code>comp_fc_h2so4_name</code> 硫酸、<code>comp_fc_cl2_name</code> 氯气、<code>comp_fc_caoh2_name</code> 氢氧化钙、违禁品成分、材料类），名称只写俗名。</p></div>
+    <div class="card"><h3>文本易理解化</h3><p>554 条无裸键/无占位符残留/无超长；hazard→危险等级、Command→指令、Debug→调试；1–85 → <b>1–97</b>（旧英文指令兼容）。</p></div>
+    <div class="card"><h3>机器便签 + 手册</h3><p>13 条便签补「容器可放入/可倒入试剂/接触反应」；chem_codex 第 1/2 页补成分与容器机制；索引书仍 4 页/1–97。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：成分名分析仪显示、容器携带内容与接触反应、便签/手册新文案排版。接触反应键 10 个已落盘：`contact_marble_hcl_name`/`contact_neutralize_hcl_name`/`contact_neutralize_h2so4_name`/`contact_nh4no3_name`/`contact_slaked_lime_name`/`contact_peroxide_mno2_name`/`contact_baking_soda_hcl_name`/`contact_nh4cl_name` + `contact_result`/`contact_fail`。</div>
+
+  <h2>第 38 轮 P11：文本去化学式 + 试管/试管架</h2>
+  <div class="grid g3">
+    <div class="card"><h3>用户文本无化学式</h3><p>CO2→二氧化碳、H2O→水、HCl→氯化氢… CSV/手册/索引书/便签/接触反应/UI 共约 <b>114 处</b>替换，0 残留；分析仪只显示「名称 · 总液量 · 成分 百分比」。</p></div>
+    <div class="card"><h3>#98 试管</h3><p>16×16 图标（总数 <b>111</b>）、三连键、100 ml 玻璃液体容器、可放入试管架；apparatus 掉落权重 12。</p></div>
+    <div class="card"><h3>试管架 + 便签双通道</h3><p>试管架 2×3 只收试管（不再是液体容器）；装好试剂后放机器输入槽参与反应、容器保留。机器便签 note 面板 + tooltip 双通道。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：试管倒液/进架/入机、便签双通道、分析仪无公式成分行、索引书 1–98 排版。</div>
+
+  <h2>第 39 轮 P12：移除 mod 乙醇 / 蒸馏水</h2>
+  <div class="grid g3">
+    <div class="card"><h3>删除 #43/#44</h3><p>Specs 移除、Create 返回 null、F10 提示「已移除」；ID 43/44 保留 reserved 占位；可生成物品 <b>83</b>，图标 <b>111→109</b>。</p></div>
+    <div class="card"><h3>配方与燃料</h3><p>水输出移除（水不计物品，仅内部 token，由原版水瓶提供）；乙醇热反应删除（反应总数 <b>44 夜间 + 5 实时</b>）；燃料=原版酒精瓶 <code>mini_bottle</code>（起始 2/电话包 1）。</p></div>
+    <div class="card"><h3>索引书/手册</h3><p>43/44 改为「已移除·请用原版酒精/水容器」说明行，仍 4 页/1–98；手册写明原版替代；本地化 554（6 个 legacy 键标注已移除）。</p></div>
+  </div>
+  <div class="note"><b>未实机验证</b>：F10 移除提示、原版水投料/接触反应、mini_bottle 燃料、旧存档残留物品。</div>
+
+  <h2>验收状态（如实区分）</h2>
+  <table>
+    <tr><th>阶段</th><th>状态</th><th>证据</th></tr>
+    <tr><td>接口核对</td><td class="ok">已验证</td><td><code>docs/api-findings.md</code>：运行时换图<b>可行</b>（SetSpriteAndShapeFromMod，已接线）；原版治安部 heat <b>官方无公开 API</b>，但存在未文档化 <code>SecData.CommitCrime</code> —— <b>第 13 轮已按 Lead 决策采用</b>（guard + 默认开启 + 可关）；&lt;GameVersions&gt; = <b>0.46</b></td></tr>
+    <tr><td>化学逻辑（文本层）</td><td class="ok">已验证</td><td><code>logic_check.py</code>：39 条反应 / 754 项断言全通过</td></tr>
+    <tr><td>化学逻辑（真实 C#）</td><td class="ok">已验证</td><td><code>logic-harness</code>：277 项断言，结论「全部通过」（相态 / 滗析 / 污染物 / 纯度链 / 加热公式 / 多级链 / T4 / 排风倍率 / 桶映射 / 反例）</td></tr>
+    <tr><td>本地化</td><td class="ok">已验证</td><td>554 条 zh/en 键集合完全一致、en 无中文；本地化类校验 FAIL = 0</td></tr>
+    <tr><td>编译</td><td class="pending">待 Lead 复核</td><td>本轮 Release 已通过（0 警告 0 错误），构建 <b>181,760 bytes</b>；发布包 `FreeChem/FreeChem.dll` 已同步，与构建产物<b>逐字节一致</b></td></tr>
+    <tr><td>静态验收</td><td class="ok">已通过</td><td><code>validate.py</code>：<b>80 PASS / 1 WARN / 0 FAIL</b>（唯一 WARN = v1 归档备份废弃 token，按约定不计 FAIL；反应方程已 ASCII 化）</td></tr>
+    <tr><td>能力扫描</td><td class="ok">已验证</td><td>空 Capabilities，IL 元数据无被禁 API</td></tr>
+    <tr><td>安装到游戏</td><td class="ok">已完成（包内 + 游戏 Mods 均已同步）</td><td>发布包与 <code>Mods/FreeChem/</code> 均已同步：<b>117 个文件、SHA256 全一致</b>（DLL 181,760B 与构建逐字节一致）</td></tr>
+    <tr><td>模组加载 / 功能 / 存档</td><td class="pending">未验证</td><td>需实机启用、F8 检查、保存重载</td></tr>
+    <tr><td>原版治安部写入（ENDANGERMENT）</td><td class="pending">已接入 / 实机未验证</td><td><code>CommitVanillaEndangerment</code>：HasInstance guard + <code>CommitCrime(ENDANGERMENT, units×10×倍率/10000)</code>；默认开启、设置 <code>vanilla_security</code> 可关；写入量平衡 / 调查节奏 / 专精 RNG 未验证</td></tr>
+    <tr><td>机器双状态换图</td><td class="pending">已接线 / 实机未验证</td><td><code>ChemMachines.SetMachineVisual</code> 统一入口（裸 key、仅状态变化时换图），13 台设备 + 加热台；游戏内是否真的换图未验证</td></tr>
+  </table>
+  <div class="note">
+    如实标注：新药剂<b>未注册进原版混合物组分表</b>（官方无此 API），兼容是物品 / 容器 / 设备 / 经济层面；
+    <b>原版治安部已接入</b>（未文档化成员，默认开启可关，写入量/调查节奏未实机验证）；毒性触发原版售后反馈、危险反应扣数值、游戏内加载与存档均需实机确认。
+    编译通过不能代替游戏内检查。
+  </div>
+</div>
+<script>
+const all = [
+ ["gas_chlorine", "氯气 Cl2"], ["gas_hydrogen", "氢气 H2"], ["gas_oxygen", "氧气 O2"], ["gas_hydrogen_chloride", "氯化氢 HCl(g)"],
+ ["gas_ammonia", "氨气 NH3"], ["gas_carbon_dioxide", "二氧化碳 CO2"], ["gas_nitrogen", "氮气 N2"], ["liq_hydrochloric_acid", "盐酸 HCl"],
+ ["liq_sulfuric_acid", "硫酸 H2SO4"], ["liq_nitric_acid", "硝酸 HNO3"], ["liq_sodium_hydroxide", "烧碱液 NaOH"], ["liq_hydrogen_peroxide", "双氧水 H2O2"],
+ ["liq_brine", "饱和盐水"], ["liq_ammonia_water", "氨水 NH3·H2O"], ["liq_calcium_chloride", "氯化钙溶液"], ["sol_sodium_chloride", "氯化钠晶体"],
+ ["sol_sodium_hydroxide", "片状烧碱"], ["sol_copper_sulfate", "硫酸铜晶体"], ["sol_potassium_nitrate", "硝酸钾"], ["sol_calcium_carbonate", "碳酸钙"],
+ ["sol_ammonium_nitrate", "硝酸铵"], ["sol_potassium_permanganate", "高锰酸钾"], ["sol_sulfur", "硫磺"], ["sol_activated_carbon", "活性炭"],
+ ["sol_bleaching_powder", "漂白粉"], ["chem_reactor", "合成反应釜（空闲）"], ["chem_reactor_on", "合成反应釜（工作）"], ["electrolyzer", "电解槽（空闲）"],
+ ["electrolyzer_on", "电解槽（工作）"], ["gas_generator", "气体发生器（空闲）"], ["gas_generator_on", "气体发生器（工作）"], ["condenser_unit", "冷凝塔（空闲）"],
+ ["condenser_unit_on", "冷凝塔（工作）"], ["crystallizer", "结晶器（空闲）"], ["crystallizer_on", "结晶器（工作）"], ["high_pressure_synth", "高压合成塔（空闲）"],
+ ["high_pressure_synth_on", "高压合成塔（工作）"], ["fractionator", "分馏柱（空闲）"], ["fractionator_on", "分馏柱（工作）"], ["titration_bench", "滴定台（空闲）"],
+ ["titration_bench_on", "滴定台（工作）"], ["canister_filling", "气体灌装台（空闲）"], ["canister_filling_on", "气体灌装台（工作）"], ["decanter", "静置滗析槽（空闲）"],
+ ["decanter_on", "静置滗析槽（工作）"], ["gas_scrubber", "气体洗涤塔（空闲）"], ["gas_scrubber_on", "气体洗涤塔（工作）"], ["precision_balance", "精密天平"],
+ ["ph_meter", "pH 计"], ["thermometer", "温度计"], ["gas_canister_empty", "空钢瓶"], ["catalyst_kit", "催化剂套件"], ["safety_goggles", "护目镜"],
+ ["gas_drum_empty", "大型储气桶（空）"], ["gas_drum_oxygen", "大型氧气桶"], ["gas_drum_hydrogen", "大型氢气桶"], ["gas_drum_nitrogen", "大型氮气桶"],
+ ["gas_drum_chlorine", "大型氯气桶"], ["gas_drum_carbon_dioxide", "大型二氧化碳桶"], ["can_oxygen_industrial", "氧气·工业级"], ["can_hydrogen_industrial", "氢气·工业级"],
+ ["can_nitrogen_industrial", "氮气·工业级"], ["can_chlorine_industrial", "氯气·工业级"], ["can_oxygen_medical", "氧气·医用级"], ["can_hydrogen_medical", "氢气·医用级"],
+ ["can_nitrogen_medical", "氮气·医用级"], ["can_chlorine_medical", "氯气·医用级"], ["can_oxygen_ultrapure", "氧气·化学纯"], ["can_hydrogen_ultrapure", "氢气·化学纯"],
+ ["can_nitrogen_ultrapure", "氮气·化学纯"], ["can_chlorine_ultrapure", "氯气·化学纯"], ["illicit_voidsalt", "空盐（违禁）"], ["illicit_redmist", "红雾（违禁）"],
+ ["illicit_nightglass", "夜玻（违禁）"], ["illicit_ashbreath", "灰息（违禁）"], ["beaker", "烧杯"], ["retort_flask", "鹅颈瓶"],
+ ["erlenmeyer_flask", "锥形瓶"], ["test_tube_rack", "试管架"], ["filter_paper", "化学滤纸"], ["filter_paper_fine", "精密滤纸"],
+ ["filter_paper_ash", "无灰定量滤纸"], ["wick_cotton", "棉灯芯"], ["wick_ceramic", "陶瓷灯芯"], ["alcohol_lamp", "酒精灯"],
+ ["spirit_burner", "酒精喷灯"], ["heating_platform", "大型加热台（空闲）"], ["heating_platform_on", "大型加热台（工作）"], ["filtration_bench", "过滤台（空闲）"],
+ ["filtration_bench_on", "过滤台（工作）"], ["liq_ethanol", "乙醇"], ["liq_water", "蒸馏水"], ["gas_ethylene", "乙烯 C2H4"],
+ ["gas_nitrous_oxide", "笑气 N2O"], ["sol_coffee_grounds", "咖啡豆糊"], ["sol_caffeine", "咖啡因"], ["sludge", "废渣"],
+ ["sol_sediment", "沉降沉淀"]
+];
+const host = document.getElementById('icons');
+all.forEach(([k,n])=>{
+  const d=document.createElement('div'); d.className='ic';
+  const im=document.createElement('img'); im.src='FreeChem/Textures/Items/'+k+'.png'; im.alt=k;
+  im.onerror=()=>{im.style.visibility='hidden'};
+  const s=document.createElement('span'); s.textContent=n;
+  d.appendChild(im); d.appendChild(s); host.appendChild(d);
+});
+</script>
+</body>
+</html>

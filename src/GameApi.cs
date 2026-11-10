@@ -13,6 +13,10 @@ namespace FreeChem
         public const string ModId = "free_chem";
         public const string TagRecipe = "fc3_rxn";
         public const string TagProgress = "fc3_prog";
+        /// <summary>容器碎屑里属于重金属滤渣的 part 数（SludgeLedger 的 Metal）。</summary>
+        public const string TagSludgeMetal = "fc3_msludge";
+        /// <summary>不足一件的滤渣零头（SludgeLedger 的 Remainder）。</summary>
+        public const string TagSludgeRemainder = "fc3_msludge_rem";
 
         static ModLog log;
         public static void Bind(ModLog l) { log = l; }
@@ -82,6 +86,68 @@ namespace FreeChem
             int p = st.Progress;
             container.ModifyTag(TagRecipe, s => s.Enable().SetString(id));
             container.ModifyTag(TagProgress, s => s.Enable().SetInt(p));
+        }
+
+        public static void AddSludgeMetal(GameItem container, int parts)
+        {
+            if (parts <= 0) return;
+            int v = ReadInt(container, TagSludgeMetal, 0) + parts;
+            container.ModifyTag(TagSludgeMetal, s => s.Enable().SetInt(v));
+        }
+
+        /// <summary>
+        /// 过滤钩子的落点：容器里的碎屑被滤走 <paramref name="removedDebris"/> part（滤前共 <paramref name="debrisBefore"/>）。
+        /// 按账换成滤渣物品，放到后柜台。【待核】谁来调用它：见 v3/DESIGN.md「过滤钩子」。
+        /// </summary>
+        public static int OnDebrisRemoved(GameItem container, int removedDebris, int debrisBefore)
+        {
+            int metal = ReadInt(container, TagSludgeMetal, 0);
+            int rem = ReadInt(container, TagSludgeRemainder, 0);
+            int items = SludgeLedger.OnDebrisRemoved(removedDebris, debrisBefore, ref metal, ref rem,
+                                                     RecipeTable.SludgePartsPerItem);
+            int m = metal, r = rem;
+            container.ModifyTag(TagSludgeMetal, s => s.Enable().SetInt(m));
+            container.ModifyTag(TagSludgeRemainder, s => s.Enable().SetInt(r));
+            for (int i = 0; i < items; i++) SpawnSludge();
+            if (items > 0) Log("metal sludge +" + items);
+            return items;
+        }
+
+        /// <summary>造一件滤渣放到后柜台。放不下时先只读探测，失败就销毁并弹原版提示，绝不静默丢失。</summary>
+        static void SpawnSludge()
+        {
+            GameItem item = ItemDirectory.CreateEmptyItem(RecipeTable.SludgeItemId);   // 工厂已注册，见 ModEntry
+            if (item == null) return;
+            ModHelper.SetItemOwnerShip(item, true);
+            ModHelper.SetSource(item, ModId, "FreeChem");
+            var emporium = EmporiumEntry.Instance;
+            GameGridInventory back = emporium == null ? null : emporium.backInvinvElement;
+            if (back == null || !GraphUtils.CanAccept(back, item))
+            {
+                item.Destroy();
+                try
+                {
+                    GenericConfirmationUIManager.Instance.OpenPanelSingleButton(
+                        ModHelper.GetLocalized(ModId, "fc3_back_full"), "OK", null);
+                }
+                catch (Exception e) { Warn("full-counter alert failed: " + e.Message); }
+                return;
+            }
+            GraphUtils.TryAcceptAllOrDestroy(back, item, "free_chem.sludge");
+        }
+
+        /// <summary>注册滤渣物品用的工厂。贴图 Textures/Items/metal_sludge.png（1×1 格）。</summary>
+        public static GameItem BuildSludgeItem()
+        {
+            string id = RecipeTable.SludgeItemId;
+            GameItem item = ItemDirectory.CreateEmptyItem(id);
+            item.name = ModHelper.GetLocalized(ModId, id + "_name");
+            item.shortDescription = ModHelper.GetLocalized(ModId, id + "_desc");
+            item.flavorText = ModHelper.GetLocalized(ModId, id + "_flavor");
+            item.unitValue = RecipeTable.SludgeValue;
+            item.SetSpriteAndShapeFromMod(ModId, id);
+            item.SetGameItemType(TypeHelper.CHEMICAL_SUPPLIES);
+            return item;
         }
 
         static bool warnedTemp;

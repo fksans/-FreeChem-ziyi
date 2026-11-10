@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Manifest>
+  <ID>free_chem</ID>
+  <Name>FreeChem · 自由化学</Name>
+  <Author>Claw / software-company</Author>
+  <ModVersion>0.9.6</ModVersion>
+  <Description>FreeChem · 自由化学：为《深空当铺》扩展原版没有的具名化学药剂（盐酸、硫酸、硝酸、烧碱、双氧水、氯气/氧气/氮气/氨气等）、39 条贴近真实配平的合成与提纯反应、T1–T4 多级链（含 4 种虚构违禁品）；新增电解槽、气体发生器、合成反应釜、冷凝吸收塔、结晶器、高压合成塔、分馏柱、滴定台、气体灌装台、静置滗析槽、气体洗涤塔、过滤台与实时大型加热台共 13 台设备（兼容原版电力、电池、模组与容器）；便携钢瓶（2×3 格）与大型储气桶（3×4 格）分档，产出工业/医用/化学纯气罐；新增烧杯、鹅颈瓶、锥形瓶、试管架、三档化学滤纸、酒精灯+灯芯、温度计等器材；滗析、过滤与洗涤提纯始终受 0.7% 残留下限约束，无法完全提纯。王尔德人脉新增气体商人、排风服务与进阶排风服务；有毒气体排放会计入排气嫌疑度，并折算写入原版治安部 ENDANGERMENT（未文档化成员，可在模组设置关闭）。模组设置面板提供「调试模式」开关；开启后可在游戏「选项 → 按键绑定」用快捷键（默认 F10，可重绑，不需要 dev.txt）打开「FreeChem 调试生成窗口」，输入 1–85 的私有数字 ID 或 spawn N 将对应物品生成到后柜台；后柜台放不下时会以原版风格窗口提示「柜台已满，无法加入新物品。」（F9 调试面板入口保留为开发机备用，需 dev.txt 并重启游戏。）</Description>
+  <GameVersions>
+    <Version>0.46</Version>
+  </GameVersions>
+  <Prerequisites />
+  <Assemblies>
+    <Assembly>FreeChem.dll</Assembly>
+  </Assemblies>
+  <Capabilities />
+</Manifest>

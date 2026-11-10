@@ -1,0 +1,190 @@
+{
+  "id": "chem_index",
+  "title": "Chem Index",
+  "background": "notebook_manual",
+  "width": 628,
+  "height": 0,
+  "chrome": [
+    {
+      "type": "button",
+      "id": "close",
+      "action": "close",
+      "x": 297,
+      "y": 2.5,
+      "w": 14,
+      "h": 15
+    },
+    {
+      "type": "button",
+      "id": "flip_left",
+      "action": "flip_left",
+      "x": 124,
+      "y": 380,
+      "w": 16,
+      "h": 16
+    },
+    {
+      "type": "button",
+      "id": "flip_right",
+      "action": "flip_right",
+      "x": 176,
+      "y": 380.5,
+      "w": 14,
+      "h": 15
+    },
+    {
+      "type": "text",
+      "id": "page_indicator",
+      "action": "page_indicator",
+      "style": "page_number",
+      "align": "center",
+      "valign": "middle",
+      "x": 140.5,
+      "y": 374,
+      "w": 33,
+      "h": 25
+    }
+  ],
+  "pages": [
+    {
+      "name": "IDs 1-25",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 26,
+          "w": 266,
+          "h": 22,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "化学品 ID 索引（1–25）",
+            "en": "Chemical ID Index (1-25)"
+          }
+        },
+        {
+          "type": "text",
+          "x": 24,
+          "y": 60,
+          "w": 266,
+          "h": 600,
+          "style": "body",
+          "fontSize": 14,
+          "wrap": true,
+          "autoHeight": true,
+          "translations": {
+            "zh": "ID 1  氯气\nID 2  氢气\nID 3  氧气\nID 4  氮气\nID 5  氯化氢\nID 6  氨气\nID 7  二氧化碳\nID 8  盐酸\nID 9  硫酸\nID 10  硝酸\nID 11  烧碱液\nID 12  双氧水\nID 13  饱和盐水\nID 14  氨水\nID 15  氯化钙溶液\nID 16  氯化钠晶体\nID 17  片状烧碱\nID 18  硫酸铜晶体\nID 19  硝酸钾\nID 20  碳酸钙\nID 21  硝酸铵\nID 22  高锰酸钾\nID 23  硫磺\nID 24  活性炭\nID 25  漂白粉",
+            "en": "ID 1  Chlorine\nID 2  Hydrogen\nID 3  Oxygen\nID 4  Nitrogen\nID 5  Hydrogen Chloride\nID 6  Ammonia\nID 7  Carbon Dioxide\nID 8  Hydrochloric Acid\nID 9  Sulfuric Acid\nID 10  Nitric Acid\nID 11  Caustic Soda Solution\nID 12  Hydrogen Peroxide\nID 13  Saturated Brine\nID 14  Ammonia Water\nID 15  Calcium Chloride Solution\nID 16  Sodium Chloride Crystals\nID 17  Caustic Soda Flakes\nID 18  Copper Sulfate Crystals\nID 19  Potassium Nitrate\nID 20  Calcium Carbonate\nID 21  Ammonium Nitrate\nID 22  Potassium Permanganate\nID 23  Sulfur\nID 24  Activated Carbon\nID 25  Bleaching Powder"
+          }
+        }
+      ]
+    },
+    {
+      "name": "IDs 26-50",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 26,
+          "w": 266,
+          "h": 22,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "化学品 ID 索引（26–50）",
+            "en": "Chemical ID Index (26-50)"
+          }
+        },
+        {
+          "type": "text",
+          "x": 24,
+          "y": 60,
+          "w": 266,
+          "h": 600,
+          "style": "body",
+          "fontSize": 14,
+          "wrap": true,
+          "autoHeight": true,
+          "translations": {
+            "zh": "ID 26  空钢瓶\nID 27  催化剂套件\nID 28  精密天平\nID 29  pH 计\nID 30  温度计\nID 31  护目镜\nID 32  烧杯\nID 33  鹅颈瓶\nID 34  锥形瓶\nID 35  试管架\nID 36  化学滤纸\nID 37  精密滤纸\nID 38  无灰定量滤纸\nID 39  棉灯芯\nID 40  陶瓷灯芯\nID 41  酒精灯\nID 42  酒精喷灯\nID 43  乙醇（已移除·请用原版酒精）\nID 44  蒸馏水（已移除·请用原版水容器）\nID 45  乙烯\nID 46  笑气\nID 47  咖啡豆糊（legacy）\nID 48  咖啡因（legacy）\nID 49  工业氧气\nID 50  医用氧气（legacy）",
+            "en": "ID 26  Empty Gas Canister\nID 27  Catalyst Kit\nID 28  Precision Balance\nID 29  pH Meter\nID 30  Thermometer\nID 31  Safety Goggles\nID 32  Beaker\nID 33  Retort Flask\nID 34  Erlenmeyer Flask\nID 35  Test Tube Rack\nID 36  Chemical Filter Paper\nID 37  Fine Filter Paper\nID 38  Ash-Free Quantitative Filter Paper\nID 39  Cotton Wick\nID 40  Ceramic Wick\nID 41  Alcohol Lamp\nID 42  Spirit Burner\nID 43  Ethanol (removed - use vanilla alcohol)\nID 44  Distilled Water (removed - use vanilla water)\nID 45  Ethylene\nID 46  Nitrous Oxide\nID 47  Coffee Grounds (legacy)\nID 48  Caffeine (legacy)\nID 49  Industrial Oxygen\nID 50  Medical Oxygen (legacy)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "IDs 51-74",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 26,
+          "w": 266,
+          "h": 22,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "化学品 ID 索引（51–74）",
+            "en": "Chemical ID Index (51-74)"
+          }
+        },
+        {
+          "type": "text",
+          "x": 24,
+          "y": 60,
+          "w": 266,
+          "h": 600,
+          "style": "body",
+          "fontSize": 14,
+          "wrap": true,
+          "autoHeight": true,
+          "translations": {
+            "zh": "ID 51  化学纯氧（legacy）\nID 52  工业氢气\nID 53  医用氢气（legacy）\nID 54  化学纯氢（legacy）\nID 55  工业氮气\nID 56  医用氮气（legacy）\nID 57  化学纯氮（legacy）\nID 58  工业氯气\nID 59  精制氯气（legacy）\nID 60  化学纯氯（legacy）\nID 61  大型储气桶（空）\nID 62  大型氧气桶\nID 63  大型氮气桶\nID 64  大型氢气桶\nID 65  大型氯气桶\nID 66  大型二氧化碳桶\nID 67  空盐（违禁）\nID 68  红雾（违禁）\nID 69  夜玻（违禁）\nID 70  灰息（违禁）\nID 71  废渣\nID 72  沉降沉淀\nID 73  合成反应釜\nID 74  电解槽",
+            "en": "ID 51  Ultra-Pure Oxygen (legacy)\nID 52  Industrial Hydrogen\nID 53  Medical Hydrogen (legacy)\nID 54  Ultra-Pure Hydrogen (legacy)\nID 55  Industrial Nitrogen\nID 56  Medical Nitrogen (legacy)\nID 57  Ultra-Pure Nitrogen (legacy)\nID 58  Industrial Chlorine\nID 59  Refined Chlorine (legacy)\nID 60  Ultra-Pure Chlorine (legacy)\nID 61  Large Gas Drum (Empty)\nID 62  Large Oxygen Drum\nID 63  Large Nitrogen Drum\nID 64  Large Hydrogen Drum\nID 65  Large Chlorine Drum\nID 66  Large Carbon Dioxide Drum\nID 67  Void Salt (Contraband)\nID 68  Red Mist (Contraband)\nID 69  Night Glass (Contraband)\nID 70  Ash Breath (Contraband)\nID 71  Sludge\nID 72  Sediment\nID 73  Synthesis Reactor\nID 74  Electrolysis Cell"
+          }
+        }
+      ]
+    },
+    {
+      "name": "IDs 75-98",
+      "elements": [
+        {
+          "type": "text",
+          "x": 24,
+          "y": 26,
+          "w": 266,
+          "h": 22,
+          "style": "title",
+          "align": "center",
+          "translations": {
+            "zh": "化学品 ID 索引（75–98）",
+            "en": "Chemical ID Index (75-98)"
+          }
+        },
+        {
+          "type": "text",
+          "x": 24,
+          "y": 60,
+          "w": 266,
+          "h": 600,
+          "style": "body",
+          "fontSize": 14,
+          "wrap": true,
+          "autoHeight": true,
+          "translations": {
+            "zh": "ID 75  气体发生器\nID 76  冷凝吸收塔\nID 77  结晶器\nID 78  高压合成塔\nID 79  分馏柱\nID 80  滴定台\nID 81  气体灌装台\nID 82  静置滗析槽\nID 83  气体洗涤塔\nID 84  过滤台\nID 85  大型加热台\nID 86  标签打印机\nID 87  生石灰\nID 88  熟石灰\nID 89  纯碱\nID 90  小苏打\nID 91  氯化铵\nID 92  二氧化锰\nID 93  氧化铜\nID 94  硫酸钾\nID 95  硝酸钠\nID 96  锰酸钾\nID 97  化学品商人的便条（legacy）\nID 98  试管",
+            "en": "ID 75  Gas Generator\nID 76  Condenser / Absorption Tower\nID 77  Crystallizer\nID 78  High-Pressure Synthesis Tower\nID 79  Fractionating Column\nID 80  Titration Bench\nID 81  Gas Filling Station\nID 82  Decanting / Settling Tank\nID 83  Gas Scrubber\nID 84  Filtration Bench\nID 85  Large Heating Platform\nID 86  Label Printer\nID 87  Quicklime\nID 88  Slaked Lime\nID 89  Soda Ash\nID 90  Baking Soda\nID 91  Ammonium Chloride\nID 92  Manganese Dioxide\nID 93  Copper Oxide\nID 94  Potassium Sulfate\nID 95  Sodium Nitrate\nID 96  Potassium Manganate\nID 97  Chemistry Dealer's Note (legacy)\nID 98  Test Tube"
+          }
+        }
+      ]
+    }
+  ],
+  "item": {
+    "id": "chem_index",
+    "name": "Chem Index",
+    "description": "Private numeric ID index of all FreeChem items (1-98; 43/44 removed, legacy marked).",
+    "sprite": "ph_meter",
+    "value": 40,
+    "important": true
+  }
+}

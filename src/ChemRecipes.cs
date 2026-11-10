@@ -136,13 +136,13 @@ namespace FreeChem
         public static readonly Dictionary<string, Dictionary<string, int>> PourParts =
             new Dictionary<string, Dictionary<string, int>>
         {
-            { "liq_hydrochloric_acid", new Dictionary<string, int> { { "acid", 20 }, { "water", 80 } } },  // 近似稀盐酸
+            { "liq_hydrochloric_acid", new Dictionary<string, int> { { "acid", 36 }, { "water", 64 } } },  // 浓盐酸（审查 1.3：与 ComponentParts 同浓度）
             { "liq_sulfuric_acid",     new Dictionary<string, int> { { "acid", 90 }, { "water", 10 } } },  // 浓硫酸
-            { "liq_nitric_acid",       new Dictionary<string, int> { { "acid", 70 }, { "water", 30 } } },  // 浓硝酸
+            { "liq_nitric_acid",       new Dictionary<string, int> { { "acid", 68 }, { "water", 32 } } },  // 浓硝酸（68%，与 ComponentParts 一致）
             { "liq_sodium_hydroxide",  new Dictionary<string, int> { { "base", 25 }, { "water", 75 } } },  // 烧碱液
             { "liq_ammonia_water",     new Dictionary<string, int> { { "base", 15 }, { "water", 85 } } },  // 稀氨水
-            { "liq_brine",             new Dictionary<string, int> { { "water", 90 }, { "mineral", 10 } } }, // 盐水
-            { "liq_calcium_chloride",  new Dictionary<string, int> { { "water", 90 }, { "mineral", 10 } } }, // 氯化钙溶液（盐类近似）
+            { "liq_brine",             new Dictionary<string, int> { { "water", 74 }, { "mineral", 26 } } }, // 饱和盐水（26%，与 ComponentParts 一致）
+            { "liq_calcium_chloride",  new Dictionary<string, int> { { "water", 60 }, { "mineral", 40 } } }, // 氯化钙溶液（40%，盐类按 mineral 近似）
             // ⚠ 原版 Liquid 没有过氧化物组分：双氧水按「水」近似映射（化学身份仍是本模组双氧水），
             //   属于已知近似，不是忠实映射；如需精确需原版扩展组分（官方不支持）。
             { "liq_hydrogen_peroxide", new Dictionary<string, int> { { "water", 100 } } },
@@ -957,6 +957,35 @@ namespace FreeChem
             { "water", new ComponentDef { NameKey = "comp_water_name", Formula = "H2O", Lethality = 0.0f, Euphoria = 0.0f, Addictiveness = 0 } },
         };
 
+        /// <summary>
+        /// 审查 4.3：自定义成分的沸点（°C）。以前统一按 100°C、可蒸发注册，
+        /// 原版蒸发器/加热板会把盐「蒸发掉」，气体在常温却被当成液体。
+        /// 这里只列气体与挥发性液体；未列出的视为固体（不可蒸发，沸点按 SolidBoilingPoint）。
+        /// </summary>
+        public static readonly Dictionary<string, double> ComponentBoilingPoints = new Dictionary<string, double>
+        {
+            // 气体
+            { "fc_h2", -253 }, { "fc_n2", -196 }, { "fc_o2", -183 }, { "fc_c2h4", -104 },
+            { "fc_n2o", -88 }, { "fc_hcl", -85 }, { "fc_co2", -78 }, { "fc_cl2", -34 }, { "fc_nh3", -33 },
+            // 液体
+            { "fc_c2h5oh", 78 }, { "fc_hno3", 83 }, { "fc_h2o2", 150 }, { "fc_h2so4", 337 },
+            { "water", 100 },
+        };
+
+        /// <summary>固体成分的「沸点」占位：远高于任何加热设备能达到的温度。</summary>
+        public const double SolidBoilingPoint = 2000;
+
+        /// <summary>成分沸点；未列出的按固体处理。</summary>
+        public static double ComponentBoilingPoint(string id)
+        {
+            double bp;
+            return ComponentBoilingPoints.TryGetValue(id ?? "", out bp) ? bp : SolidBoilingPoint;
+        }
+
+        /// <summary>成分能否蒸发（固体不能）。</summary>
+        public static bool ComponentIsEvaporative(string id)
+            => ComponentBoilingPoints.ContainsKey(id ?? "");
+
         /// <summary>P10a：全部允许的成分类 id（自定义 fc_* + 原版 water）。</summary>
                 public static readonly string[] ComponentLiquidIds =
         {
@@ -1239,7 +1268,7 @@ namespace FreeChem
                 if (r.Machine != machineId) continue;
                 if (r.SortedInputs != key) continue;
                 // P7c：温度档容忍 —— 达到或高于配方所需档位即可（不再要求精确相等）
-                if (r.Temp >= 2 && temp < r.Temp) continue;
+                if (!TempOk(r.Temp, temp)) continue;
                 if (r.Ph >= 0 && r.Ph != ph) continue;
                 if (r.NeedsCatalyst && !hasCatalyst) continue;
                 if (best == null || Specificity(r) > Specificity(best)) best = r;
@@ -1262,7 +1291,7 @@ namespace FreeChem
             foreach (var r in All)
             {
                 if (r.Machine != machineId) continue;
-                if (r.Temp >= 2 && temp < r.Temp) continue;
+                if (!TempOk(r.Temp, temp)) continue;
                 if (r.Ph >= 0 && r.Ph != ph) continue;
                 if (r.NeedsCatalyst && !hasCatalyst) continue;
                 bool allPresent = true;
@@ -1275,6 +1304,18 @@ namespace FreeChem
                 if (best == null || Specificity(r) > Specificity(best)) best = r;
             }
             return best;
+        }
+
+        /// <summary>
+        /// 温度档判定：temp ≥ 2 的配方要求「不低于」该档（P7c 容忍）；
+        /// 审查 3.5/4.4：temp 0（冷凝吸收、次氯酸盐等要冷的配方）以前完全不查温度，
+        /// 高温高压档下照样能「冷凝吸收」——现在要求不高于常温档（0/1）。temp 1 = 不限。
+        /// </summary>
+        public static bool TempOk(int recipeTemp, int temp)
+        {
+            if (recipeTemp >= 2) return temp >= recipeTemp;
+            if (recipeTemp == 0) return temp <= 1;
+            return true;
         }
 
         static int Specificity(Reaction r)

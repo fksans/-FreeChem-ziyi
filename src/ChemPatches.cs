@@ -63,7 +63,6 @@ namespace FreeChem
     static class ChemScannerModInfoPatch
     {
         static bool writing;
-        static string lastSignature;
 
         static void Postfix(ChemScannerUIManager __instance)
         {
@@ -78,10 +77,8 @@ namespace FreeChem
                 TryEnsureComponents(item);
 
                 string purity = ChemRuntime.PurityOf(item).ToString("0.#");
-                // ASCII 化学式仅内部数据/去重签名使用，不显示给玩家（P10c 用户可见行不出现缩写）
-                string asciiFormula = ChemRecipes.Formula(item.identifier);
-                string signature = item.identifier + "|" + purity + "|" + asciiFormula;
-                if (signature == lastSignature) return;   // 同一物品同一纯度不重复写
+                // 审查 2.2：以前用静态 lastSignature 去重——原版 RefreshUI 每次都会先重写 TMP，
+                // 签名相同就跳过，于是第二次刷新起屏幕上就是原版文字。写 TMP 很便宜，每次都写。
 
                 string comp = ComposeComponents(item);
                 string line = L("scanner_fc_line", comp, purity);
@@ -103,7 +100,6 @@ namespace FreeChem
                     if (__instance.totalVolumeTMP != null)
                         __instance.totalVolumeTMP.text = vol;
 
-                    lastSignature = signature;
                 }
                 finally { writing = false; }
             }
@@ -156,14 +152,52 @@ namespace FreeChem
             string name = L(item.identifier + "_name");
             if (string.IsNullOrEmpty(name) || name == item.identifier + "_name") name = item.identifier;
             string volume = VolumeText(item);
-            string comp = "";
+            // 审查 1.3：优先显示物品上真实的成分 tag（倒液/混合都以它为准），
+            // 读不到时才退回静态成分表。
+            string comp = ActualComponents(item);
             Dictionary<string, int> parts;
-            if (ChemRecipes.TryGetComponentParts(item.identifier, out parts))
+            if (comp.Length == 0 && ChemRecipes.TryGetComponentParts(item.identifier, out parts))
                 foreach (var kv in parts)
                     comp += (comp.Length == 0 ? "" : " / ") + ComponentName(kv.Key)
                             + " " + (kv.Value / (ChemRecipes.ComponentTotalPart / 100)) + "%";
             if (comp.Length == 0) comp = LFallback("scanner_fc_pure", "pure substance");
             return name + " · " + volume + " · " + comp;
+        }
+
+        /// <summary>读物品上每种 Liquid 的 currentPart tag，拼成「名称 百分比」列表；全为 0 时返回空串。</summary>
+        static string ActualComponents(GameItem item)
+        {
+            try
+            {
+                if (Liquid.Liquids == null) return "";
+                var found = new List<KeyValuePair<Liquid, int>>();
+                long total = 0;
+                foreach (var liq in Liquid.Liquids)
+                {
+                    if (liq == null || string.IsNullOrEmpty(liq.currentPart)) continue;
+                    int v = ChemCatalog.ReadInt(item, liq.currentPart, 0);
+                    if (v <= 0) continue;
+                    found.Add(new KeyValuePair<Liquid, int>(liq, v));
+                    total += v;
+                }
+                if (total <= 0) return "";
+                found.Sort((a, b) => b.Value.CompareTo(a.Value));
+                string comp = "";
+                foreach (var kv in found)
+                {
+                    string name = ComponentName(kv.Key.identifier);
+                    if (name == kv.Key.identifier && !string.IsNullOrEmpty(kv.Key.displayName))
+                        name = kv.Key.displayName;
+                    comp += (comp.Length == 0 ? "" : " / ") + name + " "
+                            + Math.Round(kv.Value * 100.0 / total) + "%";
+                }
+                return comp;
+            }
+            catch (Exception e)
+            {
+                ChemRuntime.Log("[patch] read actual components failed: " + e.Message);
+                return "";
+            }
         }
 
         /// <summary>P10a：成分显示名来自 ComponentDefs 的本地化键 comp_&lt;id&gt;_name（缺键回退 ASCII 公式）。</summary>
@@ -192,8 +226,11 @@ namespace FreeChem
         {
             ChemSpec spec = ChemCatalog.Find(item.identifier);
             if (spec != null && spec.Kind == "liquid" && spec.Phase == Phase.Liquid)
-                return LFallback("scanner_fc_volume", ChemRecipes.PourVolumeMl + " ml",
-                                 ChemRecipes.PourVolumeMl);
+            {
+                // 审查 1.4：显示瓶里真实剩余量（以前固定写 500 ml）
+                int ml = ChemCatalog.LiquidVolumeMl(item);
+                return LFallback("scanner_fc_volume", ml + " ml", ml);
+            }
             return LFallback("scanner_fc_single", "single item");
         }
 
@@ -332,85 +369,138 @@ namespace FreeChem
     }
 
     /// <summary>
-    /// P6a：倒液可靠兜底。原版 TransferLiquid 要求双方都有 LIQUID_CONTAINER_TAG；
-    /// 旧存档/克隆物品的 tag 可能丢失 → 提前 return。此 Prefix 在 source 是本模组液体时接管：
-    /// 按 PourParts + 源剩余体积（fc_volume_ml，默认 500）+ 目标剩余容量限流，
-    /// 直接 AddLiquid 注入目标、扣减源体积、源空销毁，返回 false 跳过原版逻辑。
-    /// 目标只需是原版液体容器（LIQUID_CONTAINER_TAG），不要求 source 有 tag。
+    /// 倒液补丁（审查 1.2 / 5.4 重写）。
+    ///  · 主路径交还原版 TransferLiquid（以前整段替换掉，原版的滤芯过滤、液温、源瓶外观/价格刷新都没执行）；
+    ///    Postfix 只做本模组的记账：源瓶剩余量、实验容器内容记录（带纯度）、倒空的药剂瓶销毁。
+    ///  · 禁止把别的液体倒进本模组药剂瓶（以前倒掉一半再灌自来水，还是一瓶原纯度的盐酸）；
+    ///    同种药剂瓶之间可以合并，纯度取较低者。
+    ///  · 旧存档缺 LIQUID_CONTAINER_TAG 的本模组液体仍走 PourParts 兜底。
     /// </summary>
     [HarmonyPatch(typeof(WaterHelper), "TransferLiquid")]
     static class ChemPourFallbackPatch
     {
-        static bool Prefix(GameItem sourceContainer, GameItem targetContainer)
+        internal sealed class PourState
         {
+            public int SourceBefore;
+            public List<ChemCatalog.ContentEntry> SourceEntries;
+        }
+
+        static bool Prefix(GameItem sourceContainer, GameItem targetContainer, out PourState __state)
+        {
+            __state = null;
             try
             {
                 if (sourceContainer == null || targetContainer == null) return true;
 
-                ChemSpec spec = ChemCatalog.Find(sourceContainer.identifier);
-                if (spec == null || spec.Kind != "liquid" || spec.Phase != Phase.Liquid) return true;
-                // target 必须是原版液体容器（LIQUID_CONTAINER_TAG）；source 不要求有 tag
-                if (!ChemCatalog.IsLiquidContainerItem(targetContainer)) return true;
-
-                // 目标剩余容量（part，1 ml = 1000 part）
-                int free = WaterHelper.GetFreeCapacity(targetContainer);
-                if (free <= 0)
+                // 目标是本模组药剂瓶：只允许同种药剂合并
+                if (ChemCatalog.IsOurLiquid(targetContainer)
+                    && !(ChemCatalog.IsOurLiquid(sourceContainer)
+                         && sourceContainer.identifier == targetContainer.identifier))
                 {
-                    ChemRuntime.Log("[pour] target " + targetContainer.identifier + " is full; skip.");
+                    ChemRuntime.Log("[pour] blocked: cannot pour " + sourceContainer.identifier
+                                    + " into reagent bottle " + targetContainer.identifier + ".");
                     return false;
                 }
 
-                // 主路径：源仍是原版液体容器 → RemoveAndReturn 按比例扣减源 tag 并返回组分
-                int srcPart = WaterHelper.GetTotalVolume(sourceContainer);
-                if (srcPart > 0)
+                bool sourceIsOurs = ChemCatalog.IsOurLiquid(sourceContainer);
+                if (sourceIsOurs && !ChemCatalog.IsLiquidContainerItem(sourceContainer))
                 {
-                    int move = Math.Min(free, srcPart);
-                    var parts = WaterHelper.RemoveAndReturn(sourceContainer, move);
-                    if (parts != null)
-                        foreach (var kv in parts)
-                            WaterHelper.AddLiquid(targetContainer, kv.Key, kv.Value);
-
-                    bool sourceEmpty = WaterHelper.GetTotalVolume(sourceContainer) <= 0;
-                    WaterFeatureHelper.OnLiquidContainerPourInto(targetContainer, sourceContainer, sourceEmpty);
-                    if (ChemCatalog.IsVessel(targetContainer.identifier) || targetContainer.identifier == "test_tube")
-                        ChemCatalog.AddContainerContent(targetContainer, sourceContainer.identifier, move / ChemRecipes.PourPartPerMl);
-                    // 记录【剩余】体积而不是倒出量：否则部分倒液后 fc_volume_ml 错误，可重复倒出（资源复制漏洞）。
-                    ChemCatalog.SetPourVolumeMl(sourceContainer,
-                        WaterHelper.GetTotalVolume(sourceContainer) / ChemRecipes.PourPartPerMl);
-                    ChemRuntime.Log("[pour] " + sourceContainer.identifier + " → " + targetContainer.identifier
-                                    + " " + (move / ChemRecipes.PourPartPerMl) + " ml"
-                                    + (sourceEmpty ? " (source empty)." : "."));
-                    if (sourceEmpty) sourceContainer.Destroy();
+                    LegacyPour(sourceContainer, targetContainer);
                     return false;
                 }
 
-                // 兜底路径：源没有原版液体 tag（旧存档/克隆）→ 用 PourParts + fc_volume_ml
-                Dictionary<string, int> pourParts;
-                if (!ChemRecipes.TryGetPourParts(sourceContainer.identifier, out pourParts)) return true;
-                int remainMl = ChemCatalog.GetPourVolumeMl(sourceContainer);
-                int freeMl = free / ChemRecipes.PourPartPerMl;
-                int pourMl = Math.Min(remainMl, freeMl);
-                if (pourMl <= 0)
+                if (!ChemCatalog.IsLiquidContainerItem(sourceContainer)) return true;
+                __state = new PourState
                 {
-                    ChemRuntime.Log("[pour] no room/volume for " + sourceContainer.identifier + "; skip.");
-                    return false;
-                }
-                ChemCatalog.PourPartsInto(targetContainer, pourParts, pourMl * ChemRecipes.PourPartPerMl);
-                WaterFeatureHelper.OnLiquidContainerPourInto(targetContainer, sourceContainer,
-                    remainMl - pourMl <= 0);
-                if (ChemCatalog.IsVessel(targetContainer.identifier) || targetContainer.identifier == "test_tube")
-                    ChemCatalog.AddContainerContent(targetContainer, sourceContainer.identifier, pourMl);
-                ChemCatalog.SetPourVolumeMl(sourceContainer, remainMl - pourMl);
-                ChemRuntime.Log("[pour] " + sourceContainer.identifier + " → " + targetContainer.identifier
-                                + " " + pourMl + " ml (legacy path, left " + (remainMl - pourMl) + " ml).");
-                if (remainMl - pourMl <= 0) sourceContainer.Destroy();
-                return false;
+                    SourceBefore = WaterHelper.GetTotalVolume(sourceContainer),
+                    SourceEntries = ChemCatalog.IsVessel(sourceContainer.identifier)
+                        ? ChemCatalog.ReadContainerEntries(sourceContainer) : null,
+                };
+                return true;   // 交给原版
             }
             catch (Exception e)
             {
-                ChemRuntime.Log("[pour] fallback failed: " + e.Message);
+                ChemRuntime.Log("[pour] prefix failed: " + e.Message);
+                __state = null;
                 return true;    // 异常时交回原版，避免玩家卡住
             }
+        }
+
+        static void Postfix(GameItem sourceContainer, GameItem targetContainer, PourState __state)
+        {
+            if (__state == null || sourceContainer == null || targetContainer == null) return;
+            try
+            {
+                int after = WaterHelper.GetTotalVolume(sourceContainer);
+                int moved = __state.SourceBefore - after;
+                if (moved <= 0) return;
+                int movedMl = moved / ChemRecipes.PourPartPerMl;
+                bool targetIsVessel = ChemCatalog.IsVessel(targetContainer.identifier);
+
+                if (ChemCatalog.IsOurLiquid(sourceContainer))
+                {
+                    int purity = ChemCatalog.ReadInt(sourceContainer, ChemCatalog.TPurity, 0);
+                    if (targetIsVessel)
+                        ChemCatalog.AddContainerContent(targetContainer, sourceContainer.identifier, movedMl, purity);
+                    if (ChemCatalog.IsOurLiquid(targetContainer))
+                    {
+                        // 同种合并：纯度取较低者（把源瓶的污染物状态带过去）
+                        int tp = ChemCatalog.ReadInt(targetContainer, ChemCatalog.TPurity, 0);
+                        if (purity < tp)
+                        {
+                            ChemCatalog.ApplyContaminants(targetContainer,
+                                ChemCatalog.ReadContaminants(sourceContainer),
+                                ChemCatalog.ReadPurifyLevel(sourceContainer));
+                            ChemCatalog.SyncVanillaPurity(targetContainer);
+                        }
+                        ChemCatalog.SetPourVolumeMl(targetContainer, ChemCatalog.LiquidVolumeMl(targetContainer));
+                    }
+                    ChemCatalog.SetPourVolumeMl(sourceContainer, after / ChemRecipes.PourPartPerMl);
+                    ChemRuntime.Log("[pour] " + sourceContainer.identifier + " → " + targetContainer.identifier
+                                    + " " + movedMl + " ml" + (after <= 0 ? " (source empty)." : "."));
+                    if (after <= 0) sourceContainer.Destroy();
+                    return;
+                }
+
+                // 源是实验容器：内容记录按倒出比例搬走
+                if (__state.SourceEntries != null && __state.SourceBefore > 0)
+                {
+                    foreach (var e in __state.SourceEntries)
+                    {
+                        int take = (int)((long)e.Ml * moved / __state.SourceBefore);
+                        if (take <= 0) continue;
+                        e.Ml -= take;
+                        if (targetIsVessel)
+                            ChemCatalog.AddContainerContent(targetContainer, e.Id, take, e.Purity);
+                    }
+                    ChemCatalog.WriteContainerEntries(sourceContainer, __state.SourceEntries);
+                }
+            }
+            catch (Exception e)
+            {
+                ChemRuntime.Log("[pour] postfix failed: " + e.Message);
+            }
+        }
+
+        /// <summary>旧存档/克隆的本模组液体缺原版液体 tag：用 PourParts + fc_volume_ml 倒出。</summary>
+        static void LegacyPour(GameItem sourceContainer, GameItem targetContainer)
+        {
+            if (!ChemCatalog.IsLiquidContainerItem(targetContainer)) return;
+            int free = WaterHelper.GetFreeCapacity(targetContainer);
+            Dictionary<string, int> pourParts;
+            if (free <= 0 || !ChemRecipes.TryGetPourParts(sourceContainer.identifier, out pourParts)) return;
+            int remainMl = ChemCatalog.GetPourVolumeMl(sourceContainer);
+            int pourMl = Math.Min(remainMl, free / ChemRecipes.PourPartPerMl);
+            if (pourMl <= 0) return;
+            ChemCatalog.PourPartsInto(targetContainer, pourParts, pourMl * ChemRecipes.PourPartPerMl);
+            WaterFeatureHelper.OnLiquidContainerPourInto(targetContainer, sourceContainer, remainMl - pourMl <= 0);
+            if (ChemCatalog.IsVessel(targetContainer.identifier))
+                ChemCatalog.AddContainerContent(targetContainer, sourceContainer.identifier, pourMl,
+                    ChemCatalog.ReadInt(sourceContainer, ChemCatalog.TPurity, 0));
+            ChemCatalog.SetPourVolumeMl(sourceContainer, remainMl - pourMl);
+            ChemRuntime.Log("[pour] " + sourceContainer.identifier + " → " + targetContainer.identifier
+                            + " " + pourMl + " ml (legacy path, left " + (remainMl - pourMl) + " ml).");
+            if (remainMl - pourMl <= 0) sourceContainer.Destroy();
         }
     }
 

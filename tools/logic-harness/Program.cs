@@ -582,6 +582,47 @@ class Program
            && !chlComp.ContainsKey("chlorine"),
               "氯气组分不得直接使用原版 chlorine 组分（P5d）");
 
+        // ── 27. 代码审查回归（docs/code-review-2026-11-10.md）──
+        // 4.4 / 3.5：要冷的配方（temp 0）在加热档不能进行；temp ≥2 仍是「不低于」；temp 1 不限
+        Check(ChemRecipes.TempOk(0, 0) && ChemRecipes.TempOk(0, 1)
+              && !ChemRecipes.TempOk(0, 2) && !ChemRecipes.TempOk(0, 3),
+              "审查 4.4：temp 0 配方只在冷/常温档进行");
+        Check(!ChemRecipes.TempOk(2, 1) && ChemRecipes.TempOk(2, 2) && ChemRecipes.TempOk(2, 3)
+              && ChemRecipes.TempOk(1, 0) && ChemRecipes.TempOk(1, 3),
+              "审查 4.4：temp ≥2 为下限、temp 1 不限");
+        Check(ChemRecipes.Match(new[] { "gas_hydrogen_chloride", "liq_water" }, "condenser_unit", 3, 7, false) == null
+              && ChemRecipes.Match(new[] { "gas_hydrogen_chloride", "liq_water" }, "condenser_unit", 1, 7, false) != null,
+              "审查 4.4：高温高压档不能冷凝吸收 HCl，常温可以");
+        // 3.6：MatchThermalInputs 不看温度；每条热反应的降解温度高于反应上限
+        Check(ChemLab.ThermalReactions.All(t => ChemLab.MatchThermalInputs(t.Inputs) == t),
+              "审查 3.6：热反应可只按投料匹配（供超温降解判定）");
+        Check(ChemLab.ThermalReactions.All(t => t.DegradeTemp > t.MaxTemp && t.MaxTemp >= t.MinTemp),
+              "审查 3.6：降解温度 > 反应温区上限");
+        // 4.4：同一化学反应在夜间机器与加热台上产物一致
+        var nightKmno4 = ChemRecipes.All.First(r => r.Id == "kmno4_decomp");
+        var heatKmno4 = ChemLab.ThermalReactions.First(t => t.Id == "heat_kmno4");
+        Check(new HashSet<string>(nightKmno4.Outputs).SetEquals(heatKmno4.Outputs),
+              "审查 4.4：高锰酸钾热分解在夜间机器与加热台的产物一致");
+        // 4.3：气体成分沸点低于室温且可蒸发；固体成分不可蒸发
+        string[] gasComps = { "fc_h2", "fc_n2", "fc_o2", "fc_cl2", "fc_hcl", "fc_nh3", "fc_co2", "fc_c2h4", "fc_n2o" };
+        Check(gasComps.All(g => ChemRecipes.ComponentBoilingPoint(g) < ChemLab.RoomTemp
+                                && ChemRecipes.ComponentIsEvaporative(g)),
+              "审查 4.3：气体成分沸点 < 室温");
+        string[] solidComps = { "fc_nacl", "fc_caco3", "fc_cuo", "fc_kmno4", "fc_naoh", "fc_sediment" };
+        Check(solidComps.All(c => !ChemRecipes.ComponentIsEvaporative(c)
+                                  && ChemRecipes.ComponentBoilingPoint(c) > 1000),
+              "审查 4.3：固体成分不可蒸发");
+        // 1.3：液体的原版倒液组分（PourParts）与成分表（ComponentParts）水含量一致（双氧水按水近似除外）
+        foreach (var kv in ChemRecipes.PourParts)
+        {
+            if (kv.Key == "liq_hydrogen_peroxide") continue;
+            if (!ChemRecipes.ComponentParts.TryGetValue(kv.Key, out var comp)) continue;
+            int pourWater = kv.Value.TryGetValue("water", out var pw) ? pw : 0;
+            int compWater = comp.TryGetValue("water", out var cw) ? cw * 100 / ChemRecipes.ComponentTotalPart : 0;
+            Check(pourWater == compWater,
+                  $"审查 1.3：{kv.Key} 倒液组分水含量 {pourWater}% = 成分表 {compWater}%");
+        }
+
         Console.WriteLine($"\n反应总数 {ChemRecipes.All.Length}，设备 {ChemRecipes.MachineIds.Length} 台，实时热反应 {ChemLab.ThermalReactions.Length} 条，数字 ID {ChemItemIds.Ordered.Length} 个");        Console.WriteLine(fails == 0 ? "\n结论：全部通过" : $"\n结论：{fails} 项失败");
         return fails == 0 ? 0 : 1;
     }

@@ -22,7 +22,7 @@ try:
 except Exception:
     pass
 
-ROOT = r"C:\Users\Administrator\WorkBuddy\Claw\ps-chem-mod"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 仓库根目录（原为本机绝对路径）
 PKG = os.path.join(ROOT, "FreeChem")
 SRC = os.path.join(ROOT, "src")
 TOOLS = os.path.join(ROOT, "tools")
@@ -2696,12 +2696,13 @@ if not re.search(r"QuickDial|SpeedDial|quickDial|quick_dial", src_text):
     p6_bad.append("电话快捷拨号未收录（QuickDial）")
 # 32b 倒液 Harmony 兜底：本模组液体→原版任意容器、容量限流、空瓶销毁/扣减
 _tl_pos = _patch_text.find('"TransferLiquid"')
-_tl = _patch_text[_tl_pos:_tl_pos + 5000] if _tl_pos >= 0 else ""
+_tl = _patch_text[_tl_pos:_tl_pos + 9000] if _tl_pos >= 0 else ""
 if not re.search(r'\[HarmonyPatch\(typeof\(WaterHelper\),\s*"TransferLiquid"\)\]', _patch_text):
     p6_bad.append("缺 HarmonyPatch(WaterHelper.TransferLiquid) 兜底")
-for _tok, _d in (("LIQUID_CONTAINER_TAG", "原版任意容器 tag 判定"),
-                 ("GetFreeCapacity", "目标容量限流"), ("AddLiquid(", "注入组分")):
-    if _tok not in _tl:
+# 审查 5.4 起主路径交还原版 TransferLiquid，补丁只做记账；旧存档兜底仍需容量限流与组分注入
+for _tok, _d in (("IsLiquidContainerItem|LIQUID_CONTAINER_TAG", "原版任意容器 tag 判定"),
+                 ("GetFreeCapacity", "目标容量限流"), ("AddLiquid(|PourPartsInto(", "注入组分")):
+    if not any(_t in _tl for _t in _tok.split("|")):
         p6_bad.append(f"倒液兜底缺 {_d}（{_tok}）")
 if not re.search(r"Destroy\(|currentPart|PourVolumeMl", _tl):
     p6_bad.append("倒液后未扣减/销毁源瓶（体积守恒缺失）")
@@ -2899,7 +2900,8 @@ if "TestTubeRackId" not in src_text:
     p10_bad.append("缺 TestTubeRackId（试管架语义）")
 if ("GetContainerContentIds(" not in src_text):
     p10_bad.append("缺 GetContainerContentIds（容器内容解析）")
-if "FindAllChildItems(" not in mach_text:
+# 审查 3.4 起机器经 ChemCatalog.ContentPortionIds → ContentHolders（内部 FindAllChildItems）读试管架
+if "FindAllChildItems(" not in mach_text and not ("ContentPortionIds(" in mach_text and "FindAllChildItems(" in src_text):
     p10_bad.append("机器未通过 FindAllChildItems 读取试管架内试管")
 if p10_bad:
     for b in p10_bad:

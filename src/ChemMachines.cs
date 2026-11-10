@@ -150,8 +150,18 @@ namespace FreeChem
             // 已充装的大桶是产物（不是容器、也不是气体源），任何设备都不收
             if (cid.StartsWith("gas_drum_")) return false;
             if (cid.StartsWith("filter_paper")) return machineId == "filtration_bench";
-            // P10b/P10c：实验容器（烧杯/锥形瓶/试管）与试管架可放进任意机器输入槽
-            if (ChemCatalog.IsVessel(cid) || cid == ChemCatalog.TestTubeRackId) return true;
+            // P10b/P10c：实验容器（烧杯/锥形瓶/试管）与试管架装的是液体。
+            // 审查 3.3：以前在相态过滤之前无条件放行，液体可以借烧杯进「仅收气体」的设备。
+            // 滗析/过滤是对整瓶药剂的物理提纯（要读瓶上的污染物），也不收容器。
+            if (ChemCatalog.IsVessel(cid) || cid == ChemCatalog.TestTubeRackId)
+            {
+                if (machineId == "decanter" || machineId == "filtration_bench"
+                    || machineId == "canister_filling") return false;
+                var allowedV = ChemRecipes.AllowedInputPhases(machineId);
+                if (allowedV == null) return true;
+                foreach (var a in allowedV) if (a == Phase.Liquid) return true;
+                return false;
+            }
             if (cid == "alcohol_lamp" || cid == "spirit_burner" || cid.StartsWith("wick_")) return false;
             // 仪器不参与任何设备的投料
             if (cid == "thermometer" || cid == "precision_balance"
@@ -179,6 +189,11 @@ namespace FreeChem
             }
             return false;
         }
+
+        /// <summary>输出格允许的物品：药剂、废渣、沉淀、退回的空钢瓶。</summary>
+        static bool IsOutputItem(GameItem it)
+            => it != null && (it.IsTag(ChemRecipes.ReagentTag) || it.identifier == ChemRecipes.SludgeId
+                              || it.identifier == "sol_sediment" || it.identifier == "gas_canister_empty");
 
         /// <summary>P3c 气瓶槽：只接受本模组气瓶商品（can_*，CanisterTag）且 owned。</summary>
         static bool AcceptsGasCanister(GameItem it)
@@ -230,7 +245,7 @@ namespace FreeChem
                     ChemRuntime.Log("[gas] heating platform gas slot: " + added.identifier);
                 };
             }
-            output.mayInventoryAddItemFunc = (it, _) => it.IsTag(ChemRecipes.ReagentTag);
+            output.mayInventoryAddItemFunc = (it, _) => IsOutputItem(it);   // 含废渣与退回的空钢瓶
             note.mayInventoryAddItemFunc = (it, _) =>
                 it != null && (it.identifier.Equals("postit") || it.identifier.Equals("handnote")
                                || it.identifier.Equals("slip"));
@@ -341,16 +356,18 @@ namespace FreeChem
                     return new MachineLayout { Powered = true, InputSlots = 2, OutputW = 3, OutputH = 3 };
                 case "chem_reactor":
                     return new MachineLayout { Powered = true, Modules = true, InputSlots = 3, OutputW = 3, OutputH = 3 };
+                // 审查 3.1：氯碱法产物 Cl2(2×3)+H2(2×3)+NaOH(1×3) 在 4×4 里怎么摆都放不下 → 5×4
                 case "electrolyzer":
-                    return new MachineLayout { Powered = true, Modules = true, InputSlots = 2, OutputW = 4, OutputH = 4 };
+                    return new MachineLayout { Powered = true, Modules = true, InputSlots = 2, OutputW = 5, OutputH = 4 };
                 case "gas_generator":
                     return new MachineLayout { Powered = true, InputSlots = 2, OutputW = 4, OutputH = 4 };
                 case "condenser_unit":
                     return new MachineLayout { Powered = true, InputSlots = 2, OutputW = 3, OutputH = 3 };
                 case "fractionator":
                     return new MachineLayout { Powered = true, InputSlots = 3, OutputW = 3, OutputH = 3 };
+                // 审查 3.1：哈伯法催化奖励产出 2 个 NH3（各 2×3），3×3 放不下 → 4×3
                 case "high_pressure_synth":
-                    return new MachineLayout { Powered = true, InputSlots = 3, OutputW = 3, OutputH = 3 };
+                    return new MachineLayout { Powered = true, InputSlots = 3, OutputW = 4, OutputH = 3 };
                 case "canister_filling":
                     return new MachineLayout { Powered = true, InputSlots = 1, ContainerSlot = true, OutputW = 4, OutputH = 4 };
                 case "gas_scrubber":
@@ -420,8 +437,8 @@ namespace FreeChem
                                         + " / purity " + ChemCatalog.CanisterPurity(added) + "%");
                 };
             }
-            output.mayInventoryAddItemFunc = (it, _) =>
-                it.IsTag(ChemRecipes.ReagentTag) || it.identifier == ChemRecipes.SludgeId;
+            // 审查：以前不收空钢瓶 → ConsumeGasCanisters 的 CanAccept 永远失败，钢瓶从不被消耗（气体无限用）
+            output.mayInventoryAddItemFunc = (it, _) => IsOutputItem(it);
             note.mayInventoryAddItemFunc = (it, _) =>
                 it != null && (it.identifier.Equals("postit") || it.identifier.Equals("handnote")
                                || it.identifier.Equals("slip"));
@@ -545,30 +562,26 @@ namespace FreeChem
                 }
                 // P10b/P10c：实验容器 / 试管架 → 解析内容药剂 id 参与反应匹配（容器本身不销毁）。
                 // 容器内容 tag 为 fc_content_items（"reagentId:ml;" 列表，由 ChemCatalog.GetContainerContentIds 解析）。
-                if (ChemCatalog.IsVessel(cid))
+                // 审查 3.4：容器内容按「份」计（每 500 ml 一份），不足一份不算投料
+                if (ChemCatalog.IsVessel(cid) || cid == ChemCatalog.TestTubeRackId)
                 {
-                    foreach (var contentId in ChemCatalog.GetContainerContentIds(child))
-                        ids.Add(contentId);
+                    ids.AddRange(ChemCatalog.ContentPortionIds(child));
                     continue;
                 }
-                if (cid == ChemCatalog.TestTubeRackId)
+                // 本模组真药剂：直接进投料集合（审查 1.1：液体瓶要剩满一份才算）
+                if (child.IsTag(ChemRecipes.ReagentTag))
                 {
-                    var tubes = child.FindAllChildItems();
-                    if (tubes != null)
-                        foreach (var tube in tubes)
-                        {
-                            if (tube == null || tube.identifier != "test_tube") continue;
-                            foreach (var contentId in ChemCatalog.GetContainerContentIds(tube))
-                                ids.Add(contentId);
-                        }
+                    if (ChemCatalog.HasFullPortion(child)) ids.Add(cid);
+                    else ChemRuntime.Log("[machine] " + def.Id + ": " + cid + " has only "
+                                         + ChemCatalog.LiquidVolumeMl(child) + " ml (< "
+                                         + ChemCatalog.PortionMl + " ml), ignored.");
                     continue;
                 }
-                // 本模组真药剂：直接进投料集合
-                if (child.IsTag(ChemRecipes.ReagentTag)) { ids.Add(cid); continue; }
                 // 原版药剂瓶：按 VanillaAnalog 映射成本模组药剂 id 参与反应匹配
-                // （问题 5：兼容原版药剂；Finish 会销毁原瓶）
+                // 审查 5.1：要看里面真有东西（空瓶/水量不足不算）
                 string mapped;
-                if (ChemRecipes.VanillaAnalog.TryGetValue(cid, out mapped)) ids.Add(mapped);
+                if (ChemRecipes.VanillaAnalog.TryGetValue(cid, out mapped) && VanillaPortionOk(child))
+                    ids.Add(mapped);
             }
 
             // ── P3c：气瓶槽供气（气瓶商品 → 内部气体 id 参与反应匹配）──
@@ -578,6 +591,8 @@ namespace FreeChem
             if (state.Equals(MachineProgressHelper.STATE_READY))
             {
                 if (ids.Count == 0) return;
+                // 审查 3.8：没有可进行的配方就不开工（以前直接产废渣、吞掉全部投料）
+                if (!WouldRun(def, ids, catalyst)) return;
                 int emptyCanisters = GasCanistersConsumed(def, ids, gasSlotsUsed, catalyst);
                 if (!CanAcceptOutputs(output, def, ids, catalyst, inputGrade, emptyCanisters)) return;
 
@@ -598,7 +613,13 @@ namespace FreeChem
                 if (modules != null) MachineHelper.OnMachineActioned(machine, modules);
                 if (MachineProgressHelper.IsProgressTypeMachineFinished(item))
                 {
-                    if (ids.Count == 0) { MachineProgressHelper.FinishProgressTypeMachine(item); return; }
+                    if (ids.Count == 0 || !WouldRun(def, ids, catalyst))
+                    {
+                        // 运行中途投料被取走/换掉：结束本轮，不消耗任何东西
+                        MachineProgressHelper.FinishProgressTypeMachine(item);
+                        ChemRuntime.Log("[machine] " + def.Id + ": inputs changed during run; cycle aborted.");
+                        return;
+                    }
                     // P6a 仪器自检修复：输出满时不得 Finish（否则产物被 TryAcceptAll 丢弃/机器卡住）
                     int emptyCans = GasCanistersConsumed(def, ids, gasSlotsUsed, catalyst);
                     if (!CanAcceptOutputs(output, def, ids, catalyst, inputGrade, emptyCans))
@@ -722,42 +743,109 @@ namespace FreeChem
             }
         }
 
+        /// <summary>
+        /// 审查 3.8：这组投料能不能开工。通用机器要能匹配到配方（含「容忍多余投料」）；
+        /// 灌装台/过滤台要组合有效。危险配方的「事故」仍然会开工并产废渣（这是设计）。
+        /// </summary>
+        static bool WouldRun(ChemMachineDef def, List<string> ids, bool catalyst)
+        {
+            if (ids == null || ids.Count == 0) return false;
+            if (def.Id == "canister_filling" || def.Id == "filtration_bench")
+            {
+                var outs = def.Resolve(ids, ChemRuntime.Temp, ChemRuntime.Ph, catalyst, 0);
+                return !(outs.Count == 1 && outs[0] == ChemRecipes.SludgeId);
+            }
+            return ChemRecipes.Match(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst) != null
+                || ChemRecipes.MatchIgnoringExtras(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst) != null;
+        }
+
+        /// <summary>原版水容器（VanillaAnalog 映射为 liq_water 的那些）。</summary>
+        static bool IsVanillaWaterContainer(GameItem it)
+        {
+            string mapped;
+            return it != null && ChemRecipes.VanillaAnalog.TryGetValue(it.identifier, out mapped)
+                   && mapped == "liq_water" && ChemCatalog.IsLiquidContainerItem(it);
+        }
+
+        /// <summary>
+        /// 审查 5.1：原版物品要「真有内容」才算一份投料。
+        /// 水容器要有满一份（500 ml）的水；原版药瓶要非空；其它（如梦帽菇）按件计。
+        /// </summary>
+        static bool VanillaPortionOk(GameItem it)
+        {
+            if (it == null) return false;
+            try
+            {
+                if (IsVanillaWaterContainer(it))
+                    return ChemCatalog.LiquidVolumeMl(it) >= ChemCatalog.PortionMl - 1;
+                if (it.IsTag(ChemicalHelper.CHEM_ITEM_TAG))
+                    return ChemicalHelper.GetTotalVolume(it) > 0;
+            }
+            catch (Exception e) { ChemRuntime.Log("[machine] vanilla portion check failed: " + e.Message); }
+            return true;
+        }
+
+        /// <summary>
+        /// 审查 5.1：消耗一件原版投料。水容器（水罐带滤芯、水壶等）只抽走一份水，容器本身保留；
+        /// 其它原版药瓶按件消耗。
+        /// </summary>
+        static void ConsumeVanillaInput(GameItem it)
+        {
+            if (it == null) return;
+            if (IsVanillaWaterContainer(it))
+            {
+                try { WaterHelper.RemoveAndReturn(it, ChemCatalog.PortionMl * ChemRecipes.PourPartPerMl); }
+                catch (Exception e) { ChemRuntime.Log("[machine] draw water failed: " + e.Message); }
+                return;
+            }
+            it.Destroy();
+        }
+
+        /// <summary>
+        /// 产物（加上要退回的空钢瓶）能否全部放进输出格。
+        /// 审查 3.2：以前用一张「空的」临时网格探测，没算输出格里已有的东西；
+        /// 现在直接在真实输出格上逐件试放、累计占格，探测完把试放的物品全部销毁。
+        /// 加热台也用它（审查 3.6）。
+        /// </summary>
+        public static bool OutputCanFit(GameGridInventory output, IList<string> outputIds, int emptyCanisters)
+        {
+            if (output == null || outputIds == null) return false;
+            var probes = new List<GameItem>();
+            try
+            {
+                var all = new List<string>(outputIds);
+                for (int i = 0; i < emptyCanisters; i++) all.Add("gas_canister_empty");
+                foreach (var id in all)
+                {
+                    GameItem test = DirectoryMaster.Item(id);
+                    if (test == null) continue;
+                    probes.Add(test);
+                    if (!GraphUtils.CanAccept(output, test)) return false;
+                    if (GraphUtils.TryAcceptAll(output, test) > 0) return false;   // 返回值 = 剩余未放入数量
+                }
+                return true;
+            }
+            catch (Exception e)
+            {
+                ChemRuntime.Log("[machine] output probe failed: " + e.Message);
+                return false;
+            }
+            finally
+            {
+                foreach (var p in probes) if (p != null) p.Destroy();
+            }
+        }
+
         static bool CanAcceptOutputs(GameGridInventory output, ChemMachineDef def,
                                      List<string> ids, bool catalyst, int inputGrade,
                                      int emptyCanistersNeeded)
         {
             var probe = def.Resolve(ids, ChemRuntime.Temp, ChemRuntime.Ph, catalyst, inputGrade);
             if (probe.Count == 0) return false;
-
-            // P7a：累计占格判定 —— 用同尺寸临时网格逐件真实 TryAcceptAll，
-            // 避免「逐件 CanAccept 通过、合起来放不下」导致的产物丢失。
-            MachineLayout layout = LayoutOf(def.Id);
-            var scratch = new GameGridInventory(layout.OutputW, layout.OutputH);
-            try
-            {
-                foreach (var id in probe)
-                {
-                    GameItem test = DirectoryMaster.Item(id);
-                    if (test == null) continue;
-                    if (!GraphUtils.CanAccept(scratch, test)) { test.Destroy(); return false; }
-                    GraphUtils.TryAcceptAll(scratch, test);
-                }
-                for (int i = 0; i < emptyCanistersNeeded; i++)
-                {
-                    GameItem testEmpty = DirectoryMaster.Item("gas_canister_empty");
-                    if (testEmpty == null) continue;
-                    if (!GraphUtils.CanAccept(scratch, testEmpty)) { testEmpty.Destroy(); return false; }
-                    GraphUtils.TryAcceptAll(scratch, testEmpty);
-                }
-                return true;
-            }
-            finally
-            {
-                // 清理临时网格里的探测物品
-                if (scratch.childItems != null)
-                    foreach (var it in scratch.childItems.ToArray())
-                        if (it != null) it.Destroy();
-            }
+            bool ok = OutputCanFit(output, probe, emptyCanistersNeeded);
+            if (!ok) ChemRuntime.Log("[machine] " + def.Id + ": output grid cannot hold "
+                                     + string.Join(", ", probe) + " — empty the output first.");
+            return ok;
         }
 
         static void Finish(GameItem machine, ChemMachineDef def, List<GameSlotInventory> inputs,
@@ -767,88 +855,98 @@ namespace FreeChem
             MachineProgressHelper.FinishProgressTypeMachine(machine);
 
             // 记录首次发现 / 事故（副作用只发生一次）
-            var r = ChemRecipes.Match(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst);
-            bool extrasMatched = false;
-            if (r == null)
-            {
-                r = ChemRecipes.MatchIgnoringExtras(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst);
-                extrasMatched = r != null;
-                if (extrasMatched)
-                    ChemRuntime.Log("[machine] " + def.Id + ": extra inputs tolerated, only recipe inputs consumed.");
-            }
+            var r = ChemRecipes.Match(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst)
+                    ?? ChemRecipes.MatchIgnoringExtras(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst);
             if (r != null)
             {
                 if (ChemRuntime.IsAccident(r.Hazard)) ChemRuntime.NoteAccident(r.Id);
                 else if (ChemRuntime.Discover(r.Id)) ChemRuntime.Log("New reaction: " + r.Name);
             }
 
-            // ★ 先读投料状态（污染物 / 滤纸耐久 / 提纯等级），再销毁——销毁后 tag 就读不到了
+            // 审查 3.4/3.8：按「配方需要的份数」消耗投料（need 多重集合）。
+            // 以前精确匹配时销毁所有投料、容器则整杯清空；两瓶同种药剂只需要一瓶时两瓶都被吃掉。
+            // 灌装台/过滤台没有反应表配方，沿用「全部投料都参与」。
+            var need = new List<string>();
+            bool consumeAll = r == null;
+            if (r != null)
+                foreach (var inp in r.Inputs)
+                    if (!ChemRecipes.IsAuxiliary(inp)) need.Add(ChemRecipes.Normalize(inp));
+
+            // ★ 先读投料状态（污染物 / 滤纸耐久 / 提纯等级 / 纯度），再销毁——销毁后 tag 就读不到了
             int[] sourceContam = null;
             string paperId = null;
             int sourcePurifyLevel = 0;
-            int sourcePurity = 0;   // 玩家审查：取投入最高纯度，产物至少继承它
+            int sourcePurity = -1;   // 参与反应的投料里最低的纯度
+            var probeNeed = new List<string>(need);
             foreach (var s in inputs)
             {
-                if (s.childItem == null) continue;
-                string cid = s.childItem.identifier;
+                var child = s.childItem;
+                if (child == null) continue;
+                string cid = child.identifier;
+                if (cid.StartsWith("filter_paper")) { paperId = cid; continue; }
                 if (cid.StartsWith("liq_") && sourceContam == null)
                 {
-                    sourceContam = ChemCatalog.ReadContaminants(s.childItem);
-                    sourcePurifyLevel = ChemCatalog.ReadPurifyLevel(s.childItem);   // P1c
+                    sourceContam = ChemCatalog.ReadContaminants(child);
+                    sourcePurifyLevel = ChemCatalog.ReadPurifyLevel(child);   // P1c
                 }
-                int p = ChemCatalog.ReadInt(s.childItem, ChemCatalog.TPurity, 0);
-                if (p > sourcePurity) sourcePurity = p;
-                if (cid.StartsWith("filter_paper")) paperId = cid;
+                if (ChemCatalog.IsVessel(cid) || cid == ChemCatalog.TestTubeRackId)
+                {
+                    foreach (var pid in ChemCatalog.ContentPortionIds(child))
+                    {
+                        if (!consumeAll && !probeNeed.Remove(ChemRecipes.Normalize(pid))) continue;
+                        int mp;
+                        ChemCatalog.ContentMl(child, pid, out mp);
+                        if (mp > 0) sourcePurity = sourcePurity < 0 ? mp : Math.Min(sourcePurity, mp);
+                    }
+                    continue;
+                }
+                if (!consumeAll && !probeNeed.Contains(ChemRecipes.Normalize(cid))) continue;
+                if (!consumeAll) probeNeed.Remove(ChemRecipes.Normalize(cid));
+                int p = ChemCatalog.ReadInt(child, ChemCatalog.TPurity, 0);
+                if (p > 0) sourcePurity = sourcePurity < 0 ? p : Math.Min(sourcePurity, p);
             }
+            if (sourcePurity < 0) sourcePurity = 0;
 
             foreach (var s in inputs)
             {
-                if (s.childItem == null) continue;
-                string cid = s.childItem.identifier;
-                // P10b/P10c：实验容器保留，只清空内容；试管架清空其中的试管
-                if (ChemCatalog.IsVessel(cid))
+                var child = s.childItem;
+                if (child == null) continue;
+                string cid = child.identifier;
+                // P10b/P10c：实验容器保留，只按份扣掉被用掉的内容
+                if (ChemCatalog.IsVessel(cid) || cid == ChemCatalog.TestTubeRackId)
                 {
-                    ChemCatalog.ClearContainerContent(s.childItem);
-                    continue;
-                }
-                if (cid == ChemCatalog.TestTubeRackId)
-                {
-                    var tubes = s.childItem.FindAllChildItems();
-                    if (tubes != null)
-                        foreach (var tube in tubes)
-                            if (tube != null && tube.identifier == "test_tube")
-                                ChemCatalog.ClearContainerContent(tube);
+                    foreach (var pid in ChemCatalog.ContentPortionIds(child))
+                    {
+                        string n = ChemRecipes.Normalize(pid);
+                        if (!consumeAll && !need.Remove(n)) continue;
+                        ChemCatalog.ConsumeContentPortion(child, pid);
+                    }
                     continue;
                 }
                 if ((cid == "gas_canister_empty" || cid == ChemRecipes.DrumEmptyId)
                     && def.Id == "canister_filling")
-                { s.childItem.Destroy(); continue; }   // 仅灌装台会消耗目标空容器
+                { child.Destroy(); continue; }   // 仅灌装台会消耗目标空容器
                 if (cid.StartsWith("filter_paper"))
                 {
                     // 滤纸按耐久消耗：还有次数就留在槽里，用完才销毁
-                    int dur = ChemCatalog.ReadInt(s.childItem, ChemCatalog.TFilterDur, 0) - 1;
+                    int dur = ChemCatalog.ReadInt(child, ChemCatalog.TFilterDur, 0) - 1;
                     if (dur > 0)
                     {
-                        s.childItem.ModifyTag(ChemCatalog.TFilterDur, t => t.Enable().SetInt(dur));
+                        child.ModifyTag(ChemCatalog.TFilterDur, t => t.Enable().SetInt(dur));
                         ChemRuntime.Log("[filter] " + cid + " used, durability left " + dur + ".");
                         continue;
                     }
                     ChemRuntime.Log("[filter] " + cid + " consumed (durability 0) — insert a new filter paper.");
-                    s.childItem.Destroy(); continue;
+                    child.Destroy(); continue;
                 }
                 if (ChemRecipes.IsAuxiliary(cid)) continue;
-                // P7c：容忍多余投料时，只销毁配方内的物品，多余同相物品留在槽里
-                if (extrasMatched && r != null)
-                {
-                    string norm = ChemRecipes.Normalize(cid);
-                    bool needed = false;
-                    foreach (var need in r.Inputs)
-                        if (ChemRecipes.Normalize(need) == norm) { needed = true; break; }
-                    if (!needed) continue;
-                }
-                // 其余投料全部销毁——包括本模组药剂与原版药剂瓶（VanillaAnalog 映射过的原版瓶，
-                // 问题 5 的兼容路径），确保原版药剂被消耗而不是留在槽里反复利用。
-                s.childItem.Destroy();
+                // 不足一份的液体瓶没有参与匹配，也不消耗
+                if (child.IsTag(ChemRecipes.ReagentTag) && !ChemCatalog.HasFullPortion(child)) continue;
+                bool vanilla = !child.IsTag(ChemRecipes.ReagentTag) && ChemRecipes.VanillaAnalog.ContainsKey(cid);
+                if (vanilla && !VanillaPortionOk(child)) continue;
+                if (!consumeAll && !need.Remove(ChemRecipes.Normalize(cid))) continue;   // 多余投料留在槽里
+                if (vanilla) ConsumeVanillaInput(child);
+                else child.Destroy();
             }
 
             var outputs = def.Resolve(ids, ChemRuntime.Temp, ChemRuntime.Ph, catalyst, inputGrade);
@@ -904,36 +1002,34 @@ namespace FreeChem
                     ChemCatalog.SyncVanillaPurity(produced);
                 }
 
-                // 玩家审查：合成/冷凝/电解等产物纯度不低于投入最高纯度
-                // （滗析/过滤已有各自提纯逻辑；钢瓶/桶由 inputGrade 决定 SKU/档位）
+                // 产物纯度继承投入纯度（滗析/过滤已有各自提纯逻辑；钢瓶/桶由 inputGrade 决定档位）。
+                // 审查：以前取「投入里最高」的纯度，混一瓶高纯就能把整批抬高；现在取最低（木桶效应）。
                 if (sourcePurity > 0 && def.Id != "decanter" && def.Id != "filtration_bench")
                     ChemCatalog.RaisePurityTo(produced, sourcePurity);
 
-                // P7a：产物放不下时改投后柜台并日志，绝不静默销毁
-                if (!GraphUtils.CanAccept(output, produced))
+                // P7a：开工前已用 OutputCanFit 在真实输出格上预检；这里万一仍放不下，
+                // 先试后柜台（带满仓探测），最后才放弃并记日志。
+                if (GraphUtils.CanAccept(output, produced) && GraphUtils.TryAcceptAll(output, produced) == 0)
                 {
-                    try
-                    {
-                        ModHelper.MoveItemToBackCounter(produced);
-                        ChemRuntime.Log("[machine] output full → produced item moved to back counter: " + id);
-                    }
-                    catch (Exception moveEx)
-                    {
-                        GraphUtils.TryAcceptAllOrDestroy(output, produced, "free_chem.finish");
-                        ChemRuntime.Log("[machine] output full and back counter failed (" + id + "): " + moveEx.Message);
-                    }
+                    // 已放入输出格
+                }
+                else if (ChemCatalog.TryPlaceOnBackCounter(produced, "finish"))
+                {
+                    ChemRuntime.Log("[machine] output full → produced item moved to back counter: " + id);
                 }
                 else
                 {
-                    GraphUtils.TryAcceptAll(output, produced);
+                    ChemRuntime.Log("[machine] output and back counter full; product lost: " + id);
+                    produced.Destroy();
                 }
 
                 // 有毒气体排放 → 排气嫌疑度（CO2/O2/N2/H2 不计；ChemRuntime 再折算写入原版 ENDANGERMENT）
                 NoteExhaust(id);
             }
 
-            // P3c：反应完成后消耗气瓶并回收空瓶（守恒；输出满则保留气瓶并日志）
-            ConsumeGasCanisters(def, ids, gasSlots, catalyst, output);
+            // P3c：反应完成后消耗气瓶并回收空瓶（守恒；输出满则保留气瓶并日志）。
+            // 只消耗投料槽没能满足的那部分气体（need 里剩下的）。
+            ConsumeGasCanisters(def, ids, gasSlots, catalyst, output, need);
         }
 
         /// <summary>
@@ -941,10 +1037,12 @@ namespace FreeChem
         /// 输出放不下空瓶时保留气瓶（不销毁），绝不丢失/凭空复制。
         /// </summary>
         static void ConsumeGasCanisters(ChemMachineDef def, List<string> ids,
-            List<GameSlotInventory> gasSlots, bool catalyst, GameGridInventory output)
+            List<GameSlotInventory> gasSlots, bool catalyst, GameGridInventory output,
+            List<string> need)
         {
             if (gasSlots == null) return;
-            var r = ChemRecipes.Match(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst);
+            var r = ChemRecipes.Match(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst)
+                    ?? ChemRecipes.MatchIgnoringExtras(ids, def.Id, ChemRuntime.Temp, ChemRuntime.Ph, catalyst);
             if (r == null) return;
 
             foreach (var gs in gasSlots)
@@ -955,10 +1053,8 @@ namespace FreeChem
                 string gasId;
                 if (!ChemRecipes.TryGetGasFromCanister(canisterId, out gasId)) continue;
 
-                bool consumed = false;
-                foreach (var inp in r.Inputs)
-                    if (inp == gasId) { consumed = true; break; }
-                if (!consumed) continue;   // 反应不消耗该气体 → 气瓶保留
+                // 反应不消耗该气体，或投料槽里的气体物品已经满足了 → 气瓶保留
+                if (need == null || !need.Remove(gasId)) continue;
 
                 GameItem empty = DirectoryMaster.Item("gas_canister_empty");
                 if (empty == null) { ChemRuntime.Log("[gas] empty canister item missing; canister kept."); continue; }

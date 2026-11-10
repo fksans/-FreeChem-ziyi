@@ -19,8 +19,9 @@ H2O2 / Cl2 / H2 / CuSO4 / KMnO4 这类具体化合物。
 from PIL import Image, ImageDraw, ImageFont
 import os
 
-OUT = r"C:\Users\Administrator\WorkBuddy\Claw\ps-chem-mod\FreeChem\Textures\Items"
-SHEET = r"C:\Users\Administrator\WorkBuddy\Claw\ps-chem-mod\icon_sheet.png"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 仓库根目录
+OUT = os.path.join(ROOT, "FreeChem", "Textures", "Items")
+SHEET = os.path.join(ROOT, "icon_sheet.png")
 os.makedirs(OUT, exist_ok=True)
 
 # ---------- 原版风格调色板 ----------
@@ -892,7 +893,7 @@ def main():
         sheet.alpha_composite(ic, (cx + (cell*scale-ic.width)//2, cy + (cell*scale-ic.height)//2))
         sd.text((cx+4, cy+cell*scale+2), name, fill=(216, 224, 234), font=lf)
     sheet.convert("RGB").save(SHEET)
-    preview().convert("RGB").save(r"C:\Users\Administrator\WorkBuddy\Claw\ps-chem-mod\FreeChem\preview.png")
+    preview().convert("RGB").save(os.path.join(ROOT, "FreeChem", "preview.png"))
     print(f"generated {len(ICONS)} icons -> {OUT}")
     print("sheet ->", SHEET)
 

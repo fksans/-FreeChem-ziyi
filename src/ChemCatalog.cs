@@ -47,9 +47,9 @@ namespace FreeChem
         public const string TFuelPurity = "fc_fuel_purity";
         /// <summary>酒精灯内燃料容量上限（ml）。P3a：与 500 ml 液体瓶容量匹配。</summary>
         public const int FuelCapacityMl = 500;
-        /// <summary>P4d：由真实化学组分计算出的毒性标签（0–100，Σ(part×Liquid.lethality)/总量×100）。</summary>
+        /// <summary>P4d：由真实化学组分计算出的毒性标签（系数 ×100，与 TTox 同一个 tag、同一量纲；审查 3.7 起不再 clamp 到 100）。</summary>
         public const string TCompTox = "fc_tox";
-        /// <summary>P4d：由真实化学组分计算出的欣快标签（0–100，Σ(part×Liquid.euphoria)/总量×100）。</summary>
+        /// <summary>P4d：由真实化学组分计算出的欣快标签（系数 ×100，与 TEuph 同一个 tag）。</summary>
         public const string TCompEuph = "fc_euph";
         /// <summary>P4d：由真实化学组分计算出的成瘾性标签（0–100，Σ(part×Liquid.addictiveness)/总量×100）。</summary>
         public const string TCompAddict = "fc_addict";
@@ -66,7 +66,8 @@ namespace FreeChem
         public const string TestTubeRackId = "test_tube_rack";
         /// <summary>P5b：组分注入版本（2 = 氯气改用自定义 Liquid；旧版本会在读档时重写）。</summary>
         public const string TCompVersion = "fc_components_ver";
-        public const int ComponentVersion = 3;   // P10a：真实成分模型
+        // P10a：真实成分模型（3）；审查 3.7：毒性/欣快标签不再 clamp 到 0–100，旧物品需要重算（4）
+        public const int ComponentVersion = 4;
 
         public static readonly List<ChemSpec> Specs = new List<ChemSpec>
         {
@@ -343,41 +344,6 @@ namespace FreeChem
                 SelfCheckLiquidBridge(item, spec);
                 // P4d：真实化学组分 + 由组分计算的毒性/欣快标签（幂等）
                 ApplyComponentComposition(item);
-                // P10b：实验容器成为原版液体容器（空），可倒入试剂后放进机器。
-                // 显式列出四个容器 id，便于静态校验「每个容器都有 InitLiquidContainerItem 接线」。
-                if (spec.Id == "beaker" || spec.Id == "retort_flask"
-                    || spec.Id == "erlenmeyer_flask" || spec.Id == "test_tube")
-                {
-                    try
-                    {
-                        int capacity = spec.Id == "test_tube" ? 100 : ChemRecipes.PourVolumeMl;   // 试管小容量
-                        WaterHelper.InitLiquidContainerItem(item, capacity, 10);
-                        item.ModifyTag(TContainerContent, s => s.Enable().SetString(""));
-                    }
-                    catch (Exception e) { ChemRuntime.Log("[container] init vessel failed: " + e.Message); }
-                }
-                // P10c：试管架 = 只装 test_tube 的容器（2×3 内容格），本身不是液体容器
-                if (spec.Id == TestTubeRackId)
-                {
-                    try
-                    {
-                        var rackWindow = new PixelWindow(true);
-                        var rackGrid = new GridPixelElement(2, 3, true);
-                        for (int y = 0; y < 3; y++)
-                            for (int x = 0; x < 2; x++)
-                            {
-                                var tubeSlot = new GameSlotInventory();
-                                tubeSlot.mayInventoryAddItemFunc = (it, _) =>
-                                    it != null && it.identifier == "test_tube";
-                                rackGrid.Attach(tubeSlot, x, y, 20, 20);
-                            }
-                        rackWindow.Attach(rackGrid);
-                        item.SetContentWindow(rackWindow);
-                        item.ModifyTag(TContainerContent, s => s.Enable().SetString(""));
-                        ChemRuntime.Log("[container] test tube rack window attached (2x3).");
-                    }
-                    catch (Exception e) { ChemRuntime.Log("[container] rack window failed: " + e.Message); }
-                }
                 // P6a：液体瓶记录剩余体积（倒液兜底 Prefix 用）
                 if (spec.Kind == "liquid" && spec.Phase == Phase.Liquid
                     && !item.IsTag(TPourVolumeMl))
@@ -385,6 +351,44 @@ namespace FreeChem
                 // NEW-P1-7：工厂产出的液体主动保证容器桥接（幂等；GameItem.Target 补丁降级为兜底）
                 if (spec.Kind == "liquid" && spec.Phase == Phase.Liquid)
                     EnsureLiquidBridge(item);
+            }
+
+            // 审查 2.1：实验容器 / 试管架的 Kind 是 "vessel"，不在 ReagentKinds 里，
+            // 以前这段写在上面的 IsReagentKind 块内，永远执行不到（烧杯倒不进液体、试管架打不开）。
+            // P10b：实验容器成为原版液体容器（空），可倒入试剂后放进机器。
+            // 显式列出四个容器 id，便于静态校验「每个容器都有 InitLiquidContainerItem 接线」。
+            if (spec.Id == "beaker" || spec.Id == "retort_flask"
+                || spec.Id == "erlenmeyer_flask" || spec.Id == "test_tube")
+            {
+                try
+                {
+                    int capacity = spec.Id == "test_tube" ? 100 : ChemRecipes.PourVolumeMl;   // 试管小容量
+                    WaterHelper.InitLiquidContainerItem(item, capacity, 10);
+                    item.ModifyTag(TContainerContent, s => s.Enable().SetString(""));
+                }
+                catch (Exception e) { ChemRuntime.Log("[container] init vessel failed: " + e.Message); }
+            }
+            // P10c：试管架 = 只装 test_tube 的容器（2×3 内容格），本身不是液体容器
+            if (spec.Id == TestTubeRackId)
+            {
+                try
+                {
+                    var rackWindow = new PixelWindow(true);
+                    var rackGrid = new GridPixelElement(2, 3, true);
+                    for (int y = 0; y < 3; y++)
+                        for (int x = 0; x < 2; x++)
+                        {
+                            var tubeSlot = new GameSlotInventory();
+                            tubeSlot.mayInventoryAddItemFunc = (it, _) =>
+                                it != null && it.identifier == "test_tube";
+                            rackGrid.Attach(tubeSlot, x, y, 20, 20);
+                        }
+                    rackWindow.Attach(rackGrid);
+                    item.SetContentWindow(rackWindow);
+                    item.ModifyTag(TContainerContent, s => s.Enable().SetString(""));
+                    ChemRuntime.Log("[container] test tube rack window attached (2x3).");
+                }
+                catch (Exception e) { ChemRuntime.Log("[container] rack window failed: " + e.Message); }
             }
 
             return item;
@@ -595,8 +599,9 @@ namespace FreeChem
                         filterMinimumPurity = 0,
                         filterDurabilityUsage = 0,
                         filterVolumeRemoved = 0,
-                        boilingPoint = 100.0,
-                        isEvaporative = true,
+                        // 审查 4.3：按成分真实相态设沸点；固体不可蒸发
+                        boilingPoint = ChemRecipes.ComponentBoilingPoint(id),
+                        isEvaporative = ChemRecipes.ComponentIsEvaporative(id),
                         lethality = def.Lethality,
                         addictiveness = def.Addictiveness,
                         euphoria = def.Euphoria,
@@ -636,7 +641,11 @@ namespace FreeChem
             bool already = item.IsTag(TCompApplied);
             int ver = ReadInt(item, TCompVersion, 0);
             if (already && ver >= ComponentVersion) return false;
-            if (already && ver < ComponentVersion) ResetComponentTags(item);
+            // 审查 1.3：液体药剂瓶本身是原版液体容器，它的成分 tag 就是瓶里真实的液体（PourParts，500 ml）。
+            // 不能再往上写 fc_* 成分，更不能 ResetComponentTags（会把瓶里的 water 清零 = 瓶子被抽干）。
+            // 液体只计算毒性/欣快标签。
+            bool liquidContainer = item.IsTag(WaterHelper.LIQUID_CONTAINER_TAG) || IsOurLiquid(item);
+            if (already && ver < ComponentVersion && !liquidContainer) ResetComponentTags(item);
 
             try
             {
@@ -655,7 +664,7 @@ namespace FreeChem
                     list.Add(new KeyValuePair<string, int>(kv.Key, kv.Value));
                     sum += kv.Value;
                 }
-                if (list.Count > 0) ChemicalHelper.AddLiquidToChemFromList(item, list);
+                if (list.Count > 0 && !liquidContainer) ChemicalHelper.AddLiquidToChemFromList(item, list);
                 foreach (var kv in parts)
                 {
                     Liquid liq = Liquid.GetLiquidFromId(kv.Key);
@@ -674,9 +683,11 @@ namespace FreeChem
                     euph += frac * def.Euphoria;
                     addict += frac * def.Addictiveness;
                 }
-                int toxTag = Mathf.Clamp(Mathf.RoundToInt((float)(tox * 100.0)), 0, 100);
-                int euphTag = Mathf.Clamp(Mathf.RoundToInt((float)(euph * 100.0)), 0, 100);
-                int addictTag = Mathf.Clamp(Mathf.RoundToInt((float)(addict * 100.0)), 0, 100);
+                // 审查 3.7：与 WriteState 写入的 Profile 同一量纲（系数 ×100），不 clamp 到 100，
+                // 否则氯气 4.0、空盐欣快 10.0 这类强效品全被压成同一个值。
+                int toxTag = Mathf.Clamp(Mathf.RoundToInt((float)(tox * 100.0)), 0, 100000);
+                int euphTag = Mathf.Clamp(Mathf.RoundToInt((float)(euph * 100.0)), 0, 100000);
+                int addictTag = Mathf.Clamp(Mathf.RoundToInt((float)(addict * 100.0)), 0, 100000);
                 item.ModifyTag(TCompTox, s => s.Enable().SetInt(toxTag));
                 item.ModifyTag(TCompEuph, s => s.Enable().SetInt(euphTag));
                 item.ModifyTag(TCompAddict, s => s.Enable().SetInt(addictTag));
@@ -787,13 +798,9 @@ namespace FreeChem
             try
             {
                 Liquid alcohol = Liquid.GetLiquidFromId("alcohol");
-                if (alcohol != null && !string.IsNullOrEmpty(alcohol.currentPart)
-                    && ReadInt(item, alcohol.currentPart, 0) > 0)
-                    return true;
-                Liquid water = Liquid.GetLiquidFromId("water");
-                if (alcohol != null && water != null
-                    && ReadInt(item, alcohol.currentPart, 0) + ReadInt(item, water.currentPart, 0) > 0)
-                    return true;
+                // 审查 1.7：只认「含酒精」；以前 alcohol+water>0 也算，纯水瓶/水罐会被放进燃料槽卡住。
+                if (alcohol != null && !string.IsNullOrEmpty(alcohol.currentPart))
+                    return ReadInt(item, alcohol.currentPart, 0) > 0;
             }
             catch (Exception e)
             {
@@ -841,6 +848,240 @@ namespace FreeChem
             return ml;
         }
 
+        // ── 审查 1.1 / 3.4：「一份投料」口径 ──
+        // 反应以「份」为单位：一份液体 = 一整瓶 500 ml（PortionMl）。
+        // 一瓶最多算一份，不足一份不参与反应；分装到容器里的液体按毫升累加，满 500 ml 才算一份，
+        // 这样「倒出 499 ml 后剩 1 ml 的瓶子仍按整瓶反应」「一瓶分装进 5 支试管变 5 份」都不再成立。
+
+        /// <summary>一份液体投料的体积（ml）。</summary>
+        public const int PortionMl = ChemRecipes.PourVolumeMl;
+        /// <summary>取整误差容忍（ml）。</summary>
+        const int PortionToleranceMl = 1;
+
+        /// <summary>物品里真实的液体体积（ml）：优先读原版液体 tag，缺 tag 的旧物品退回 fc_volume_ml。</summary>
+        public static int LiquidVolumeMl(GameItem item)
+        {
+            if (item == null) return 0;
+            try
+            {
+                if (IsLiquidContainerItem(item))
+                    return Math.Max(0, WaterHelper.GetTotalVolume(item)) / ChemRecipes.PourPartPerMl;
+            }
+            catch (Exception e) { ChemRuntime.Log("[volume] read failed: " + e.Message); }
+            return GetPourVolumeMl(item);
+        }
+
+        /// <summary>是否是本模组的液体药剂瓶。</summary>
+        public static bool IsOurLiquid(GameItem item)
+        {
+            if (item == null) return false;
+            var spec = Find(item.identifier);
+            return spec != null && spec.Kind == "liquid" && spec.Phase == Phase.Liquid;
+        }
+
+        /// <summary>
+        /// 这件投料是否够「一份」：本模组液体瓶要剩满 500 ml；固体/气体/钢瓶按件计，恒为 true。
+        /// </summary>
+        public static bool HasFullPortion(GameItem item)
+        {
+            if (item == null) return false;
+            if (!IsOurLiquid(item)) return true;
+            return LiquidVolumeMl(item) >= PortionMl - PortionToleranceMl;
+        }
+
+        /// <summary>容器内容的一条记录：药剂 id + 体积（ml）+ 倒入时的纯度。</summary>
+        public sealed class ContentEntry
+        {
+            public string Id;
+            public int Ml;
+            public int Purity;
+        }
+
+        /// <summary>
+        /// 解析容器内容（格式 `id:ml:purity;`，兼容旧格式 `id:ml;`，旧格式纯度按 0 处理即「未知」）。
+        /// 记录总量超过容器里真实液量时按比例缩小（被原版操作倒走/蒸发的部分不再计入）。
+        /// </summary>
+        public static List<ContentEntry> ReadContainerEntries(GameItem container)
+        {
+            var list = new List<ContentEntry>();
+            if (container == null) return list;
+            try
+            {
+                var tag = container.GetTagReadonly(TContainerContent);
+                string raw = tag == null ? null : tag.GetString();
+                if (string.IsNullOrEmpty(raw)) return list;
+                foreach (var part in raw.Split(';'))
+                {
+                    if (string.IsNullOrEmpty(part)) continue;
+                    var f = part.Split(':');
+                    if (f.Length < 2 || string.IsNullOrEmpty(f[0])) continue;
+                    int ml, purity = 0;
+                    if (!int.TryParse(f[1], out ml) || ml <= 0) continue;
+                    if (f.Length >= 3) int.TryParse(f[2], out purity);
+                    var existing = list.Find(e => e.Id == f[0]);
+                    if (existing != null)
+                    {
+                        // 同种药剂合并：纯度取较低者（稀释/混合不会变纯）
+                        existing.Purity = Math.Min(existing.Purity, purity);
+                        existing.Ml += ml;
+                    }
+                    else list.Add(new ContentEntry { Id = f[0], Ml = ml, Purity = purity });
+                }
+                int recorded = 0;
+                foreach (var e in list) recorded += e.Ml;
+                int actual = LiquidVolumeMl(container);
+                if (recorded > actual)
+                    foreach (var e in list)
+                        e.Ml = actual <= 0 ? 0 : (int)((long)e.Ml * actual / recorded);
+                list.RemoveAll(e => e.Ml <= 0);
+            }
+            catch (Exception e) { ChemRuntime.Log("[container] parse content failed: " + e.Message); }
+            return list;
+        }
+
+        /// <summary>把内容记录写回容器。</summary>
+        public static void WriteContainerEntries(GameItem container, List<ContentEntry> entries)
+        {
+            if (container == null) return;
+            var sb = new System.Text.StringBuilder();
+            if (entries != null)
+                foreach (var e in entries)
+                    if (e != null && e.Ml > 0 && !string.IsNullOrEmpty(e.Id))
+                        sb.Append(e.Id).Append(':').Append(e.Ml).Append(':').Append(e.Purity).Append(';');
+            string raw = sb.ToString();
+            container.ModifyTag(TContainerContent, s => s.Enable().SetString(raw));
+        }
+
+        /// <summary>容器（烧杯/锥形瓶/鹅颈瓶/试管）或试管架里可用的液体容器列表。</summary>
+        public static List<GameItem> ContentHolders(GameItem item)
+        {
+            var holders = new List<GameItem>();
+            if (item == null) return holders;
+            if (IsVessel(item.identifier)) { holders.Add(item); return holders; }
+            if (item.identifier == TestTubeRackId)
+            {
+                var tubes = item.FindAllChildItems();
+                if (tubes != null)
+                    foreach (var t in tubes)
+                        if (t != null && t.identifier == "test_tube") holders.Add(t);
+            }
+            return holders;
+        }
+
+        /// <summary>容器（或试管架内全部试管）里某药剂的总毫升数与最低纯度。</summary>
+        public static int ContentMl(GameItem item, string reagentId, out int minPurity)
+        {
+            minPurity = 100;
+            int total = 0;
+            string want = ChemRecipes.Normalize(reagentId);
+            foreach (var h in ContentHolders(item))
+                foreach (var e in ReadContainerEntries(h))
+                {
+                    if (ChemRecipes.Normalize(e.Id) != want) continue;
+                    total += e.Ml;
+                    minPurity = Math.Min(minPurity, e.Purity);
+                }
+            if (total == 0) minPurity = 0;
+            return total;
+        }
+
+        /// <summary>容器（或试管架）里能凑出的「整份」药剂 id 列表（每 500 ml 一份）。</summary>
+        public static List<string> ContentPortionIds(GameItem item)
+        {
+            var ids = new List<string>();
+            var totals = new Dictionary<string, int>();
+            foreach (var h in ContentHolders(item))
+                foreach (var e in ReadContainerEntries(h))
+                {
+                    int cur;
+                    totals.TryGetValue(e.Id, out cur);
+                    totals[e.Id] = cur + e.Ml;
+                }
+            foreach (var kv in totals)
+                for (int n = (kv.Value + PortionToleranceMl) / PortionMl; n > 0; n--) ids.Add(kv.Key);
+            return ids;
+        }
+
+        /// <summary>
+        /// 从容器（或试管架的试管）里消耗一份药剂：扣掉内容记录里的 500 ml，
+        /// 同时按比例从容器的真实液体里移除同样体积。返回是否扣成功。
+        /// </summary>
+        public static bool ConsumeContentPortion(GameItem item, string reagentId)
+        {
+            string want = ChemRecipes.Normalize(reagentId);
+            int need = PortionMl;
+            foreach (var h in ContentHolders(item))
+            {
+                if (need <= 0) break;
+                var entries = ReadContainerEntries(h);
+                bool changed = false;
+                foreach (var e in entries)
+                {
+                    if (need <= 0) break;
+                    if (ChemRecipes.Normalize(e.Id) != want || e.Ml <= 0) continue;
+                    int take = Math.Min(e.Ml, need);
+                    e.Ml -= take;
+                    need -= take;
+                    changed = true;
+                    try
+                    {
+                        if (IsLiquidContainerItem(h))
+                            WaterHelper.RemoveAndReturn(h, take * ChemRecipes.PourPartPerMl);
+                    }
+                    catch (Exception ex) { ChemRuntime.Log("[container] remove liquid failed: " + ex.Message); }
+                }
+                if (changed) WriteContainerEntries(h, entries);
+            }
+            if (need > PortionToleranceMl)
+                ChemRuntime.Log("[container] consume " + reagentId + ": short by " + need + " ml.");
+            return need <= PortionToleranceMl;
+        }
+
+        /// <summary>
+        /// 放到后柜台：先只读探测，能放下才放，失败返回 false（调用方决定保留投料还是销毁产物），
+        /// 不再直接调 ModHelper.MoveItemToBackCounter（满仓时不报错也不提示，物品会丢）。
+        /// </summary>
+        public static bool TryPlaceOnBackCounter(GameItem item, string context)
+        {
+            if (item == null) return false;
+            try
+            {
+                var emporium = EmporiumEntry.Instance;
+                GameGridInventory back = emporium == null ? null : emporium.backInvinvElement;
+                if (back == null)
+                {
+                    ChemRuntime.Log("[place] back counter unavailable (" + context + ").");
+                    return false;
+                }
+                if (!GraphUtils.CanAccept(back, item)) return false;
+                return GraphUtils.TryAcceptAllOrDestroy(back, item, "free_chem." + context);
+            }
+            catch (Exception e)
+            {
+                ChemRuntime.Log("[place] back counter failed (" + context + "): " + e.Message);
+                return false;
+            }
+        }
+
+        /// <summary>后柜台是否能各自放下这些物品（逐件只读探测；用于消耗投料前的预检）。</summary>
+        public static bool BackCounterCanAccept(IEnumerable<GameItem> items)
+        {
+            try
+            {
+                var emporium = EmporiumEntry.Instance;
+                GameGridInventory back = emporium == null ? null : emporium.backInvinvElement;
+                if (back == null) return false;
+                foreach (var it in items)
+                    if (it != null && !GraphUtils.CanAccept(back, it)) return false;
+                return true;
+            }
+            catch (Exception e)
+            {
+                ChemRuntime.Log("[place] back counter probe failed: " + e.Message);
+                return false;
+            }
+        }
+
         /// <summary>P6a：目标是否是原版液体容器（可接收倒液）。</summary>
         public static bool IsLiquidContainerItem(GameItem item)
             => item != null && item.IsTag(WaterHelper.LIQUID_CONTAINER_TAG);
@@ -851,6 +1092,10 @@ namespace FreeChem
 
         /// <summary>P10b：把「药剂 id + 倒入 ml」记录到容器内容清单。</summary>
         public static void AddContainerContent(GameItem container, string reagentId, int ml)
+            => AddContainerContent(container, reagentId, ml, 0);
+
+        /// <summary>审查 3.4：记录时带上倒入时的纯度（格式 `id:ml:purity;`），经过容器后纯度链不再断掉。</summary>
+        public static void AddContainerContent(GameItem container, string reagentId, int ml, int purity)
         {
             if (container == null || string.IsNullOrEmpty(reagentId) || ml <= 0) return;
             try
@@ -858,9 +1103,10 @@ namespace FreeChem
                 string old = "";
                 var tag = container.GetTagReadonly(TContainerContent);
                 if (tag != null) old = tag.GetString() ?? "";
-                string entry = reagentId + ":" + ml + ";";
+                string entry = reagentId + ":" + ml + ":" + Mathf.Clamp(purity, 0, 100) + ";";
                 container.ModifyTag(TContainerContent, s => s.Enable().SetString(old + entry));
-                ChemRuntime.Log("[container] +" + ml + " ml " + reagentId + " → " + container.identifier);
+                ChemRuntime.Log("[container] +" + ml + " ml " + reagentId + " (" + purity + "%) → "
+                                + container.identifier);
             }
             catch (Exception e) { ChemRuntime.Log("[container] add content failed: " + e.Message); }
         }
@@ -907,18 +1153,38 @@ namespace FreeChem
         public static bool TryContactReaction(GameItem source, GameItem target)
         {
             if (source == null || target == null || source == target) return false;
+            // 审查 5.3：只在两件都是本模组药剂时触发。以前原版碱瓶、原版水罐（含滤芯）
+            // 会经 VanillaAnalog 映射被当成药剂，一点就整件销毁。
+            if (!IsOurReagent(source.identifier) || !IsOurReagent(target.identifier)) return false;
             ChemRecipes.ContactReaction r = ChemRecipes.MatchContact(source.identifier, target.identifier);
             if (r == null) return false;
+            // 审查 1.1：不足一份（倒过的半瓶）不反应，交还原版逻辑（例如倒液）
+            if (!HasFullPortion(source) || !HasFullPortion(target)) return false;
+            var produced = new List<GameItem>();
             try
             {
                 string srcName = source.identifier, dstName = target.identifier;
+                int purity = Math.Min(ReadInt(source, TPurity, 0), ReadInt(target, TPurity, 0));
                 foreach (var o in r.Outputs)
                 {
-                    GameItem produced = EnsureOwned(DirectoryMaster.Item(o));
-                    if (produced == null) continue;
-                    ModHelper.SetSource(produced, ModId, "FreeChem");
-                    ModHelper.MoveItemToBackCounter(produced);
+                    GameItem p = EnsureOwned(DirectoryMaster.Item(o));
+                    if (p == null) continue;
+                    ModHelper.SetSource(p, ModId, "FreeChem");
+                    if (purity > 0) RaisePurityTo(p, purity);
+                    produced.Add(p);
                 }
+                // 先确认后柜台放得下，再消耗投料；放不下就什么都不消耗
+                if (!BackCounterCanAccept(produced))
+                {
+                    foreach (var p in produced) p.Destroy();
+                    ChemDebug.ShowVanillaAlert(ModHelper.GetLocalized(ModId, "debug_alert_title"),
+                                               ModHelper.GetLocalized(ModId, "debug_alert_full"));
+                    ChemRuntime.Log("[contact] back counter full; " + srcName + " + " + dstName + " kept.");
+                    return true;   // 已处理（不让原版把它当成普通点击）
+                }
+                foreach (var p in produced)
+                    if (!TryPlaceOnBackCounter(p, "contact"))
+                        ChemRuntime.Log("[contact] product could not be placed: " + p.identifier);
                 source.Destroy();
                 target.Destroy();
                 ChemRuntime.Log("[contact] " + srcName + " + " + dstName + " → "

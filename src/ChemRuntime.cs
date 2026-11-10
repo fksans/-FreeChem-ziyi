@@ -252,14 +252,16 @@ namespace FreeChem
         {
             if (item == null) return 0;
             int tox = ChemCatalog.ReadInt(item, ChemCatalog.TTox, 0);
-            return Mathf.RoundToInt(VolumeUl * tox / 100f);
+            // 审查 3.7：tag 存的是「系数 ×100」，要再除一次 100（= tox × 25，与上面注释一致）。
+            // 以前少除了 100，盐酸 30 → 75000，几乎所有药剂都显示「致命」。
+            return Mathf.RoundToInt(VolumeUl * (tox / 100f) / 100f);
         }
 
         public static int EuphoriaLoad(GameItem item)
         {
             if (item == null) return 0;
             int euph = ChemCatalog.ReadInt(item, ChemCatalog.TEuph, 0);
-            return Mathf.RoundToInt(VolumeUl * euph / 100f);
+            return Mathf.RoundToInt(VolumeUl * (euph / 100f) / 100f);   // 同上（审查 3.7）
         }
 
         /// <summary>致命 / 有毒 / 安全，对齐原版阈值。</summary>

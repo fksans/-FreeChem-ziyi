@@ -30,6 +30,11 @@ namespace FreeChem
             public int HeldSeconds = 0;
             public string ActiveReaction = null;
             public bool High = false;
+            /// <summary>审查 2.4：给 tooltip 用的状态（0 熄火 / 1 升温中 / 2 反应中 / 3 输出已满暂停）。</summary>
+            public int Status = 0;
+            /// <summary>ConsumeThermalInputs 之后还没满足、需要由气瓶提供的气体。</summary>
+            public List<string> PendingGas;
+            public int NeedSeconds = 0;
         }
 
         static readonly List<Rig> Rigs = new List<Rig>();
@@ -144,7 +149,7 @@ namespace FreeChem
                 && (r.Temp > ChemLab.RoomTemp + 1f || r.ActiveReaction != null);
             ChemMachines.SetMachineVisual(r.Machine, "heating_platform", workingVisual);
 
-            if (!lit) { r.HeldSeconds = 0; r.ActiveReaction = null; return; }
+            if (!lit) { r.HeldSeconds = 0; r.ActiveReaction = null; r.Status = 0; return; }
 
             // 找当前温区内的实时反应
             // P3f 审计修复：燃料槽只作燃料，不再把其中的乙醇当反应投料（原实现会与燃烧语义冲突）；
@@ -153,10 +158,10 @@ namespace FreeChem
             if (vesselItems != null)
                 foreach (var vi in vesselItems)
                     CollectThermalInput(ids, vi, applyVanillaAnalog: true);
-
             // P3c：加热台气瓶槽同样可作气体来源。默认先用「普通投料」匹配（避免气瓶空占破坏既有配方）；
             // 若匹配不到，再把气瓶映射的 gas id 加入重试（供后续含气体的热反应使用）。
-            var reaction = ChemLab.MatchThermal(ids, r.Temp);
+            // 审查 3.6：先只按投料匹配（不看温度），再按温度区间决定升温 / 反应 / 降解。
+            var reaction = ChemLab.MatchThermalInputs(ids);
             if (reaction == null && r.GasSlots != null)
             {
                 var withGas = new List<string>(ids);
@@ -172,28 +177,40 @@ namespace FreeChem
                     }
                 }
                 if (withGas.Count > ids.Count)
-                    reaction = ChemLab.MatchThermal(withGas, r.Temp);
+                    reaction = ChemLab.MatchThermalInputs(withGas);
             }
-            if (reaction == null) { r.HeldSeconds = 0; r.ActiveReaction = null; return; }
+            if (reaction == null) { r.HeldSeconds = 0; r.ActiveReaction = null; r.Status = 1; return; }
+            if (r.ActiveReaction != reaction.Id) { r.ActiveReaction = reaction.Id; r.HeldSeconds = 0; }
+            r.NeedSeconds = reaction.Seconds;
 
-            // 超温降解
+            // 超温降解（以前这段永远走不到）
             if (r.Temp > reaction.DegradeTemp)
             {
+                if (!ChemMachines.OutputCanFit(r.Output, new[] { ChemRecipes.SludgeId }, 0))
+                { r.Status = 3; return; }
                 Produce(r, new[] { ChemRecipes.SludgeId });
                 ConsumeThermalInputs(r, reaction);
-                r.HeldSeconds = 0; r.ActiveReaction = null;
+                r.HeldSeconds = 0; r.ActiveReaction = null; r.Status = 1;
                 if (log != null) log.Warning("[FreeChem] overheated: " + reaction.Id);
                 return;
             }
+            // 不在反应温区（还没升到 / 略超上限但未到降解温度）：暂停计时，不清零
+            if (r.Temp < reaction.MinTemp || r.Temp > reaction.MaxTemp) { r.Status = 1; return; }
 
-            if (r.ActiveReaction != reaction.Id) { r.ActiveReaction = reaction.Id; r.HeldSeconds = 0; }
+            r.Status = 2;
             r.HeldSeconds++;
             if (r.HeldSeconds < reaction.Seconds) return;
-
+            // 审查 3.6：输出格放不下就停在「已完成、等待取货」，不消耗投料（以前产物直接丢失）
+            if (!ChemMachines.OutputCanFit(r.Output, reaction.Outputs, CountGasCanistersUsed(r, reaction)))
+            {
+                r.HeldSeconds = reaction.Seconds;
+                r.Status = 3;
+                return;
+            }
             Produce(r, reaction.Outputs, reaction);
             ConsumeThermalInputs(r, reaction);
             ConsumeThermalGas(r, reaction);
-            r.HeldSeconds = 0; r.ActiveReaction = null;
+            r.HeldSeconds = 0; r.ActiveReaction = null; r.Status = 1;
             if (ChemRuntime.Discover(reaction.Id) && log != null)
                 log.Log("[FreeChem] thermal reaction discovered: " + reaction.Name);
         }
@@ -205,16 +222,63 @@ namespace FreeChem
         static void ConsumeThermalInputs(Rig r, ChemLab.ThermalReaction reaction)
         {
             if (r.VesselSlot == null) return;
+            // 审查 3.4：按配方需要的份数消耗（以前同种投料放两件会两件都被吃掉；容器里的内容不参与）
+            var need = new List<string>();
+            foreach (var inp in reaction.Inputs) need.Add(ChemRecipes.Normalize(inp));
             foreach (var it in r.VesselSlot.childItems.ToArray())
             {
-                if (it == null) continue;
-                string normalized = ChemRecipes.Normalize(it.identifier);
-                bool participates = false;
-                if (!string.IsNullOrEmpty(normalized))
-                    foreach (var inp in reaction.Inputs)
-                        if (inp == normalized) { participates = true; break; }
-                if (participates) it.Destroy();
+                if (it == null || need.Count == 0) continue;
+                if (ChemCatalog.IsVessel(it.identifier) || it.identifier == ChemCatalog.TestTubeRackId)
+                {
+                    foreach (var pid in ChemCatalog.ContentPortionIds(it))
+                        if (need.Remove(ChemRecipes.Normalize(pid)))
+                            ChemCatalog.ConsumeContentPortion(it, pid);
+                    continue;
+                }
+                if (!IsUsableThermalInput(it)) continue;
+                if (!need.Remove(ChemRecipes.Normalize(it.identifier))) continue;
+                it.Destroy();
             }
+            r.PendingGas = need;   // 剩下的只能由气瓶槽提供
+        }
+
+        /// <summary>这件反应槽物品能否作为一份热反应投料（液体要满一份，原版瓶要非空）。</summary>
+        static bool IsUsableThermalInput(GameItem it)
+        {
+            if (it == null) return false;
+            if (it.IsTag(ChemRecipes.ReagentTag)) return ChemCatalog.HasFullPortion(it);
+            if (ChemRecipes.VanillaAnalog.ContainsKey(it.identifier))
+            {
+                try
+                {
+                    if (it.IsTag(ChemicalHelper.CHEM_ITEM_TAG)) return ChemicalHelper.GetTotalVolume(it) > 0;
+                }
+                catch (Exception) { }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>本次热反应要从气瓶槽消耗几个气瓶（用于输出格预检退回的空瓶）。</summary>
+        static int CountGasCanistersUsed(Rig r, ChemLab.ThermalReaction reaction)
+        {
+            if (r.GasSlots == null) return 0;
+            var have = new List<string>();
+            if (r.VesselSlot != null && r.VesselSlot.childItems != null)
+                foreach (var vi in r.VesselSlot.childItems) CollectThermalInput(have, vi, true);
+            int n = 0;
+            foreach (var inp in reaction.Inputs)
+            {
+                string g = ChemRecipes.Normalize(inp);
+                if (have.Remove(g)) continue;
+                foreach (var gs in r.GasSlots)
+                {
+                    string gasId;
+                    if (gs.childItem != null && ChemRecipes.TryGetGasFromCanister(gs.childItem.identifier, out gasId)
+                        && gasId == g) { n++; break; }
+                }
+            }
+            return n;
         }
 
         /// <summary>
@@ -231,10 +295,8 @@ namespace FreeChem
                 string canisterId = can.identifier;
                 string gasId;
                 if (!ChemRecipes.TryGetGasFromCanister(canisterId, out gasId)) continue;
-                bool used = false;
-                foreach (var inp in reaction.Inputs)
-                    if (inp == gasId) { used = true; break; }
-                if (!used) continue;
+                // 只消耗反应槽投料没满足的那部分气体
+                if (r.PendingGas == null || !r.PendingGas.Remove(gasId)) continue;
 
                 GameItem empty = DirectoryMaster.Item("gas_canister_empty");
                 if (empty == null) continue;
@@ -261,6 +323,13 @@ namespace FreeChem
         static void CollectThermalInput(List<string> ids, GameItem it, bool applyVanillaAnalog)
         {
             if (it == null) return;
+            // 审查 2.3：放进反应槽的烧杯/试管架，里面倒入的试剂也参与热反应（按份计）
+            if (ChemCatalog.IsVessel(it.identifier) || it.identifier == ChemCatalog.TestTubeRackId)
+            {
+                ids.AddRange(ChemCatalog.ContentPortionIds(it));
+                return;
+            }
+            if (!IsUsableThermalInput(it)) return;
             if (applyVanillaAnalog)
             {
                 string mapped;
@@ -316,7 +385,13 @@ namespace FreeChem
                         }
                     }
                 }
-                GraphUtils.TryAcceptAll(r.Output, produced);
+                // 开工前已用 OutputCanFit 预检；万一仍放不下，试后柜台，最后才放弃
+                if (!(GraphUtils.CanAccept(r.Output, produced) && GraphUtils.TryAcceptAll(r.Output, produced) == 0)
+                    && !ChemCatalog.TryPlaceOnBackCounter(produced, "heating"))
+                {
+                    if (log != null) log.Warning("[FreeChem] heating output full; product lost: " + id);
+                    produced.Destroy();
+                }
                 // 实时反应同样可能放出有毒气体：计入排气嫌疑度，并按倍率折算写入原版治安部（默认开启、可配置关闭）
                 int units = ChemLab.ExhaustUnitsForGas(id);
                 if (units > 0)
@@ -382,17 +457,25 @@ namespace FreeChem
             int need = Mathf.Max(0, ChemCatalog.FuelCapacityMl - before);
             if (need <= 0) return false;
 
-            // NEW-P1-3：按瓶内剩余体积消耗，只倒需要量，剩余燃料保留在瓶里（空了才销毁）
-            int fuelVol = ChemCatalog.GetPourVolumeMl(fuel);
+            // 审查 1.6：燃料是原版液体容器时，体积从原版液体 tag 读、也从原版 tag 扣。
+            // 以前原版 250 ml 酒精瓶没有 fc_volume_ml → 按 500 ml 算，且扣减只写 mod tag，瓶里的酒精原封不动。
+            bool vanillaContainer = ChemCatalog.IsLiquidContainerItem(fuel);
+            int fuelVol = ChemCatalog.LiquidVolumeMl(fuel);
             int effective = Mathf.RoundToInt(fuelVol * purity / 100f);
             int add = Mathf.Min(need, effective);
             if (add <= 0) return false;
             int usedMl = Mathf.Clamp(Mathf.CeilToInt(add * 100f / Mathf.Max(1, purity)), 1, Mathf.Max(1, fuelVol));
-
             lamp.ModifyTag(ChemCatalog.TFuel, s => s.Enable().SetInt(before + add));
             lamp.ModifyTag(ChemCatalog.TFuelPurity, s => s.Enable().SetInt(purity));
             int leftMl = fuelVol - usedMl;
-            if (leftMl <= 0) fuel.Destroy();
+            if (vanillaContainer)
+            {
+                // 按比例抽走酒精和水；空瓶留在燃料槽里（原版瓶子是可复用容器，不销毁）
+                try { WaterHelper.RemoveAndReturn(fuel, usedMl * ChemRecipes.PourPartPerMl); }
+                catch (Exception e) { if (log != null) log.Warning("[FreeChem] draw fuel failed: " + e.Message); }
+                ChemCatalog.SetPourVolumeMl(fuel, Mathf.Max(0, leftMl));
+            }
+            else if (leftMl <= 0) fuel.Destroy();
             else ChemCatalog.SetPourVolumeMl(fuel, leftMl);
             if (log != null)
                 log.Log("[FreeChem] fuel loaded: +" + add + " ml @ " + purity
@@ -429,6 +512,26 @@ namespace FreeChem
             }
             return false;
         }
+
+        /// <summary>
+        /// 审查 2.4：加热台 tooltip 状态行（温度 / 档位 / 状态 / 进度）。
+        /// 键 heat_status：{0}=温度 {1}=档位文字 {2}=状态文字 {3}=已进行秒 {4}=需要秒。
+        /// </summary>
+        public static string StatusLine(GameItem machine)
+        {
+            foreach (var r in Rigs)
+            {
+                if (r.Machine != machine) continue;
+                string mode = L(r.High ? "heat_mode_high" : "heat_mode_low");
+                string state = L("heat_state_" + r.Status);
+                return L("heat_status", Mathf.RoundToInt(r.Temp), mode, state,
+                         r.HeldSeconds, r.NeedSeconds);
+            }
+            return "";
+        }
+
+        static string L(string key, params object[] args)
+            => ModHelper.GetLocalized(ChemCatalog.ModId, key, args);
 
         public static bool IsHigh(GameItem machine)
         {

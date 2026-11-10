@@ -321,9 +321,11 @@ namespace FreeChem
                 "HCl(aq) --78–110°C→ 更纯 HCl(aq)",
                 new[]{"liq_hydrochloric_acid"}, new[]{"liq_hydrochloric_acid"},
                 78f, 110f, 130f, 20),
+            // 审查 4.4：与夜间 kmno4_decomp 产物一致（以前只产 O2，两种固体凭空消失）
             new ThermalReaction("heat_kmno4", "高锰酸钾热分解",
                 "2KMnO4 --Δ→ K2MnO4 + MnO2 + O2↑",
-                new[]{"sol_potassium_permanganate"}, new[]{"gas_oxygen"},
+                new[]{"sol_potassium_permanganate"},
+                new[]{"gas_oxygen", "sol_manganese_dioxide", "sol_potassium_manganate"},
                 140f, 160f, 190f, 25),
             new ThermalReaction("heat_nh4no3", "硝酸铵热分解",
                 "NH4NO3 --Δ→ N2O↑ + 2H2O",
@@ -340,6 +342,20 @@ namespace FreeChem
                 new[]{"sol_potassium_nitrate", "liq_sulfuric_acid"}, new[]{"liq_nitric_acid"},
                 120f, 160f, 190f, 30),
         };
+
+        /// <summary>
+        /// 审查 3.6：只按投料匹配热反应、不看温度（供加热台判断「升温中 / 反应中 / 超温降解」）。
+        /// 以前只有 MatchThermal：温度一超过 MaxTemp 就匹配不到，超温降解分支永远走不到。
+        /// </summary>
+        public static ThermalReaction MatchThermalInputs(IEnumerable<string> rawInputs)
+        {
+            var ids = rawInputs.Select(ChemRecipes.Normalize).Where(x => !string.IsNullOrEmpty(x)).ToArray();
+            if (ids.Length == 0) return null;
+            string key = string.Join("+", ids.OrderBy(x => x));
+            foreach (var r in ThermalReactions)
+                if (r.SortedInputs == key) return r;
+            return null;
+        }
 
         public static ThermalReaction MatchThermal(IEnumerable<string> rawInputs, float temp)
         {

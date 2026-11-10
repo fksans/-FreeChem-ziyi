@@ -470,6 +470,12 @@ namespace FreeChem
 
             if (ChemCatalog.IsMachine(id))
             {
+                // 审查 2.4：加热台显示温度 / 档位 / 状态 / 进度
+                if (id == "heating_platform")
+                {
+                    string heat = ChemHeating.StatusLine(item);
+                    if (!string.IsNullOrEmpty(heat)) builder.AddLine(heat);
+                }
                 builder.AddLine(ChemRuntime.SuspicionLine());
                 // P10c：机器用途便签 —— 即使 noteSlot 的 handnote 未显示，tooltip 也给出用法
                 string noteKey = "machine_note_" + id;
@@ -496,6 +502,11 @@ namespace FreeChem
                 // P1a：可被原版成分仪分析；液体还可倒入原版液体容器（双氧水为「按水近似」）
                 if (spec.Kind == "liquid")
                 {
+                    // 审查 2.5：显示剩余量；不足一份时提示不能参与反应
+                    int ml = ChemCatalog.LiquidVolumeMl(item);
+                    builder.AddLine(ModHelper.GetLocalized(ChemCatalog.ModId,
+                        ml >= ChemCatalog.PortionMl - 1 ? "liquid_remaining" : "liquid_remaining_partial",
+                        ml, ChemCatalog.PortionMl));
                     builder.AddLine(ModHelper.GetLocalized(ChemCatalog.ModId, "chem_vanilla_bridge_tip"));
                     if (id == "liq_hydrogen_peroxide")
                         builder.AddLine(ModHelper.GetLocalized(ChemCatalog.ModId, "pour_approx_water"));

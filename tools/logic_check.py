@@ -20,7 +20,7 @@ try:
 except Exception:
     pass
 
-ROOT = r"C:\Users\Administrator\WorkBuddy\Claw\ps-chem-mod"
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # 仓库根目录（原为本机绝对路径）
 SRC = os.path.join(ROOT, "src")
 RECIPES = os.path.join(SRC, "ChemRecipes.cs")
 CATALOG = os.path.join(SRC, "ChemCatalog.cs")
